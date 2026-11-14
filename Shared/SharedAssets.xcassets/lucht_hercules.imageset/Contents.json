@@ -1,4 +1,15 @@
 {
-  "images" : [ { "filename" : "lucht_hercules.png", "idiom" : "universal" } ],
-  "info" : { "author" : "xcode", "version" : 1 }
+  "images": [
+    {
+      "filename": "lucht_hercules.svg",
+      "idiom": "universal"
+    }
+  ],
+  "info": {
+    "author": "xcode",
+    "version": 1
+  },
+  "properties": {
+    "preserves-vector-representation": true
+  }
 }
