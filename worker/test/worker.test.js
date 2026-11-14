@@ -272,3 +272,10 @@ test("App Store Connect: sales report of 112Heli and summary in beheer", async (
   assert.equal(o.downloads.configured, false);
   assert.equal(o.downloads.dagen.length, 30);
 });
+
+test("Medic 01: Lifeliner drawing, but its own name", () => {
+  const info = classify({ hex: "485aaa", flight: "MEDIC01 ", r: "PH-XYZ", t: "EC35", lat: 52, lon: 5, alt_baro: 900 }, new Map(), new Map());
+  assert.equal(info.naam, "Medic 01");
+  assert.equal(info.soort, "trauma");
+  assert.equal(info.icoon ?? null, null);
+});

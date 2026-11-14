@@ -10,6 +10,8 @@ export const HELIS = [
   { id: "lifeliner2", naam: "Lifeliner 2", soort: "trauma", basis: "Rotterdam", callsigns: ["LIFELN2", "LIFELN02"] },
   { id: "lifeliner3", naam: "Lifeliner 3", soort: "trauma", basis: "Volkel", callsigns: ["LIFELN3", "LIFELN03"] },
   { id: "lifeliner4", naam: "Lifeliner 4", soort: "trauma", basis: "Groningen", callsigns: ["LIFELN4", "LIFELN04"] },
+  // 112Heli: medical helicopter Medic 01 – same drawing as the Lifeliner, but not a Lifeliner.
+  { id: "medic01", naam: "Medic 01", soort: "trauma", callsigns: ["MEDIC01", "MEDIC1"] },
   { id: "zulu01", naam: "Zulu 01", soort: "politie", callsigns: ["ZXP01"], regs: ["PH-PXA"] },
   { id: "zulu02", naam: "Zulu 02", soort: "politie", callsigns: ["ZXP02"], regs: ["PH-PXB"] },
   { id: "zulu03", naam: "Zulu 03", soort: "politie", callsigns: ["ZXP03"], regs: ["PH-PXC"] },
@@ -46,6 +48,11 @@ export function identify(ac, learned = new Map()) {
 
   let m = cs.match(/^(?:LIFELN|LIFELINER|LIFE)0?([1-9])$/);
   if (m && byId(`lifeliner${m[1]}`)) return { ...byId(`lifeliner${m[1]}`), herkenning: "callsign" };
+  m = cs.match(/^MEDIC0?(\d{1,2})$/);
+  if (m) {
+    const nr = m[1].padStart(2, "0");
+    return { ...(byId(`medic${nr}`) || { id: `medic${nr}`, naam: `Medic ${nr}`, soort: "trauma", callsigns: [] }), herkenning: "callsign" };
+  }
   m = cs.match(/^(?:ZXP|ZULU|POLITIE)0?(\d{1,2})$/);
   if (m) {
     const nr = m[1].padStart(2, "0");
