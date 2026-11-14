@@ -12,18 +12,24 @@
 //  POST /v1/activities                  Live Activity push token for one aircraft
 //  DELETE /v1/activities/:token
 //  POST /v1/reports                     "dit toestel ontbreekt of klopt niet"
-//  GET  /v1/beheer/reports              (Basic auth BEHEER_USER / BEHEER_PASSWORD) – the reports, for beheer
-//  POST /v1/beheer/reports/:id          { status } – mark a report as handled
+//  beheer (LRbeheer + 112heli.lrvdlinden.app/beheer), login with BEHEER_USER / BEHEER_PASSWORD:
+//  POST /v1/beheer/login                { user, password } → { token, expires } (30 days; Bearer token)
+//  GET  /v1/beheer/ping                 { configured }
+//  GET  /v1/beheer/overview             status, counters, platforms, versions, per soort, per day (14 days)
+//  GET  /v1/beheer/aircraft             all known aircraft with last seen and flights
+//  GET  /v1/beheer/reports              reports from the app; POST /:id { status }; DELETE /:id
+//  GET  /v1/beheer/push                 sent messages; GET /v1/beheer/push/bereik?soorten=; POST { titel, tekst, soorten, doel, token }
 import { fetchADSB, ingest, cleanup } from "./engine.js";
 import { refreshWeer, currentWeer } from "./weer.js";
 import { apnsConfigured, mapkitToken, mapkitConfigured } from "./apple.js";
 import { SOORTEN, STANDAARD_SOORTEN, plekVan, bovenPlaats } from "./fleet.js";
+import * as beheer from "./beheer.js";
 const now = () => Math.floor(Date.now() / 1000);
 
 const CORS = {
   "access-control-allow-origin": "*",
   "access-control-allow-methods": "GET, POST, DELETE, OPTIONS",
-  "access-control-allow-headers": "content-type",
+  "access-control-allow-headers": "content-type, authorization",
 };
 const json = (data, status = 200, maxAge = 0) =>
   new Response(JSON.stringify(data), {
@@ -171,30 +177,32 @@ async function route(request, env) {
     return json({ ok: true });
   }
   if (p.startsWith("/v1/beheer/")) {
-    if (!isBeheer(request, env)) return new Response(JSON.stringify({ error: "niet ingelogd" }), { status: 401, headers: { "content-type": "application/json", "www-authenticate": 'Basic realm="112Heli beheer"', ...CORS } });
-    if (p === "/v1/beheer/reports" && m === "GET") {
-      const rows = await env.DB.prepare("SELECT * FROM reports ORDER BY created_at DESC LIMIT 200").all();
-      return json({ reports: rows.results || [] });
-    }
-    if ((r = p.match(/^\/v1\/beheer\/reports\/(\d+)$/)) && m === "POST") {
-      let body; try { body = await request.json(); } catch { body = {}; }
-      const status = ["nieuw", "bekeken", "opgelost"].includes(body.status) ? body.status : "bekeken";
-      await env.DB.prepare("UPDATE reports SET status = ? WHERE id = ?").bind(status, Number(r[1])).run();
-      return json({ ok: true });
+    try { return await routeBeheer(request, env, url, p, m); } catch (e) {
+      if (e instanceof beheer.BeheerError) return bad(e.message, e.status);
+      throw e;
     }
   }
   return bad("niet gevonden", 404);
 }
 
-/** Basic auth with the shared beheer login (BEHEER_USER / BEHEER_PASSWORD, the same for all LRvdLinden beheer). */
-function isBeheer(request, env) {
-  if (!env.BEHEER_USER || !env.BEHEER_PASSWORD) return false;
-  const h = request.headers.get("authorization") || "";
-  if (!h.startsWith("Basic ")) return false;
-  try {
-    const [u, ...rest] = atob(h.slice(6)).split(":");
-    return u === env.BEHEER_USER && rest.join(":") === env.BEHEER_PASSWORD;
-  } catch { return false; }
+async function routeBeheer(request, env, url, p, m) {
+  const body = async () => { try { return await request.json(); } catch { return {}; } };
+  if (p === "/v1/beheer/login" && m === "POST") return json(await beheer.login(env, request, await body()));
+  if (p === "/v1/beheer/ping" && m === "GET") return json({ configured: beheer.beheerConfigured(env) });
+  const admin = await beheer.requireAdmin(env, request);
+  let r;
+  if (p === "/v1/beheer/me" && m === "GET") return json({ user: admin.u, expires: admin.exp ? new Date(admin.exp).toISOString() : null });
+  if (p === "/v1/beheer/overview" && m === "GET") return json(await beheer.overview(env));
+  if (p === "/v1/beheer/aircraft" && m === "GET") return json(await beheer.aircraftList(env));
+  if (p === "/v1/beheer/reports" && m === "GET") return json(await beheer.reports(env));
+  if ((r = p.match(/^\/v1\/beheer\/reports\/(\d+)$/))) {
+    if (m === "POST") return json(await beheer.setReportStatus(env, Number(r[1]), await body()));
+    if (m === "DELETE") return json(await beheer.deleteReport(env, Number(r[1])));
+  }
+  if (p === "/v1/beheer/push" && m === "GET") return json(await beheer.broadcastHistory(env));
+  if (p === "/v1/beheer/push/bereik" && m === "GET") return json(await beheer.pushPreview(env, url));
+  if (p === "/v1/beheer/push" && m === "POST") return json(await beheer.broadcast(env, await body()));
+  return bad("niet gevonden", 404);
 }
 
 async function runIngest(env) {

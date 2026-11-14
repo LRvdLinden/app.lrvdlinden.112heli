@@ -197,3 +197,29 @@ test("mapkit token: 503 without keys", async () => {
   const res = await worker.fetch(new Request("https://x/v1/mapkit-token", { headers: { origin: "https://112heli.lrvdlinden.app" } }), { DB: d1() });
   assert.equal(res.status, 503);
 });
+
+test("beheer: login, token, overview, aircraft, reports and push", async () => {
+  const env = { DB: d1(), BEHEER_USER: "leon", BEHEER_PASSWORD: "geheim1" };
+  const call = (path, init = {}, token) => worker.fetch(new Request("https://x" + path, { ...init, headers: { ...(token ? { authorization: "Bearer " + token } : {}), ...(init.headers || {}) } }), env);
+  assert.equal((await call("/v1/beheer/overview")).status, 401);
+  assert.equal((await call("/v1/beheer/login", { method: "POST", body: JSON.stringify({ user: "leon", password: "fout" }) })).status, 401);
+  const login = await (await call("/v1/beheer/login", { method: "POST", body: JSON.stringify({ user: "Leon", password: "geheim1" }) })).json();
+  assert.ok(login.token.includes("."));
+  assert.equal((await call("/v1/beheer/overview", {}, login.token + "x")).status, 401);
+  const o = await (await call("/v1/beheer/overview", {}, login.token)).json();
+  assert.equal(o.dagen.length, 14);
+  assert.equal(o.tellers.apparaten, 0);
+  assert.equal(o.status.apns, false);
+  const a = await (await call("/v1/beheer/aircraft", {}, login.token)).json();
+  assert.ok(Array.isArray(a.toestellen));
+  await call("/v1/reports", { method: "POST", body: JSON.stringify({ hex: "484a1b", tekst: "Klopt niet" }) });
+  const rep = await (await call("/v1/beheer/reports", {}, login.token)).json();
+  const id = rep.reports[0].id;
+  assert.equal((await (await call(`/v1/beheer/reports/${id}`, { method: "POST", body: JSON.stringify({ status: "opgelost" }) }, login.token)).json()).status, "opgelost");
+  assert.equal((await call(`/v1/beheer/reports/${id}`, { method: "DELETE" }, login.token)).status, 200);
+  assert.equal((await (await call("/v1/beheer/overview", {}, login.token)).json()).tellers.openMeldingen, 0);
+  // Push without APNs keys: 503, and the reach is counted per soort.
+  assert.equal((await call("/v1/beheer/push", { method: "POST", body: JSON.stringify({ tekst: "Test" }) }, login.token)).status, 503);
+  assert.equal((await (await call("/v1/beheer/push/bereik?soorten=trauma", {}, login.token)).json()).bereik, 0);
+  assert.deepEqual((await (await call("/v1/beheer/push", {}, login.token)).json()).berichten, []);
+});

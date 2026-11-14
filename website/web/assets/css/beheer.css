@@ -1,0 +1,46 @@
+/* 112Heli web-beheer (zelfde functies als LRbeheer → 112Heli). */
+.beheer .wrap { max-width: 1100px; }
+.bh-login { max-width: 400px; margin: 40px auto; padding: 32px; border-radius: var(--radius); background: var(--card); border: 1px solid var(--line); text-align: center; }
+.bh-login img { width: 84px; height: 84px; border-radius: 22%; margin-bottom: 14px; }
+.bh-login h1 { font-size: 1.6rem; margin: 0 0 4px; }
+.bh-form { display: grid; gap: 10px; margin-top: 22px; text-align: left; }
+.bh-form label { font-size: .85rem; color: var(--muted); }
+.bh-in, .bh-area, .bh-select { width: 100%; padding: 12px 14px; border-radius: 12px; border: 1px solid var(--line); background: rgba(255,255,255,.06); color: var(--text); font: inherit; }
+.bh-area { min-height: 110px; resize: vertical; }
+.bh-err { color: #ff7a80; font-size: .9rem; min-height: 1.2em; }
+.bh-top { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; margin-bottom: 18px; }
+.bh-top h1 { font-size: 1.7rem; margin: 0; }
+.bh-top .sp { flex: 1; }
+.bh-tabs { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 22px; }
+.bh-tab { padding: 9px 16px; border-radius: 999px; border: 1px solid var(--line); background: transparent; color: var(--text); font: inherit; cursor: pointer; }
+.bh-tab[aria-selected="true"] { background: var(--accent); border-color: var(--accent); }
+.bh-tab .n { display: inline-block; min-width: 20px; margin-left: 6px; padding: 0 6px; border-radius: 999px; background: var(--red); font-size: .75rem; }
+.bh-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 12px; }
+.bh-card { padding: 18px; border-radius: 18px; background: var(--card); border: 1px solid var(--line); }
+.bh-card h2 { font-size: 1.05rem; margin: 0 0 12px; }
+.bh-tile .k { font-size: .82rem; color: var(--muted); }
+.bh-tile .v { font-size: 1.9rem; font-weight: 700; font-variant-numeric: tabular-nums; }
+.bh-tile .s { font-size: .78rem; color: var(--muted); }
+.bh-two { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 12px; }
+.bh-status { display: grid; gap: 8px; }
+.bh-status div { display: flex; justify-content: space-between; gap: 10px; }
+.ok { color: #34d399; } .nok { color: #ff7a80; } .warn { color: #f2a15e; }
+.bh-bars { display: flex; align-items: flex-end; gap: 6px; height: 160px; padding-top: 8px; }
+.bh-bar { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; gap: 4px; height: 100%; font-size: .7rem; color: var(--muted); }
+.bh-bar i { display: block; width: 100%; border-radius: 6px 6px 2px 2px; background: var(--radar); min-height: 2px; }
+.bh-row { display: flex; justify-content: space-between; gap: 10px; padding: 7px 0; border-bottom: 1px solid var(--line); }
+.bh-row:last-child { border-bottom: 0; }
+.bh-table { width: 100%; border-collapse: collapse; font-size: .92rem; }
+.bh-table th, .bh-table td { text-align: left; padding: 9px 8px; border-bottom: 1px solid var(--line); vertical-align: top; }
+.bh-table th { color: var(--muted); font-weight: 500; font-size: .8rem; }
+.bh-tag { display: inline-block; padding: 2px 9px; border-radius: 999px; font-size: .75rem; background: rgba(255,255,255,.08); }
+.bh-tag.nieuw { background: var(--red); } .bh-tag.opgelost { background: #0f766e; } .bh-tag.lucht { background: #16a34a; }
+.bh-actions { display: flex; gap: 6px; flex-wrap: wrap; }
+.bh-btn { padding: 7px 12px; border-radius: 10px; border: 1px solid var(--line); background: rgba(255,255,255,.06); color: var(--text); font: inherit; font-size: .85rem; cursor: pointer; }
+.bh-btn.primary { background: var(--accent); border-color: var(--accent); font-weight: 600; padding: 11px 18px; }
+.bh-btn.danger { color: #ff7a80; }
+.bh-btn:disabled { opacity: .5; cursor: default; }
+.bh-check { display: inline-flex; align-items: center; gap: 6px; margin: 0 12px 6px 0; font-size: .92rem; }
+.bh-note { font-size: .82rem; color: var(--muted); }
+.bh-search { max-width: 320px; margin-bottom: 12px; }
+@media (max-width: 760px) { .bh-two { grid-template-columns: 1fr; } .bh-table .hide-s { display: none; } }
