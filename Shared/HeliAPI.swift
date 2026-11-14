@@ -41,6 +41,17 @@ struct HeliAPI: Sendable {
         try Self.check(response)
     }
 
+    /// POST with a JSON body and a JSON answer.
+    private func post<T: Decodable>(_ path: String, body: [String: Any]) async throws -> T {
+        var request = URLRequest(url: base.appending(path: path))
+        request.httpMethod = "POST"
+        request.setValue("application/json", forHTTPHeaderField: "content-type")
+        request.httpBody = try JSONSerialization.data(withJSONObject: body)
+        let (data, response) = try await session.data(for: request)
+        try Self.check(response)
+        return try JSONDecoder().decode(T.self, from: data)
+    }
+
     private static func check(_ response: URLResponse) throws {
         guard let http = response as? HTTPURLResponse, (200..<300).contains(http.statusCode) else {
             throw URLError(.badServerResponse)
@@ -85,6 +96,25 @@ struct HeliAPI: Sendable {
     }
 
     func deleteActivity(token: String) async throws { try await send("DELETE", "v1/activities/\(token)") }
+
+    /// Answer of the server to a testmelding: did Apple accept it, and if not, why.
+    struct TestPushResult: Decodable, Sendable {
+        var ok: Bool
+        var status: Int?
+        var reden: String?
+    }
+
+    /// Testmelding to this device, straight from the server via Apple.
+    func testPush(token: String) async throws -> TestPushResult {
+        try await post("v1/devices/test", body: ["token": token])
+    }
+
+    /// Starts of the last 7 days per straal in km around a place, for the chosen soorten.
+    func startsBereik(lat: Double, lon: Double, soorten: [String]) async throws -> [Int: Int] {
+        struct R: Decodable { var perStraal: [String: Int] }
+        let r: R = try await post("v1/starts/bereik", body: ["lat": lat, "lon": lon, "soorten": soorten])
+        return Dictionary(uniqueKeysWithValues: r.perStraal.compactMap { k, v in Int(k).map { ($0, v) } })
+    }
 
     /// "Dit toestel ontbreekt of klopt niet".
     func report(_ body: [String: Any]) async throws { try await send("POST", "v1/reports", body: body) }

@@ -103,6 +103,20 @@ final class PushManager: ObservableObject {
         }
     }
 
+    /// Sends a testmelding via the server and Apple. Returns a short Dutch line for the settings screen.
+    func sendTest() async -> (ok: Bool, tekst: String) {
+        guard let token else { return (false, "Dit toestel heeft nog geen pushadres. Open de app opnieuw en probeer het nog eens.") }
+        syncTask?.cancel()
+        await sync()
+        do {
+            let r = try await HeliAPI.shared.testPush(token: token)
+            if r.ok { return (true, "Verstuurd. Je krijgt zo een testmelding.") }
+            return (false, r.reden ?? "Apple weigerde de melding.")
+        } catch {
+            return (false, "Geen verbinding met de server. Probeer het later opnieuw.")
+        }
+    }
+
     private func sync() async {
         guard let token else { return }
         var body: [String: Any] = [

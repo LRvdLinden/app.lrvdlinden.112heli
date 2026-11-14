@@ -71,9 +71,26 @@ export async function sendPush(env, device, payload, { kind = "alert", priority 
     });
     let reason = null;
     if (!res.ok) { try { reason = (await res.json()).reason; } catch {} }
-    return { ok: res.status === 200, status: res.status, reason };
+    const r = { ok: res.status === 200, status: res.status, reason };
+    if (kind === "alert") await logPush(env, device, payload, r);
+    return r;
   } catch (e) {
-    return { ok: false, status: 0, reason: String(e.message || e) };
+    const r = { ok: false, status: 0, reason: String(e.message || e).slice(0, 200) };
+    if (kind === "alert") await logPush(env, device, payload, r);
+    return r;
+  }
+}
+
+/** Remembers a sent pushmelding with Apple's answer (shown in beheer). Never stops a push when logging fails. */
+async function logPush(env, device, payload, r) {
+  try {
+    const alert = payload?.aps?.alert;
+    const titel = typeof alert === "string" ? alert : alert?.title || alert?.body || null;
+    await env.DB.prepare("INSERT INTO push_log (at, kind, titel, hex, token_end, environment, status, reason) VALUES (?, ?, ?, ?, ?, ?, ?, ?)")
+      .bind(Math.floor(Date.now() / 1000), String(payload?.kind || payload?.type || "melding").slice(0, 16), titel ? String(titel).slice(0, 120) : null,
+        payload?.hex || null, String(device.token || "").slice(-6), device.environment || null, r.status, r.reason).run();
+  } catch (e) {
+    console.error("[pushlog]", e.message);
   }
 }
 

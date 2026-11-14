@@ -11,6 +11,8 @@
 //  GET  /v1/incidents?days=30
 //  POST /v1/devices                     register a device for pushmeldingen (+ choices)
 //  DELETE /v1/devices/:token
+//  POST /v1/devices/test                { token } → testmelding to a registered device, with Apple's answer
+//  POST /v1/starts/bereik               { lat, lon, soorten? } → starts of the last 7 days per straal (10–200 km)
 //  POST /v1/activities                  Live Activity push token for one aircraft
 //  DELETE /v1/activities/:token
 //  POST /v1/reports                     "dit toestel ontbreekt of klopt niet"
@@ -20,10 +22,11 @@
 //  GET  /v1/beheer/overview             status, counters, platforms, versions, per soort, per day (14 days)
 //  GET  /v1/beheer/aircraft             all known aircraft with last seen and flights
 //  GET  /v1/beheer/reports              reports from the app; POST /:id { status }; DELETE /:id
+//  GET  /v1/beheer/pushlog              every pushmelding of the last 7 days with Apple's answer
 //  GET  /v1/beheer/push                 sent messages; GET /v1/beheer/push/bereik?soorten=; POST { titel, tekst, soorten, doel, token }
 import { fetchADSB, ingest, cleanup } from "./engine.js";
 import { refreshWeer, currentWeer } from "./weer.js";
-import { apnsConfigured, mapkitToken, mapkitConfigured } from "./apple.js";
+import { apnsConfigured, mapkitToken, mapkitConfigured, sendPush, isDeadToken } from "./apple.js";
 import { SOORTEN, STANDAARD_SOORTEN, plekVan, bovenPlaats } from "./fleet.js";
 import * as beheer from "./beheer.js";
 import { syncDownloads } from "./asc.js";
@@ -107,6 +110,42 @@ async function saveDevice(env, body) {
   return json({ ok: true });
 }
 
+/** Testmelding from the app settings: shows straight away whether pushes reach this device. At most once per 30 seconds. */
+async function testPush(env, body) {
+  if (!isToken(body.token)) return bad("token ontbreekt of is ongeldig");
+  if (!apnsConfigured(env)) return json({ ok: false, status: 0, reden: "Pushmeldingen zijn niet ingesteld op de server" });
+  const d = await env.DB.prepare("SELECT token, environment FROM devices WHERE token = ?").bind(body.token).first();
+  if (!d) return json({ ok: false, status: 0, reden: "Dit toestel is nog niet aangemeld. Zet meldingen uit en weer aan." });
+  const t = now();
+  const recent = await env.DB.prepare("SELECT at FROM push_log WHERE kind = 'test' AND token_end = ? AND at > ?").bind(d.token.slice(-6), t - 30).first();
+  if (recent) return json({ ok: false, status: 429, reden: "Wacht even, je kreeg net al een testmelding." });
+  const res = await sendPush(env, d, {
+    aps: { alert: { title: "Testmelding van 112Heli", body: "Meldingen werken. Zo krijg je ook een melding als een heli opstijgt." }, sound: "heli.wav" },
+    kind: "test",
+  }, { collapseId: "test" });
+  if (isDeadToken(res)) await env.DB.prepare("DELETE FROM devices WHERE token = ?").bind(d.token).run();
+  return json({ ok: res.ok, status: res.status, reden: res.ok ? null : res.reason || `Apple gaf status ${res.status}` });
+}
+
+const BEREIK_STRALEN = [10, 25, 50, 75, 100, 150, 200];
+
+/** How many starts there were in the last 7 days within each straal of a place (helps choosing the straal). */
+async function startsBereik(env, body) {
+  const lat = Number(body?.lat), lon = Number(body?.lon);
+  if (!Number.isFinite(lat) || !Number.isFinite(lon) || Math.abs(lat) > 90 || Math.abs(lon) > 180) return { dagen: 7, perStraal: {} };
+  const soorten = Array.isArray(body?.soorten) ? body.soorten.filter((s) => SOORTEN.includes(s)) : null;
+  const rows = (await env.DB.prepare(
+    "SELECT f.start_lat AS lat, f.start_lon AS lon, a.soort FROM flights f JOIN aircraft a ON a.hex = f.hex WHERE f.start_ts > ? AND f.start_lat IS NOT NULL"
+  ).bind(now() - 7 * 86400).all()).results || [];
+  const perStraal = Object.fromEntries(BEREIK_STRALEN.map((k) => [k, 0]));
+  for (const r of rows) {
+    if (soorten && !soorten.includes(r.soort)) continue;
+    const km = distanceKm(lat, lon, r.lat, r.lon);
+    for (const k of BEREIK_STRALEN) if (km <= k) perStraal[k]++;
+  }
+  return { dagen: 7, perStraal };
+}
+
 async function route(request, env) {
   const url = new URL(request.url);
   const p = url.pathname.replace(/\/+$/, "") || "/";
@@ -162,6 +201,14 @@ async function route(request, env) {
   if (p === "/v1/devices" && m === "POST") {
     let body; try { body = await request.json(); } catch { return bad("ongeldige JSON"); }
     return saveDevice(env, body);
+  }
+  if (p === "/v1/devices/test" && m === "POST") {
+    let body; try { body = await request.json(); } catch { return bad("ongeldige JSON"); }
+    return testPush(env, body);
+  }
+  if (p === "/v1/starts/bereik" && m === "POST") {
+    let body; try { body = await request.json(); } catch { return bad("ongeldige JSON"); }
+    return json(await startsBereik(env, body));
   }
   if ((r = p.match(/^\/v1\/devices\/([0-9a-fA-F]+)$/)) && m === "DELETE") {
     await env.DB.prepare("DELETE FROM devices WHERE token = ?").bind(r[1]).run();
@@ -255,6 +302,7 @@ async function routeBeheer(request, env, url, p, m) {
     if (m === "POST") return json(await beheer.setReportStatus(env, Number(r[1]), await body()));
     if (m === "DELETE") return json(await beheer.deleteReport(env, Number(r[1])));
   }
+  if (p === "/v1/beheer/pushlog" && m === "GET") return json(await beheer.pushLog(env));
   if (p === "/v1/beheer/push" && m === "GET") return json(await beheer.broadcastHistory(env));
   if (p === "/v1/beheer/push/bereik" && m === "GET") return json(await beheer.pushPreview(env, url));
   if (p === "/v1/beheer/push" && m === "POST") return json(await beheer.broadcast(env, await body()));

@@ -302,3 +302,44 @@ test("speed and track worked out when the record lacks them; North Sea", async (
   assert.equal(bovenPlaats(53.70, 5.5), "de Noordzee");
   assert.notEqual(bovenPlaats(52.37, 4.9), "de Noordzee");
 });
+
+test("testmelding, push log in beheer and starts per straal", async () => {
+  const pair = await crypto.subtle.generateKey({ name: "ECDSA", namedCurve: "P-256" }, true, ["sign"]);
+  const der = Buffer.from(await crypto.subtle.exportKey("pkcs8", pair.privateKey)).toString("base64");
+  const env = { DB: d1(), APN_KEY_ID: "KEY", APN_TEAM_ID: "TEAM", APN_P8_CERT: `-----BEGIN PRIVATE KEY-----\n${der}\n-----END PRIVATE KEY-----`,
+    BEHEER_USER: "leon", BEHEER_PASSWORD: "geheim1" };
+  const call = (path, init = {}, token) => worker.fetch(new Request("https://x" + path, { ...init, headers: { ...(token ? { authorization: "Bearer " + token } : {}) } }), env);
+  const token = "b".repeat(64);
+  const sent = [];
+  const realFetch = globalThis.fetch;
+  globalThis.fetch = async (url, init) => { sent.push({ url: String(url), body: JSON.parse(init.body) }); return new Response(null, { status: 200 }); };
+  try {
+    // Not registered yet: no push.
+    assert.equal((await (await call("/v1/devices/test", { method: "POST", body: JSON.stringify({ token }) })).json()).ok, false);
+    await call("/v1/devices", { method: "POST", body: JSON.stringify({ token, lat: 52.23, lon: 5.99 }) });
+    const r = await (await call("/v1/devices/test", { method: "POST", body: JSON.stringify({ token }) })).json();
+    assert.equal(r.ok, true);
+    assert.equal(sent.length, 1);
+    assert.ok(sent[0].url.endsWith(`/3/device/${token}`));
+    assert.equal(sent[0].body.kind, "test");
+    // Second one straight after is held back.
+    assert.equal((await (await call("/v1/devices/test", { method: "POST", body: JSON.stringify({ token }) })).json()).status, 429);
+    assert.equal(sent.length, 1);
+  } finally {
+    globalThis.fetch = realFetch;
+  }
+  const login = await (await call("/v1/beheer/login", { method: "POST", body: JSON.stringify({ user: "leon", password: "geheim1" }) })).json();
+  const log = await (await call("/v1/beheer/pushlog", {}, login.token)).json();
+  assert.equal(log.ok24u, 1);
+  assert.equal(log.meldingen[0].kind, "test");
+  assert.equal(log.meldingen[0].token_end, "bbbbbb");
+  assert.equal(log.meldingen[0].ok, true);
+
+  const t = Math.floor(Date.now() / 1000);
+  env.DB.raw.exec(`INSERT INTO aircraft (hex, naam, soort, updated_at) VALUES ('484a1b', 'Lifeliner 3', 'trauma', ${t})`);
+  env.DB.raw.exec(`INSERT INTO flights (hex, start_ts, start_lat, start_lon) VALUES ('484a1b', ${t - 3600}, 52.504, 5.376), ('484a1b', ${t - 9 * 86400}, 52.23, 5.99)`);
+  const b = await (await call("/v1/starts/bereik", { method: "POST", body: JSON.stringify({ lat: 52.23, lon: 5.99 }) })).json();
+  assert.deepEqual(b.perStraal, { 10: 0, 25: 0, 50: 0, 75: 1, 100: 1, 150: 1, 200: 1 });
+  const p = await (await call("/v1/starts/bereik", { method: "POST", body: JSON.stringify({ lat: 52.23, lon: 5.99, soorten: ["politie"] }) })).json();
+  assert.equal(p.perStraal[200], 0);
+});

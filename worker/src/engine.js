@@ -358,6 +358,7 @@ export async function cleanup(env) {
     env.DB.prepare("DELETE FROM flights WHERE start_ts < ?").bind(keep),
     env.DB.prepare("DELETE FROM incidents WHERE start_ts < ?").bind(keep),
     env.DB.prepare("DELETE FROM zone_hits WHERE at < ?").bind(t - 86400),
+    env.DB.prepare("DELETE FROM push_log WHERE at < ?").bind(t - 7 * 86400),
     env.DB.prepare("INSERT OR REPLACE INTO kv (key, value, at) VALUES ('cleanup', '', ?)").bind(t),
   ]);
 }

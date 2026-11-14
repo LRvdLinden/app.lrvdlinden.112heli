@@ -266,3 +266,16 @@ export async function broadcastHistory(env) {
   const rows = (await env.DB.prepare("SELECT * FROM broadcasts ORDER BY created_at DESC LIMIT 50").all()).results || [];
   return { berichten: rows.map((r) => ({ ...r, soorten: JSON.parse(r.soorten || "[]") })) };
 }
+
+/** Every pushmelding of the last 7 days with Apple's answer, newest first, plus totals for the last 24 hours. */
+export async function pushLog(env) {
+  const t = now();
+  const rows = (await env.DB.prepare(
+    `SELECT p.id, p.at, p.kind, p.titel, p.hex, p.token_end, p.environment, p.status, p.reason, a.naam
+     FROM push_log p LEFT JOIN aircraft a ON a.hex = p.hex ORDER BY p.at DESC LIMIT 200`
+  ).all()).results || [];
+  const dag = await env.DB.prepare(
+    "SELECT SUM(CASE WHEN status = 200 THEN 1 ELSE 0 END) AS ok, SUM(CASE WHEN status = 200 THEN 0 ELSE 1 END) AS fout FROM push_log WHERE at > ?"
+  ).bind(t - 86400).first();
+  return { ok24u: dag?.ok || 0, fout24u: dag?.fout || 0, meldingen: rows.map((r) => ({ ...r, ok: r.status === 200 })) };
+}

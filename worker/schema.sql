@@ -152,3 +152,17 @@ CREATE TABLE IF NOT EXISTS downloads (
   units INTEGER NOT NULL DEFAULT 0,
   PRIMARY KEY (day, device, kind)
 );
+
+-- Every pushmelding sent to Apple with Apple's answer (7 days), for beheer: did a push actually go out?
+CREATE TABLE IF NOT EXISTS push_log (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  at INTEGER NOT NULL,
+  kind TEXT,                       -- takeoff, landing, callsign, incident, zone, bericht, test
+  titel TEXT,
+  hex TEXT,
+  token_end TEXT,                  -- last 6 characters of the device token, enough to recognise a device
+  environment TEXT,
+  status INTEGER,                  -- HTTP status from Apple (200 = accepted), 0 = no answer
+  reason TEXT                      -- Apple's reason when refused
+);
+CREATE INDEX IF NOT EXISTS push_log_at ON push_log (at);

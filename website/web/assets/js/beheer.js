@@ -78,7 +78,7 @@ function loginView(error = "") {
 
 function shell() {
   const open = cache.overview?.tellers?.openMeldingen || 0;
-  const tabs = [["overzicht", "Overzicht"], ["toestellen", "Toestellen"], ["meldingen", "Meldingen"], ["push", "Pushbericht"]];
+  const tabs = [["overzicht", "Overzicht"], ["toestellen", "Toestellen"], ["meldingen", "Meldingen"], ["pushlog", "Pushlog"], ["push", "Pushbericht"]];
   root.innerHTML = `<div class="bh-top"><h1>112Heli beheer</h1><span class="sp"></span>
       <button class="bh-btn" id="ref">Vernieuwen</button><button class="bh-btn" id="out">Uitloggen</button></div>
     <div class="bh-tabs" role="tablist">${tabs.map(([id, t]) => `<button class="bh-tab" role="tab" data-tab="${id}" aria-selected="${tab === id}">${t}${id === "meldingen" && open ? `<span class="n">${open}</span>` : ""}</button>`).join("")}</div>
@@ -96,6 +96,7 @@ async function load() {
     if (tab === "overzicht") p.innerHTML = overviewView(cache.overview);
     if (tab === "toestellen") { cache.aircraft ||= await api("/v1/beheer/aircraft"); aircraftView(p, cache.aircraft.toestellen); }
     if (tab === "meldingen") { cache.reports ||= await api("/v1/beheer/reports"); reportsView(p, cache.reports.reports); }
+    if (tab === "pushlog") { cache.pushlog ||= await api("/v1/beheer/pushlog"); pushLogView(p, cache.pushlog); }
     if (tab === "push") { cache.push ||= await api("/v1/beheer/push"); pushView(p, cache.push.berichten); }
   } catch (e) {
     if (!session) return loginView(e.message);
@@ -200,6 +201,23 @@ function reportsView(p, list) {
       await load();
     } catch (e) { alertBox(e.message); }
   }));
+}
+
+// ------------------------------------------------------------------ pushlog
+
+const PUSH_SOORT = { takeoff: "Opstijgen", landing: "Landing", callsign: "Roepnaam", incident: "Grote inzet", zone: "Zone", bericht: "Pushbericht", test: "Testmelding" };
+
+function pushLogView(p, d) {
+  const rows = d.meldingen || [];
+  p.innerHTML = `<div class="bh-card"><h2>Pushmeldingen</h2>
+      <p class="bh-note">Elke melding die naar Apple ging, met het antwoord van Apple. Laatste 24 uur: <span class="ok">${fmt(d.ok24u)} aangenomen</span> · <span class="${d.fout24u ? "nok" : ""}">${fmt(d.fout24u)} geweigerd</span>. We bewaren 7 dagen.</p>
+    </div>
+    ${rows.length ? `<div class="bh-card"><table class="bh-table"><thead><tr><th>Melding</th><th class="hide-s">Soort</th><th class="hide-s">Toestel</th><th>Apple</th></tr></thead><tbody>
+      ${rows.map((r) => `<tr><td>${esc(r.titel || "–")}<br><span class="bh-note">${when(r.at)}</span></td>
+        <td class="hide-s">${esc(PUSH_SOORT[r.kind] || r.kind || "–")}</td>
+        <td class="hide-s">…${esc(r.token_end)}<br><span class="bh-note">${esc(r.environment === "sandbox" ? "Xcode (sandbox)" : "TestFlight / App Store")}</span></td>
+        <td>${r.ok ? '<span class="ok">Aangenomen</span>' : `<span class="nok">${esc(r.reason || (r.status ? "Status " + r.status : "Geen antwoord"))}</span>`}</td></tr>`).join("")}
+    </tbody></table></div>` : '<div class="empty">Nog geen pushmeldingen verstuurd sinds de pushlog bestaat.</div>'}`;
 }
 
 // ------------------------------------------------------------------ pushbericht

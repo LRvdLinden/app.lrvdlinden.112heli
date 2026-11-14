@@ -7,6 +7,9 @@ struct SettingsView: View {
     @AppStorage("onboarding.done") private var onboardingDone = true
     @State private var showWhatsNew = false
     @State private var showAddZone = false
+    @State private var testBezig = false
+    @State private var testUitkomst: (ok: Bool, tekst: String)?
+    @State private var bereik: [Int: Int] = [:]
 
     private let radii: [Int] = [10, 25, 50, 100, 200, 0]
 
@@ -51,11 +54,13 @@ struct SettingsView: View {
                     if push.radiusKm > 0 && !location.isAllowed {
                         Button("Gebruik mijn locatie") { location.request() }
                     }
+                    if push.radiusKm > 0, let aantal = bereik[push.radiusKm] {
+                        LabeledContent("Starts afgelopen week", value: "\(aantal)")
+                    }
                 } footer: {
-                    Text(push.radiusKm > 0 && !location.isAllowed
-                         ? "Zonder locatie krijg je meldingen uit heel Nederland."
-                         : "Favorieten melden we altijd, waar ze ook opstijgen.")
+                    Text(gebiedUitleg)
                 }
+                .task(id: bereikSleutel) { await laadBereik() }
             }
 
             Section("Weergave") {
@@ -109,6 +114,25 @@ struct SettingsView: View {
                 Toggle("Meerdere helikopters op één plek", isOn: $push.incidents)
                 Toggle("Favorieten: opstijgen en landen", isOn: $push.favAlerts)
                 Toggle("Favoriet wisselt van roepnaam", isOn: $push.callsign)
+                Button {
+                    Task {
+                        testBezig = true
+                        testUitkomst = await push.sendTest()
+                        testBezig = false
+                    }
+                } label: {
+                    HStack {
+                        Label("Stuur testmelding", systemImage: "bell.badge")
+                        Spacer()
+                        if testBezig { ProgressView() }
+                    }
+                }
+                .disabled(testBezig)
+                if let testUitkomst {
+                    Label(testUitkomst.tekst, systemImage: testUitkomst.ok ? "checkmark.circle.fill" : "exclamationmark.triangle.fill")
+                        .font(.footnote)
+                        .foregroundStyle(testUitkomst.ok ? .green : .orange)
+                }
             } else if push.authorization == .denied {
                 Text("Meldingen staan uit voor 112Heli. Zet ze aan in de systeeminstellingen.").foregroundStyle(.secondary)
             } else {
@@ -117,6 +141,30 @@ struct SettingsView: View {
         } header: {
             Text("Pushmeldingen")
         }
+    }
+
+    /// Reloads the starts per straal when the soorten or the location change.
+    private var bereikSleutel: String {
+        let plek = location.location.map { "\(($0.coordinate.latitude * 100).rounded()),\(($0.coordinate.longitude * 100).rounded())" } ?? "-"
+        return push.soorten.map(\.rawValue).sorted().joined(separator: ",") + "|" + plek
+    }
+
+    private func laadBereik() async {
+        guard let loc = location.location else { bereik = [:]; return }
+        let r = try? await HeliAPI.shared.startsBereik(lat: (loc.coordinate.latitude * 100).rounded() / 100,
+                                                      lon: (loc.coordinate.longitude * 100).rounded() / 100,
+                                                      soorten: push.soorten.map(\.rawValue).sorted())
+        bereik = r ?? [:]
+    }
+
+    private var gebiedUitleg: String {
+        if push.radiusKm > 0 && !location.isAllowed { return "Zonder locatie krijg je meldingen uit heel Nederland." }
+        var tekst = "Favorieten melden we altijd, waar ze ook opstijgen."
+        if push.radiusKm > 0, let nu = bereik[push.radiusKm],
+           let groter = radii.filter({ $0 > push.radiusKm }).first, let meer = bereik[groter], meer > nu {
+            tekst += " Binnen \(groter) km waren het er de afgelopen week \(meer)."
+        }
+        return tekst
     }
 
     private static func link(_ key: String) -> URL? {
@@ -140,6 +188,7 @@ struct WhatsNewView: View {
                 Label("Landingsplek: geland bij ziekenhuis, terug op de basis of op locatie", systemImage: "mappin.and.ellipse")
                 Label("Status per toestel en de leeftijd van elke positie", systemImage: "clock")
                 Label("Melding als een favoriet van roepnaam wisselt", systemImage: "arrow.triangle.2.circlepath")
+                Label("Testmelding en het aantal starts in je gebied bij de instellingen", systemImage: "checkmark.bubble")
                 Label("Weer dat vliegen beperkt (KNMI)", systemImage: "cloud.fog")
                 Label("Een eigen helikoptergeluid bij meldingen", systemImage: "speaker.wave.2")
                 Label("Meld een toestel dat ontbreekt of niet klopt", systemImage: "exclamationmark.bubble")
