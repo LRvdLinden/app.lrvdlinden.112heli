@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.0.0 (3)
+- Eigen server in het Cloudflare-account 112heli: `112heli-api.112heli.workers.dev`.
+
 ## 1.0.0 (2)
 - Zulu (AW139) helemaal zichtbaar: de tekening viel buiten het kader, ook in het app-icoon.
 - Welkomstscherm: je kunt ook de jet van Max Verstappen volgen.

@@ -57,7 +57,7 @@ identity = {
     "CODE_SIGN_STYLE": "Automatic",
     "DEVELOPMENT_TEAM": TEAM,
     "MARKETING_VERSION": "1.0.0",
-    "CURRENT_PROJECT_VERSION": "2",
+    "CURRENT_PROJECT_VERSION": "3",
     "GENERATE_INFOPLIST_FILE": "YES",
     "INFOPLIST_KEY_ITSAppUsesNonExemptEncryption": "NO",
     "SWIFT_EMIT_LOC_STRINGS": "YES",

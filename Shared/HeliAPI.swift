@@ -8,8 +8,8 @@ struct HeliAPI: Sendable {
 
     init() {
         let configured = Bundle.main.object(forInfoDictionaryKey: "HeliAPIURL") as? String
-        let value = (configured?.isEmpty == false ? configured! : "https://112heli-api.lrvdlinden.workers.dev")
-        base = URL(string: value) ?? URL(string: "https://112heli-api.lrvdlinden.workers.dev")!
+        let value = (configured?.isEmpty == false ? configured! : "https://112heli-api.112heli.workers.dev")
+        base = URL(string: value) ?? URL(string: "https://112heli-api.112heli.workers.dev")!
     }
 
     private var session: URLSession {

@@ -31,7 +31,7 @@ De herkenning van toestellen, de tekeningen en de ziekenhuizen/bases komen uit A
 ### Deploy (GitHub Actions → workflow "Worker")
 Zet deze repository-secrets in `LRvdLinden/app.lrvdlinden.112heli` (waarden uit `app.lrvdlinden.secrets` / A-Alerts):
 `CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID`, `APN_KEY_ID`, `APN_TEAM_ID` (of `TEAM_ID`), `APN_P8_CERT`, en optioneel `VERKEER_URL`, `VERKEER_TOKEN`, `BEHEER_APP_USER` en `BEHEER_APP_PASSWORD` (voor de meldingen in beheer).
-De workflow maakt de D1-database `112heli`, deployt `112heli-api` en zet de secrets. Adres: `https://112heli-api.lrvdlinden.workers.dev` (staat in `Config/Base.xcconfig`).
+De workflow maakt de D1-database `112heli`, deployt `112heli-api` en zet de secrets. Adres: `https://112heli-api.112heli.workers.dev` (staat in `Config/Base.xcconfig`).
 
 ## App bouwen
 Open `Heli112.xcodeproj` in Xcode 16 of nieuwer. Schemes: **112Heli** (iPhone/iPad/Mac) en **112Heli TV**.
