@@ -1,0 +1,611 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		20916512010D510F2E797B1B /* 112Heli Widgets.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = ACFF661D240B8AE997ABF27B /* 112Heli Widgets.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		D029E6B6C06F948F798329E2 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0AD051443066D1911B2572BE /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = BBBA62FDB4AC7FC72C30A75E;
+			remoteInfo = "112Heli Widgets";
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		199DABBE781761DD7BE566B7 /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				20916512010D510F2E797B1B /* 112Heli Widgets.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		9399117A008E61097EE5E466 /* 112Heli.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "112Heli.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		ACFF661D240B8AE997ABF27B /* 112Heli Widgets.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = "112Heli Widgets.appex"; sourceTree = BUILT_PRODUCTS_DIR; };
+		E9C1AB5D4C50A7DA2381036B /* 112Heli TV.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "112Heli TV.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		B6C18F275DCBA1E59B73272A /* Base.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "Base.xcconfig"; sourceTree = "<group>"; };
+		D36DF8C38C9567EF8E739816 /* Heli112-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Heli112-Info.plist"; sourceTree = "<group>"; };
+		B47054AF3C22EB322F93E69B /* Heli112-iOS.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "Heli112-iOS.entitlements"; sourceTree = "<group>"; };
+		9441DE459C99C3BE03F7293F /* Heli112-macOS.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "Heli112-macOS.entitlements"; sourceTree = "<group>"; };
+		F8519B690C3E2A9607C4BDB4 /* Heli112TV-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Heli112TV-Info.plist"; sourceTree = "<group>"; };
+		A8929C17A858BD1C66E535F2 /* Heli112TV.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "Heli112TV.entitlements"; sourceTree = "<group>"; };
+		2BED23C4F0D48459AD77D199 /* Secrets.example.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "Secrets.example.xcconfig"; sourceTree = "<group>"; };
+		D0B2768498CBDF50939CAA96 /* Widgets-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Widgets-Info.plist"; sourceTree = "<group>"; };
+		12778747CE569FC31429F5CC /* Widgets-iOS.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "Widgets-iOS.entitlements"; sourceTree = "<group>"; };
+		D052C31A3BE359F8B0460A20 /* Widgets-macOS.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "Widgets-macOS.entitlements"; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedRootGroup section */
+		25EA48D7D03403BAE6AD8C0A /* Heli112 */ = {isa = PBXFileSystemSynchronizedRootGroup; path = Heli112; sourceTree = "<group>"; };
+		C622AA8A1D4B6B213EB85BFC /* Heli112Widgets */ = {isa = PBXFileSystemSynchronizedRootGroup; path = Heli112Widgets; sourceTree = "<group>"; };
+		ADF2D1C4EAE957AA42A4AEC3 /* Heli112TV */ = {isa = PBXFileSystemSynchronizedRootGroup; path = Heli112TV; sourceTree = "<group>"; };
+		C6701F041686532A89393B82 /* Shared */ = {isa = PBXFileSystemSynchronizedRootGroup; path = Shared; sourceTree = "<group>"; };
+		8F4D950BCCF777D4D054183C /* SharedUI */ = {isa = PBXFileSystemSynchronizedRootGroup; path = SharedUI; sourceTree = "<group>"; };
+/* End PBXFileSystemSynchronizedRootGroup section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		626CE2CE3298519DDA52A2D4 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		7744E1FBFC06F6003E0D8C30 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		18D4CB7FA533038556CF3A1F /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		52488CD50C50F595B46F6CCC = {
+			isa = PBXGroup;
+			children = (
+				25EA48D7D03403BAE6AD8C0A /* Heli112 */,
+				C622AA8A1D4B6B213EB85BFC /* Heli112Widgets */,
+				ADF2D1C4EAE957AA42A4AEC3 /* Heli112TV */,
+				C6701F041686532A89393B82 /* Shared */,
+				8F4D950BCCF777D4D054183C /* SharedUI */,
+				E63801FF560DDF4DA11D628B /* Config */,
+				9F7E7BB43CB600CEF6CCA756 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		E63801FF560DDF4DA11D628B /* Config */ = {
+			isa = PBXGroup;
+			children = (
+				B6C18F275DCBA1E59B73272A /* Base.xcconfig */,
+				D36DF8C38C9567EF8E739816 /* Heli112-Info.plist */,
+				B47054AF3C22EB322F93E69B /* Heli112-iOS.entitlements */,
+				9441DE459C99C3BE03F7293F /* Heli112-macOS.entitlements */,
+				F8519B690C3E2A9607C4BDB4 /* Heli112TV-Info.plist */,
+				A8929C17A858BD1C66E535F2 /* Heli112TV.entitlements */,
+				2BED23C4F0D48459AD77D199 /* Secrets.example.xcconfig */,
+				D0B2768498CBDF50939CAA96 /* Widgets-Info.plist */,
+				12778747CE569FC31429F5CC /* Widgets-iOS.entitlements */,
+				D052C31A3BE359F8B0460A20 /* Widgets-macOS.entitlements */,
+			);
+			path = Config;
+			sourceTree = "<group>";
+		};
+		9F7E7BB43CB600CEF6CCA756 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				9399117A008E61097EE5E466 /* 112Heli.app */,
+				ACFF661D240B8AE997ABF27B /* 112Heli Widgets.appex */,
+				E9C1AB5D4C50A7DA2381036B /* 112Heli TV.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		AA40460EF710D829CED7E25A /* 112Heli */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = AEB19DC68794F600016E9110 /* Build configuration list for PBXNativeTarget "112Heli" */;
+			buildPhases = (
+				4060E2B37300770F00576113 /* Sources */,
+				626CE2CE3298519DDA52A2D4 /* Frameworks */,
+				5CF9E0047E27F3E86F260F59 /* Resources */,
+				199DABBE781761DD7BE566B7 /* Embed Foundation Extensions */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				81281DE3D6967A1BECC97759 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				25EA48D7D03403BAE6AD8C0A /* Heli112 */,
+				C6701F041686532A89393B82 /* Shared */,
+				8F4D950BCCF777D4D054183C /* SharedUI */,
+			);
+			name = "112Heli";
+			packageProductDependencies = (
+			);
+			productName = "112Heli";
+			productReference = 9399117A008E61097EE5E466 /* 112Heli.app */;
+			productType = "com.apple.product-type.application";
+		};
+		BBBA62FDB4AC7FC72C30A75E /* 112Heli Widgets */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 59180F1A61F0CF99A6E52FB0 /* Build configuration list for PBXNativeTarget "112Heli Widgets" */;
+			buildPhases = (
+				C659B81593A447CCDC61D23B /* Sources */,
+				7744E1FBFC06F6003E0D8C30 /* Frameworks */,
+				2AEC6AE9ABD0DED79CA83E24 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				C622AA8A1D4B6B213EB85BFC /* Heli112Widgets */,
+				C6701F041686532A89393B82 /* Shared */,
+			);
+			name = "112Heli Widgets";
+			packageProductDependencies = (
+			);
+			productName = "112Heli Widgets";
+			productReference = ACFF661D240B8AE997ABF27B /* 112Heli Widgets.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
+		C0EB3A98FFA645DE464FF9A1 /* 112Heli TV */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 7B1DF4A65E0602374D73C4DD /* Build configuration list for PBXNativeTarget "112Heli TV" */;
+			buildPhases = (
+				CC0C649800EF5494FE307054 /* Sources */,
+				18D4CB7FA533038556CF3A1F /* Frameworks */,
+				B6B43B74D2A9A6635D578CC6 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				ADF2D1C4EAE957AA42A4AEC3 /* Heli112TV */,
+				C6701F041686532A89393B82 /* Shared */,
+				8F4D950BCCF777D4D054183C /* SharedUI */,
+			);
+			name = "112Heli TV";
+			packageProductDependencies = (
+			);
+			productName = "112Heli TV";
+			productReference = E9C1AB5D4C50A7DA2381036B /* 112Heli TV.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		0AD051443066D1911B2572BE /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 2600;
+				LastUpgradeCheck = 2600;
+				TargetAttributes = {
+					AA40460EF710D829CED7E25A = {
+						CreatedOnToolsVersion = 26.0;
+					};
+					BBBA62FDB4AC7FC72C30A75E = {
+						CreatedOnToolsVersion = 26.0;
+					};
+					C0EB3A98FFA645DE464FF9A1 = {
+						CreatedOnToolsVersion = 26.0;
+					};
+				};
+			};
+			buildConfigurationList = 8E7E2E1F95C546E67FC453CA /* Build configuration list for PBXProject "Heli112" */;
+			developmentRegion = nl;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				nl,
+				Base,
+			);
+			mainGroup = 52488CD50C50F595B46F6CCC;
+			minimizedProjectReferenceProxies = 1;
+			preferredProjectObjectVersion = 77;
+			productRefGroup = 9F7E7BB43CB600CEF6CCA756 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				AA40460EF710D829CED7E25A /* 112Heli */,
+				BBBA62FDB4AC7FC72C30A75E /* 112Heli Widgets */,
+				C0EB3A98FFA645DE464FF9A1 /* 112Heli TV */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		5CF9E0047E27F3E86F260F59 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		2AEC6AE9ABD0DED79CA83E24 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B6B43B74D2A9A6635D578CC6 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		4060E2B37300770F00576113 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C659B81593A447CCDC61D23B /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		CC0C649800EF5494FE307054 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		81281DE3D6967A1BECC97759 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = BBBA62FDB4AC7FC72C30A75E /* 112Heli Widgets */;
+			targetProxy = D029E6B6C06F948F798329E2 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		20D82ACF411160514FE690DC /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = B6C18F275DCBA1E59B73272A /* Base.xcconfig */;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				TVOS_DEPLOYMENT_TARGET = 17.0;
+				WATCHOS_DEPLOYMENT_TARGET = 10.0;
+				XROS_DEPLOYMENT_TARGET = 1.0;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_TESTABILITY = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				ONLY_ACTIVE_ARCH = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		BFD33726CFBBC7614369DC72 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = B6C18F275DCBA1E59B73272A /* Base.xcconfig */;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				TVOS_DEPLOYMENT_TARGET = 17.0;
+				WATCHOS_DEPLOYMENT_TARGET = 10.0;
+				XROS_DEPLOYMENT_TARGET = 1.0;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		2A94E3579CFEF17FE966480B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = EU3UY476T6;
+				MARKETING_VERSION = 1.0.0;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				"CODE_SIGN_ENTITLEMENTS[sdk=iphoneos*]" = "Config/Heli112-iOS.entitlements";
+				"CODE_SIGN_ENTITLEMENTS[sdk=iphonesimulator*]" = "Config/Heli112-iOS.entitlements";
+				"CODE_SIGN_ENTITLEMENTS[sdk=macosx*]" = "Config/Heli112-macOS.entitlements";
+				COMBINE_HIDPI_IMAGES = YES;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_PREVIEWS = YES;
+				INFOPLIST_FILE = "Config/Heli112-Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = 112Heli;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.news";
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "Je locatie wordt gebruikt om te tonen hoe ver een toestel weg is en voor meldingen uit je eigen omgeving (afgerond op ongeveer een kilometer).";
+				INFOPLIST_KEY_NSSupportsLiveActivities = YES;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "© 112Heli · LRvdLinden";
+				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
+				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
+				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;
+				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphonesimulator*]" = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				"LD_RUNPATH_SEARCH_PATHS[sdk=iphoneos*]" = "$(inherited) @executable_path/Frameworks";
+				"LD_RUNPATH_SEARCH_PATHS[sdk=iphonesimulator*]" = "$(inherited) @executable_path/Frameworks";
+				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "$(inherited) @executable_path/../Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = app.lrvdlinden.112HELI;
+				PRODUCT_MODULE_NAME = Heli112;
+				PRODUCT_NAME = 112Heli;
+				SDKROOT = auto;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		4934C1245C0F7649A6BF909F /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = EU3UY476T6;
+				MARKETING_VERSION = 1.0.0;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				"CODE_SIGN_ENTITLEMENTS[sdk=iphoneos*]" = "Config/Heli112-iOS.entitlements";
+				"CODE_SIGN_ENTITLEMENTS[sdk=iphonesimulator*]" = "Config/Heli112-iOS.entitlements";
+				"CODE_SIGN_ENTITLEMENTS[sdk=macosx*]" = "Config/Heli112-macOS.entitlements";
+				COMBINE_HIDPI_IMAGES = YES;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_PREVIEWS = YES;
+				INFOPLIST_FILE = "Config/Heli112-Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = 112Heli;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.news";
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "Je locatie wordt gebruikt om te tonen hoe ver een toestel weg is en voor meldingen uit je eigen omgeving (afgerond op ongeveer een kilometer).";
+				INFOPLIST_KEY_NSSupportsLiveActivities = YES;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "© 112Heli · LRvdLinden";
+				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
+				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
+				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;
+				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphonesimulator*]" = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				"LD_RUNPATH_SEARCH_PATHS[sdk=iphoneos*]" = "$(inherited) @executable_path/Frameworks";
+				"LD_RUNPATH_SEARCH_PATHS[sdk=iphonesimulator*]" = "$(inherited) @executable_path/Frameworks";
+				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "$(inherited) @executable_path/../Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = app.lrvdlinden.112HELI;
+				PRODUCT_MODULE_NAME = Heli112;
+				PRODUCT_NAME = 112Heli;
+				SDKROOT = auto;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		FD7A8F3B5B3474F788709A40 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = EU3UY476T6;
+				MARKETING_VERSION = 1.0.0;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				APPLICATION_EXTENSION_API_ONLY = YES;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				"CODE_SIGN_ENTITLEMENTS[sdk=iphoneos*]" = "Config/Widgets-iOS.entitlements";
+				"CODE_SIGN_ENTITLEMENTS[sdk=iphonesimulator*]" = "Config/Widgets-iOS.entitlements";
+				"CODE_SIGN_ENTITLEMENTS[sdk=macosx*]" = "Config/Widgets-macOS.entitlements";
+				ENABLE_HARDENED_RUNTIME = YES;
+				INFOPLIST_FILE = "Config/Widgets-Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = 112Heli;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.news";
+				"LD_RUNPATH_SEARCH_PATHS[sdk=iphoneos*]" = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
+				"LD_RUNPATH_SEARCH_PATHS[sdk=iphonesimulator*]" = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
+				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "$(inherited) @executable_path/../Frameworks @executable_path/../../../../Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = app.lrvdlinden.112HELI.widgets;
+				PRODUCT_MODULE_NAME = Heli112Widgets;
+				PRODUCT_NAME = "112Heli Widgets";
+				SDKROOT = auto;
+				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
+				SUPPORTS_MACCATALYST = NO;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		F9BF8D0F05C61D8BF57B5344 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = EU3UY476T6;
+				MARKETING_VERSION = 1.0.0;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				APPLICATION_EXTENSION_API_ONLY = YES;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				"CODE_SIGN_ENTITLEMENTS[sdk=iphoneos*]" = "Config/Widgets-iOS.entitlements";
+				"CODE_SIGN_ENTITLEMENTS[sdk=iphonesimulator*]" = "Config/Widgets-iOS.entitlements";
+				"CODE_SIGN_ENTITLEMENTS[sdk=macosx*]" = "Config/Widgets-macOS.entitlements";
+				ENABLE_HARDENED_RUNTIME = YES;
+				INFOPLIST_FILE = "Config/Widgets-Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = 112Heli;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.news";
+				"LD_RUNPATH_SEARCH_PATHS[sdk=iphoneos*]" = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
+				"LD_RUNPATH_SEARCH_PATHS[sdk=iphonesimulator*]" = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
+				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "$(inherited) @executable_path/../Frameworks @executable_path/../../../../Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = app.lrvdlinden.112HELI.widgets;
+				PRODUCT_MODULE_NAME = Heli112Widgets;
+				PRODUCT_NAME = "112Heli Widgets";
+				SDKROOT = auto;
+				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
+				SUPPORTS_MACCATALYST = NO;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		F8F2A3A6305C1D4FA7B01ED7 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = EU3UY476T6;
+				MARKETING_VERSION = 1.0.0;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				ASSETCATALOG_COMPILER_APPICON_NAME = "App Icon & Top Shelf Image";
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = "Config/Heli112TV.entitlements";
+				ENABLE_PREVIEWS = YES;
+				INFOPLIST_FILE = "Config/Heli112TV-Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = 112Heli;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.news";
+				INFOPLIST_KEY_UIUserInterfaceStyle = Automatic;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = app.lrvdlinden.112HELI;
+				PRODUCT_MODULE_NAME = Heli112TV;
+				PRODUCT_NAME = "112Heli TV";
+				SDKROOT = appletvos;
+				SUPPORTED_PLATFORMS = "appletvos appletvsimulator";
+				TARGETED_DEVICE_FAMILY = 3;
+			};
+			name = Debug;
+		};
+		7A864C67C2AE5C6F6F643811 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = EU3UY476T6;
+				MARKETING_VERSION = 1.0.0;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				ASSETCATALOG_COMPILER_APPICON_NAME = "App Icon & Top Shelf Image";
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = "Config/Heli112TV.entitlements";
+				ENABLE_PREVIEWS = YES;
+				INFOPLIST_FILE = "Config/Heli112TV-Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = 112Heli;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.news";
+				INFOPLIST_KEY_UIUserInterfaceStyle = Automatic;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = app.lrvdlinden.112HELI;
+				PRODUCT_MODULE_NAME = Heli112TV;
+				PRODUCT_NAME = "112Heli TV";
+				SDKROOT = appletvos;
+				SUPPORTED_PLATFORMS = "appletvos appletvsimulator";
+				TARGETED_DEVICE_FAMILY = 3;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		8E7E2E1F95C546E67FC453CA /* Build configuration list for PBXProject "Heli112" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				20D82ACF411160514FE690DC /* Debug */,
+				BFD33726CFBBC7614369DC72 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		AEB19DC68794F600016E9110 /* Build configuration list for PBXNativeTarget "112Heli" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				2A94E3579CFEF17FE966480B /* Debug */,
+				4934C1245C0F7649A6BF909F /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		59180F1A61F0CF99A6E52FB0 /* Build configuration list for PBXNativeTarget "112Heli Widgets" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				FD7A8F3B5B3474F788709A40 /* Debug */,
+				F9BF8D0F05C61D8BF57B5344 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		7B1DF4A65E0602374D73C4DD /* Build configuration list for PBXNativeTarget "112Heli TV" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				F8F2A3A6305C1D4FA7B01ED7 /* Debug */,
+				7A864C67C2AE5C6F6F643811 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 0AD051443066D1911B2572BE /* Project object */;
+}

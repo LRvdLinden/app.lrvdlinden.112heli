@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleURLName</key>
+			<string>app.lrvdlinden.112HELI</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>heli112</string>
+			</array>
+		</dict>
+	</array>
+	<key>HeliAPIURL</key>
+	<string>$(HELI_API_URL)</string>
+	<key>HeliPrivacyURL</key>
+	<string>$(HELI_PRIVACY_URL)</string>
+	<key>HeliSupportURL</key>
+	<string>$(HELI_SUPPORT_URL)</string>
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>remote-notification</string>
+	</array>
+	<key>UILaunchScreen</key>
+	<dict>
+		<key>UIColorName</key>
+		<string>LaunchBackground</string>
+	</dict>
+	<key>ITSAppUsesNonExemptEncryption</key>
+	<false/>
+</dict>
+</plist>

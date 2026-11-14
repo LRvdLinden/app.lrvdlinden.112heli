@@ -1,0 +1,29 @@
+{
+  "sourceLanguage": "nl",
+  "strings": {
+    "NSLocationWhenInUseUsageDescription": {
+      "comment": "Locatie",
+      "extractionState": "manual",
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Je locatie wordt gebruikt om te tonen hoe ver een toestel weg is en voor meldingen uit je eigen omgeving (afgerond op ongeveer een kilometer)."
+          }
+        }
+      }
+    },
+    "CFBundleDisplayName": {
+      "extractionState": "manual",
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "112Heli"
+          }
+        }
+      }
+    }
+  },
+  "version": "1.0"
+}

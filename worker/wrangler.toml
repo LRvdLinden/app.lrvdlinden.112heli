@@ -1,0 +1,22 @@
+# Cloudflare Worker: the API + ADS-B ingest + pushmeldingen for 112Heli.
+# Deployed by the GitHub workflow "Worker" (database_id is filled in there).
+name = "112heli-api"
+main = "src/index.js"
+compatibility_date = "2026-10-01"
+workers_dev = true
+
+[triggers]
+crons = ["* * * * *"]
+
+[[d1_databases]]
+binding = "DB"
+database_name = "112heli"
+database_id = "__D1_DATABASE_ID__"
+
+[vars]
+RETENTION_DAYS = "30"
+POLLS_PER_RUN = "4"
+APN_TOPIC = "app.lrvdlinden.112HELI"
+
+[observability]
+enabled = true

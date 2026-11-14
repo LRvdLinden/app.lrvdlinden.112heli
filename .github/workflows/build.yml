@@ -1,0 +1,42 @@
+name: Build
+
+# Check build of all Apple targets (no signing): iPhone/iPad + widgets, Mac, Apple TV.
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths: ["Heli112/**", "Heli112TV/**", "Heli112Widgets/**", "Shared/**", "SharedUI/**", "Config/**", "Heli112.xcodeproj/**", ".github/workflows/build.yml"]
+
+jobs:
+  build:
+    runs-on: macos-15
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Select newest Xcode
+        run: sudo xcode-select -s "$(ls -d /Applications/Xcode*.app | sort -V | tail -1)" && xcodebuild -version
+
+      - name: Build iOS / iPadOS (+ widgets)
+        run: |
+          set -o pipefail
+          xcodebuild -project Heli112.xcodeproj -scheme "112Heli" -destination 'generic/platform=iOS Simulator' \
+            CODE_SIGNING_ALLOWED=NO build 2>&1 | tee ios.log | grep -E "error:|\*\* BUILD" | sort -u | head -n 150
+
+      - name: Build macOS
+        run: |
+          set -o pipefail
+          xcodebuild -project Heli112.xcodeproj -scheme "112Heli" -destination 'generic/platform=macOS' \
+            CODE_SIGNING_ALLOWED=NO build 2>&1 | tee mac.log | grep -E "error:|\*\* BUILD" | sort -u | head -n 150
+
+      - name: Build tvOS (Apple TV)
+        run: |
+          set -o pipefail
+          xcodebuild -project Heli112.xcodeproj -scheme "112Heli TV" -destination 'generic/platform=tvOS Simulator' \
+            CODE_SIGNING_ALLOWED=NO build 2>&1 | tee tv.log | grep -E "error:|\*\* BUILD" | sort -u | head -n 150
+
+      - name: Build settings (identity per target)
+        if: always()
+        run: |
+          xcodebuild -project Heli112.xcodeproj -alltargets -showBuildSettings 2>/dev/null \
+            | grep -E "^Build settings for|DEVELOPMENT_TEAM|PRODUCT_BUNDLE_IDENTIFIER|MARKETING_VERSION|CURRENT_PROJECT_VERSION|INFOPLIST_KEY_CFBundleDisplayName|LSApplicationCategoryType" | sort -u
