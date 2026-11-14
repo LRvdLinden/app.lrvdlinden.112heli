@@ -3,7 +3,9 @@
 
 Run after changing a page: python3 website/tools/build.py
 """
+import json
 import os
+import re
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 WEB = os.path.join(ROOT, "web")
@@ -11,7 +13,31 @@ SITE = "https://112heli.lrvdlinden.app"
 V = "1"  # cache-buster for css/js
 
 
-def head(title, desc, path, extra=""):
+OG = {  # page -> og image (NL), alt text
+    "home": ("home", "112Heli: alles wat vliegt voor de hulpdiensten, live op de kaart"),
+    "kaart": ("kaart", "Live kaart van 112Heli met de Lifeliner, de Zulu en de Kustwacht"),
+    "toestellen": ("toestellen", "Alle toestellen van 112Heli op een rij"),
+}
+LASTMOD = "2026-11-14"  # change only when page content really changes
+SITEMAP = ["/", "/kaart/", "/toestellen/", "/support/", "/privacy/"]
+ORG = {"@type": "Organization", "@id": "https://lrvdlinden.app/#org", "name": "LRvdLinden", "url": "https://lrvdlinden.app",
+       "sameAs": ["https://github.com/LRvdLinden"]}
+
+
+def ld(*objs):
+    return "".join(f'<script type="application/ld+json">{json.dumps({"@context": "https://schema.org", **o}, ensure_ascii=False)}</script>\n' for o in objs)
+
+
+def crumbs(name, path):
+    return {"@type": "BreadcrumbList", "itemListElement": [
+        {"@type": "ListItem", "position": 1, "name": "112Heli", "item": SITE + "/"},
+        {"@type": "ListItem", "position": 2, "name": name, "item": SITE + path}]}
+
+
+def head(title, desc, path, extra="", og="home", robots=None):
+    img, alt = OG[og]
+    url = SITE + ("/" if path == "/404.html" else path)
+    rob = f'<meta name="robots" content="{robots}">\n' if robots else ""
     return f"""<!doctype html>
 <html lang="nl">
 <head>
@@ -19,7 +45,23 @@ def head(title, desc, path, extra=""):
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>{title}</title>
 <meta name="description" content="{desc}">
-<link rel="canonical" href="{SITE}{path}">
+<link rel="canonical" href="{url}">
+{rob}<meta property="og:type" content="website">
+<meta property="og:site_name" content="112Heli">
+<meta property="og:locale" content="nl_NL">
+<meta property="og:title" content="{title}">
+<meta property="og:description" content="{desc}">
+<meta property="og:url" content="{url}">
+<meta property="og:image" content="{SITE}/og/{img}.png">
+<meta property="og:image:type" content="image/png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="{alt}">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="{title}">
+<meta name="twitter:description" content="{desc}">
+<meta name="twitter:image" content="{SITE}/og/{img}.png">
+<meta name="twitter:image:alt" content="{alt}">
 <meta name="theme-color" content="#0d111c">
 <link rel="icon" href="/favicon.ico" sizes="any">
 <link rel="icon" type="image/png" href="/favicon.png">
@@ -85,9 +127,9 @@ FOOTER = f"""<footer>
 """
 
 
-def page(path, title, desc, active, body, script=None, extra_head="", footer=True):
+def page(path, title, desc, active, body, script=None, extra_head="", footer=True, og="home", robots=None):
     js = f'<script type="module" src="/assets/js/{script}?v={V}"></script>\n' if script else '<script type="module">import { initChrome } from "/assets/js/core.js?v=' + V + '"; initChrome();</script>\n'
-    html = head(title, desc, path, extra_head) + "<body>\n" + nav(active) + body + (FOOTER if footer else "") + js + "</body>\n</html>\n"
+    html = head(title, desc, path, extra_head, og, robots) + "<body>\n" + nav(active) + body + (FOOTER if footer else "") + js + "</body>\n</html>\n"
     out = os.path.join(WEB, path.strip("/"), "index.html") if path != "/" else os.path.join(WEB, "index.html")
     if path.endswith(".html"):
         out = os.path.join(WEB, path.strip("/"))
@@ -221,9 +263,15 @@ home = f"""<main>
 </main>
 """
 
-page("/", "112Heli – Lifeliners, politiehelikopters en Kustwacht live op de kaart",
-     "Zie live waar de Lifeliners, politiehelikopters (Zulu), Kustwacht en Defensie vliegen. Met melding bij opstijgen, landingsplek en historie.",
-     "home", home, "home.js")
+HOME_DESC = "Zie live waar de Lifeliner, de politiehelikopter (Zulu), de Kustwacht en Defensie vliegen. Gratis app met melding bij opstijgen en landingsplek."
+page("/", "Lifeliner en politiehelikopter live op de kaart | 112Heli", HOME_DESC,
+     "home", home, "home.js", extra_head=ld(
+        {"@type": "WebSite", "@id": SITE + "/#website", "name": "112Heli", "url": SITE + "/", "inLanguage": "nl", "publisher": {"@id": ORG["@id"]}},
+        ORG,
+        {"@type": "MobileApplication", "name": "112Heli", "operatingSystem": "iOS 17, iPadOS 17, macOS 14, tvOS 17",
+         "applicationCategory": "NavigationApplication", "inLanguage": "nl", "description": HOME_DESC, "url": SITE + "/",
+         "image": SITE + "/assets/img/app-icon.png", "author": {"@id": ORG["@id"]},
+         "offers": {"@type": "Offer", "price": "0", "priceCurrency": "EUR"}}))
 
 # ------------------------------------------------------------------ live map (no footer: full screen)
 kaart = """<main class="mapapp">
@@ -238,8 +286,9 @@ kaart = """<main class="mapapp">
   <div id="map" aria-label="Kaart met toestellen"></div>
 </main>
 """
-page("/kaart/", "Live kaart – 112Heli", "Live kaart met Apple Kaarten: Lifeliners, politiehelikopters, Kustwacht en Defensie in de lucht boven Nederland.",
-     "kaart", kaart, "kaart.js", footer=False)
+page("/kaart/", "Live kaart van alle hulpdiensthelikopters | 112Heli",
+     "Live kaart met Apple Kaarten: zie waar de Lifeliner, de politiehelikopter, de Kustwacht en Defensie nu boven Nederland vliegen.",
+     "kaart", kaart, "kaart.js", footer=False, og="kaart", extra_head=ld(crumbs("Live kaart", "/kaart/")))
 
 # ------------------------------------------------------------------ aircraft list
 toestellen = """<main class="page"><div class="wrap">
@@ -254,14 +303,15 @@ toestellen = """<main class="page"><div class="wrap">
   <p class="muted prose">Elk toestel zendt een vast adres uit dat nooit verandert. Daaraan, aan de registratie en aan het type herkennen we het, ook als de roepnaam per vlucht anders is. Bij Defensie tonen we alleen Nederlandse toestellen. Een toestel dat zijn positie niet uitzendt, staat niet op de kaart.</p>
 </div></main>
 """
-page("/toestellen/", "Toestellen – Lifeliners, Zulu, Kustwacht en Defensie | 112Heli",
-     "Alle hulpdiensttoestellen live: in de lucht, op de basis of uit beeld. Plus uitleg over Lifeliner, Zulu, Kustwacht, Chinook, F-35 en meer.",
-     "toestellen", toestellen, "toestellen.js")
+page("/toestellen/", "Toestellen: Lifeliner, Zulu, Kustwacht | 112Heli",
+     "Alle hulpdiensttoestellen live: in de lucht, op de basis of uit beeld. Met uitleg over Lifeliner, Zulu, Kustwacht, Chinook, F-35 en meer.",
+     "toestellen", toestellen, "toestellen.js", og="toestellen", extra_head=ld(crumbs("Toestellen", "/toestellen/")))
 
 # ------------------------------------------------------------------ one aircraft
 toestel = """<main class="page"><div class="wrap" id="toestel"><div class="empty">Laden…</div></div></main>
 """
-page("/toestel/", "Toestel live | 112Heli", "Live positie, route, hoogte, snelheid en vluchten van dit hulpdiensttoestel.", "toestellen", toestel, "toestel.js")
+page("/toestel/", "Toestel live | 112Heli", "Live positie, route, hoogte, snelheid en vluchten van dit hulpdiensttoestel.", "toestellen", toestel, "toestel.js",
+     og="toestellen", robots="noindex, follow")
 
 # ------------------------------------------------------------------ privacy and support
 privacy = """<main class="page"><div class="wrap prose">
@@ -284,7 +334,9 @@ privacy = """<main class="page"><div class="wrap prose">
   <p class="muted">Laatst bijgewerkt: november 2026.</p>
 </div></main>
 """
-page("/privacy/", "Privacyverklaring – 112Heli", "Welke gegevens 112Heli gebruikt: geen account, geen tracking, alleen wat nodig is voor pushmeldingen.", "", privacy)
+page("/privacy/", "Privacyverklaring | 112Heli",
+     "Welke gegevens 112Heli gebruikt: geen account, geen advertenties en geen tracking. Alleen wat nodig is voor pushmeldingen en je zones.",
+     "", privacy, extra_head=ld(crumbs("Privacyverklaring", "/privacy/")))
 
 support = """<main class="page"><div class="wrap prose">
   <span class="eyebrow">Hulp</span>
@@ -303,7 +355,11 @@ support = """<main class="page"><div class="wrap prose">
   <p>112Heli is gemaakt door <a href="https://lrvdlinden.app">LRvdLinden</a>.</p>
 </div></main>
 """
-page("/support/", "Hulp – 112Heli", "Antwoorden op veelgestelde vragen over 112Heli: kaart, meldingen, zones en toestellen.", "support", support)
+FAQ = re.findall(r"<h2>(.*?)</h2>\s*<p>(.*?)</p>", support)
+page("/support/", "Hulp en veelgestelde vragen | 112Heli",
+     "Antwoorden op veelgestelde vragen over 112Heli: waarom een helikopter niet op de kaart staat, meldingen, zones en een toestel melden.",
+     "support", support, extra_head=ld(crumbs("Hulp", "/support/"), {"@type": "FAQPage", "mainEntity": [
+        {"@type": "Question", "name": q, "acceptedAnswer": {"@type": "Answer", "text": re.sub(r"<[^>]+>", "", a)}} for q, a in FAQ if not q.startswith("Contact")]}))
 
 notfound = """<main class="page"><div class="wrap center">
   <img class="appicon" src="/assets/img/app-icon.png" alt="" width="128" height="128">
@@ -312,7 +368,12 @@ notfound = """<main class="page"><div class="wrap center">
   <a class="btn btn-primary" href="/kaart/">Naar de live kaart</a>
 </div></main>
 """
-page("/404.html", "Niet gevonden – 112Heli", "Deze pagina bestaat niet.", "", notfound)
+page("/404.html", "Niet gevonden | 112Heli", "Deze pagina bestaat niet. Bekijk de live kaart met alle hulpdiensthelikopters.", "", notfound, robots="noindex")
+
+# ------------------------------------------------------------------ robots.txt and sitemap.xml
+open(os.path.join(WEB, "robots.txt"), "w").write(f"User-agent: *\nAllow: /\n\nSitemap: {SITE}/sitemap.xml\n")
+open(os.path.join(WEB, "sitemap.xml"), "w").write('<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
+    + "".join(f"  <url><loc>{SITE}{u}</loc><lastmod>{LASTMOD}</lastmod></url>\n" for u in SITEMAP) + "</urlset>\n")
 
 # ------------------------------------------------------------------ manifest
 open(os.path.join(WEB, "site.webmanifest"), "w").write("""{
@@ -330,6 +391,12 @@ open(os.path.join(WEB, "site.webmanifest"), "w").write("""{
 }
 """)
 open(os.path.join(WEB, ".htaccess"), "w").write("""ErrorDocument 404 /404.html
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteCond %{HTTPS} off [OR]
+  RewriteCond %{HTTP_HOST} ^www\\. [NC]
+  RewriteRule ^ https://112heli.lrvdlinden.app%{REQUEST_URI} [L,R=301]
+</IfModule>
 <IfModule mod_headers.c>
   <FilesMatch "\\.(webp|png|woff2|ico)$">
     Header set Cache-Control "public, max-age=2592000"

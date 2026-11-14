@@ -7,8 +7,8 @@ DEVELOPMENT_TEAM = EU3UY476T6
 HELI_API_URL = https:/$()/112heli-api.112heli.workers.dev
 
 // Links in Instellingen. Empty = the link is hidden. Fill in before the App Store release.
-HELI_PRIVACY_URL =
-HELI_SUPPORT_URL =
+HELI_PRIVACY_URL = https:/$()/112heli.lrvdlinden.app/privacy/
+HELI_SUPPORT_URL = https:/$()/112heli.lrvdlinden.app/support/
 
 // Optional local overrides (not in git), e.g. a local wrangler dev URL while testing.
 #include? "Secrets.xcconfig"

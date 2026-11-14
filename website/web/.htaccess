@@ -1,4 +1,10 @@
 ErrorDocument 404 /404.html
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteCond %{HTTPS} off [OR]
+  RewriteCond %{HTTP_HOST} ^www\. [NC]
+  RewriteRule ^ https://112heli.lrvdlinden.app%{REQUEST_URI} [L,R=301]
+</IfModule>
 <IfModule mod_headers.c>
   <FilesMatch "\.(webp|png|woff2|ico)$">
     Header set Cache-Control "public, max-age=2592000"
