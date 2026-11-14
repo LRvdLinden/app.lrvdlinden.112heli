@@ -10,7 +10,7 @@ import re
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 WEB = os.path.join(ROOT, "web")
 SITE = "https://112heli.lrvdlinden.app"
-V = "2"  # cache-buster for css/js
+V = "3"  # cache-buster for css/js
 
 
 OG = {  # page -> og image (NL), alt text
@@ -138,17 +138,40 @@ def page(path, title, desc, active, body, script=None, extra_head="", footer=Tru
 
 
 # ------------------------------------------------------------------ home
+IMG = "/assets/img/"
+# Features as a bento grid (like pasr.nl): each card with its own small animation. (span, title, text, visual)
 FEATURES = [
-    ("🗺️", "Live kaart", "Alle hulpdiensttoestellen op Apple Kaarten, met route, hoogte, snelheid en koers."),
-    ("🔔", "Melding bij opstijgen", "Een pushmelding als een Lifeliner of Zulu in jouw buurt de lucht in gaat, met een eigen helikoptergeluid."),
-    ("📍", "Eigen zone", "Een melding als er iets boven jouw wijk of plaats vliegt, welk toestel het ook is."),
-    ("🚨", "Meerdere heli's op één plek", "Staan twee of meer helikopters bij elkaar, niet bij een ziekenhuis of basis? Dan is er vaak iets groots aan de hand."),
-    ("🏥", "Landingsplek", "Geland bij een ziekenhuis, terug op de basis of op locatie: je ziet het meteen, en in de vluchtenlijst."),
-    ("🌫️", "Weer dat vliegen beperkt", "Bij mist, onweer of harde wind (KNMI) zie je dat er weinig helikopterinzet te verwachten is."),
-    ("⭐", "Favorieten en widgets", "Volg je favoriete toestel op het beginscherm, in een widget en als Live Activity op het toegangsscherm."),
-    ("📺", "Apple TV", "Een groot meldkamerscherm met de kaart en alles wat nu in de lucht is."),
+    (4, "Live kaart", "Alle hulpdiensttoestellen op Apple Kaarten, met route, hoogte, snelheid en koers.", f"""<div class="fv fv-map">
+      <svg viewBox="0 0 400 150" preserveAspectRatio="none" aria-hidden="true"><path class="fv-trail" d="M20,120 C90,60 160,110 230,70 S340,30 390,50"/><path class="fv-trail b" d="M10,40 C80,70 150,30 220,90 S330,130 390,110"/></svg>
+      <i class="fv-sweep"></i>
+      <span class="fv-fly a" style="offset-path:path('M20,120 C90,60 160,110 230,70 S340,30 390,50')"><img src="{IMG}heli_lifeliner_ec135.webp" alt=""></span>
+      <span class="fv-fly b" style="offset-path:path('M10,40 C80,70 150,30 220,90 S330,130 390,110')"><img src="{IMG}heli_politie_ec135.webp" alt=""></span>
+      <span class="fv-pin" style="left:57%;top:46%">✚</span><span class="fv-pin h" style="left:12%;top:70%">H</span></div>"""),
+    (2, "Melding bij opstijgen", "Een pushmelding als een Lifeliner of Zulu in jouw buurt de lucht in gaat, met een eigen helikoptergeluid.", f"""<div class="fv fv-push">
+      <div class="fv-note"><img src="{IMG}app-icon.png" alt=""><span><b>Lifeliner 3 is opgestegen</b><small>Vertrok van basis Volkel</small></span></div>
+      <span class="fv-bell">🔔</span></div>"""),
+    (2, "Eigen zone", "Een melding als er iets boven jouw wijk of plaats vliegt, welk toestel het ook is.", f"""<div class="fv fv-zone">
+      <span class="fv-area"></span><span class="fv-area r2"></span><span class="fv-home">Thuis</span>
+      <span class="fv-cross"><img src="{IMG}heli_politie_ec135.webp" alt=""></span></div>"""),
+    (2, "Meerdere heli's op één plek", "Staan twee of meer helikopters bij elkaar, niet bij een ziekenhuis of basis? Dan is er vaak iets groots aan de hand.", f"""<div class="fv fv-inzet">
+      <span class="fv-alarm"></span><span class="fv-alarm r2"></span>
+      <span class="fv-in l"><img src="{IMG}heli_lifeliner_ec135.webp" alt=""></span>
+      <span class="fv-in r"><img src="{IMG}heli_politie_ec135.webp" alt=""></span></div>"""),
+    (2, "Landingsplek", "Geland bij een ziekenhuis, terug op de basis of op locatie: je ziet het meteen, en in de vluchtenlijst.", f"""<div class="fv fv-land">
+      <span class="fv-pad">H</span><span class="fv-down"><img src="{IMG}heli_lifeliner_ec135.webp" alt=""></span>
+      <span class="fv-tag">Geland bij UMCG</span></div>"""),
+    (3, "Weer dat vliegen beperkt", "Bij mist, onweer of harde wind (KNMI) zie je dat er weinig helikopterinzet te verwachten is.", """<div class="fv fv-fog">
+      <i class="fv-mist m1"></i><i class="fv-mist m2"></i><i class="fv-mist m3"></i>
+      <span class="fv-warn">🌫️ Weinig helikopterinzet verwacht</span></div>"""),
+    (3, "Favorieten en widgets", "Volg je favoriete toestel op het beginscherm, in een widget en als Live Activity op het toegangsscherm.", f"""<div class="fv fv-fav">
+      <div class="fv-widget"><small>In de lucht</small><b>Lifeliner 3</b><span>460 m · 241 km/u</span><i>★</i></div>
+      <div class="fv-live"><img src="{IMG}heli_lifeliner_ec135.webp" alt=""><span><b>Lifeliner 3</b><small>Boven Ede</small></span><em>In de lucht</em></div></div>"""),
+    (6, "Apple TV", "Een groot meldkamerscherm met de kaart en alles wat nu in de lucht is.", f"""<div class="fv fv-tv">
+      <div class="fv-screen"><svg viewBox="0 0 400 150" preserveAspectRatio="none" aria-hidden="true"><path class="fv-trail" d="M30,110 C110,40 190,120 270,60 S360,40 390,30"/></svg>
+        <span class="fv-fly a slow" style="offset-path:path('M30,110 C110,40 190,120 270,60 S360,40 390,30')"><img src="{IMG}lucht_kustwacht_aw189.webp" alt=""></span>
+        <div class="fv-side"><b>In de lucht</b><span>Lifeliner 1</span><span>Zulu 26</span><span>Kustwacht</span></div></div></div>"""),
 ]
-feat = "\n".join(f"""      <article class="feature reveal" style="--d:{(i % 4) * .07:.2f}s"><div class="ico">{ic}</div><h3>{t}</h3><p>{d}</p></article>""" for i, (ic, t, d) in enumerate(FEATURES))
+feat = "\n".join(f"""      <article class="feature span{span} reveal" style="--d:{(i % 3) * .08:.2f}s">{vis}<h3>{t}</h3><p>{d}</p></article>""" for i, (span, t, d, vis) in enumerate(FEATURES))
 
 ROUTES = """<svg viewBox="0 0 600 545" preserveAspectRatio="none" aria-hidden="true">
   <path id="r1" class="path" stroke="#9333ea" d="M90,420 C170,300 260,260 330,250 S470,170 520,80"/>

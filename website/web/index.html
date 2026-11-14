@@ -28,8 +28,8 @@
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
 <link rel="manifest" href="/site.webmanifest">
 <link rel="preload" href="/assets/fonts/Poppins-Bold.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="/assets/css/site.css?v=2">
-<script src="/assets/js/config.js?v=2"></script>
+<link rel="stylesheet" href="/assets/css/site.css?v=3">
+<script src="/assets/js/config.js?v=3"></script>
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebSite", "@id": "https://112heli.lrvdlinden.app/#website", "name": "112Heli", "url": "https://112heli.lrvdlinden.app/", "inLanguage": "nl", "publisher": {"@id": "https://lrvdlinden.app/#org"}}</script>
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "Organization", "@id": "https://lrvdlinden.app/#org", "name": "LRvdLinden", "url": "https://lrvdlinden.app", "sameAs": ["https://github.com/LRvdLinden"]}</script>
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "MobileApplication", "name": "112Heli", "operatingSystem": "iOS 17, iPadOS 17, macOS 14, tvOS 17", "applicationCategory": "NavigationApplication", "inLanguage": "nl", "description": "Zie live waar de Lifeliner, de politiehelikopter (Zulu), de Kustwacht en Defensie vliegen. Gratis app met melding bij opstijgen en landingsplek.", "url": "https://112heli.lrvdlinden.app/", "image": "https://112heli.lrvdlinden.app/assets/img/app-icon.png", "author": {"@id": "https://lrvdlinden.app/#org"}, "offers": {"@type": "Offer", "price": "0", "priceCurrency": "EUR"}}</script>
@@ -95,14 +95,35 @@
       <p class="lead reveal">Gemaakt voor iedereen die opkijkt als er een helikopter overkomt.</p>
     </div>
     <div class="features">
-      <article class="feature reveal" style="--d:0.00s"><div class="ico">🗺️</div><h3>Live kaart</h3><p>Alle hulpdiensttoestellen op Apple Kaarten, met route, hoogte, snelheid en koers.</p></article>
-      <article class="feature reveal" style="--d:0.07s"><div class="ico">🔔</div><h3>Melding bij opstijgen</h3><p>Een pushmelding als een Lifeliner of Zulu in jouw buurt de lucht in gaat, met een eigen helikoptergeluid.</p></article>
-      <article class="feature reveal" style="--d:0.14s"><div class="ico">📍</div><h3>Eigen zone</h3><p>Een melding als er iets boven jouw wijk of plaats vliegt, welk toestel het ook is.</p></article>
-      <article class="feature reveal" style="--d:0.21s"><div class="ico">🚨</div><h3>Meerdere heli's op één plek</h3><p>Staan twee of meer helikopters bij elkaar, niet bij een ziekenhuis of basis? Dan is er vaak iets groots aan de hand.</p></article>
-      <article class="feature reveal" style="--d:0.00s"><div class="ico">🏥</div><h3>Landingsplek</h3><p>Geland bij een ziekenhuis, terug op de basis of op locatie: je ziet het meteen, en in de vluchtenlijst.</p></article>
-      <article class="feature reveal" style="--d:0.07s"><div class="ico">🌫️</div><h3>Weer dat vliegen beperkt</h3><p>Bij mist, onweer of harde wind (KNMI) zie je dat er weinig helikopterinzet te verwachten is.</p></article>
-      <article class="feature reveal" style="--d:0.14s"><div class="ico">⭐</div><h3>Favorieten en widgets</h3><p>Volg je favoriete toestel op het beginscherm, in een widget en als Live Activity op het toegangsscherm.</p></article>
-      <article class="feature reveal" style="--d:0.21s"><div class="ico">📺</div><h3>Apple TV</h3><p>Een groot meldkamerscherm met de kaart en alles wat nu in de lucht is.</p></article>
+      <article class="feature span4 reveal" style="--d:0.00s"><div class="fv fv-map">
+      <svg viewBox="0 0 400 150" preserveAspectRatio="none" aria-hidden="true"><path class="fv-trail" d="M20,120 C90,60 160,110 230,70 S340,30 390,50"/><path class="fv-trail b" d="M10,40 C80,70 150,30 220,90 S330,130 390,110"/></svg>
+      <i class="fv-sweep"></i>
+      <span class="fv-fly a" style="offset-path:path('M20,120 C90,60 160,110 230,70 S340,30 390,50')"><img src="/assets/img/heli_lifeliner_ec135.webp" alt=""></span>
+      <span class="fv-fly b" style="offset-path:path('M10,40 C80,70 150,30 220,90 S330,130 390,110')"><img src="/assets/img/heli_politie_ec135.webp" alt=""></span>
+      <span class="fv-pin" style="left:57%;top:46%">✚</span><span class="fv-pin h" style="left:12%;top:70%">H</span></div><h3>Live kaart</h3><p>Alle hulpdiensttoestellen op Apple Kaarten, met route, hoogte, snelheid en koers.</p></article>
+      <article class="feature span2 reveal" style="--d:0.08s"><div class="fv fv-push">
+      <div class="fv-note"><img src="/assets/img/app-icon.png" alt=""><span><b>Lifeliner 3 is opgestegen</b><small>Vertrok van basis Volkel</small></span></div>
+      <span class="fv-bell">🔔</span></div><h3>Melding bij opstijgen</h3><p>Een pushmelding als een Lifeliner of Zulu in jouw buurt de lucht in gaat, met een eigen helikoptergeluid.</p></article>
+      <article class="feature span2 reveal" style="--d:0.16s"><div class="fv fv-zone">
+      <span class="fv-area"></span><span class="fv-area r2"></span><span class="fv-home">Thuis</span>
+      <span class="fv-cross"><img src="/assets/img/heli_politie_ec135.webp" alt=""></span></div><h3>Eigen zone</h3><p>Een melding als er iets boven jouw wijk of plaats vliegt, welk toestel het ook is.</p></article>
+      <article class="feature span2 reveal" style="--d:0.00s"><div class="fv fv-inzet">
+      <span class="fv-alarm"></span><span class="fv-alarm r2"></span>
+      <span class="fv-in l"><img src="/assets/img/heli_lifeliner_ec135.webp" alt=""></span>
+      <span class="fv-in r"><img src="/assets/img/heli_politie_ec135.webp" alt=""></span></div><h3>Meerdere heli's op één plek</h3><p>Staan twee of meer helikopters bij elkaar, niet bij een ziekenhuis of basis? Dan is er vaak iets groots aan de hand.</p></article>
+      <article class="feature span2 reveal" style="--d:0.08s"><div class="fv fv-land">
+      <span class="fv-pad">H</span><span class="fv-down"><img src="/assets/img/heli_lifeliner_ec135.webp" alt=""></span>
+      <span class="fv-tag">Geland bij UMCG</span></div><h3>Landingsplek</h3><p>Geland bij een ziekenhuis, terug op de basis of op locatie: je ziet het meteen, en in de vluchtenlijst.</p></article>
+      <article class="feature span3 reveal" style="--d:0.16s"><div class="fv fv-fog">
+      <i class="fv-mist m1"></i><i class="fv-mist m2"></i><i class="fv-mist m3"></i>
+      <span class="fv-warn">🌫️ Weinig helikopterinzet verwacht</span></div><h3>Weer dat vliegen beperkt</h3><p>Bij mist, onweer of harde wind (KNMI) zie je dat er weinig helikopterinzet te verwachten is.</p></article>
+      <article class="feature span3 reveal" style="--d:0.00s"><div class="fv fv-fav">
+      <div class="fv-widget"><small>In de lucht</small><b>Lifeliner 3</b><span>460 m · 241 km/u</span><i>★</i></div>
+      <div class="fv-live"><img src="/assets/img/heli_lifeliner_ec135.webp" alt=""><span><b>Lifeliner 3</b><small>Boven Ede</small></span><em>In de lucht</em></div></div><h3>Favorieten en widgets</h3><p>Volg je favoriete toestel op het beginscherm, in een widget en als Live Activity op het toegangsscherm.</p></article>
+      <article class="feature span6 reveal" style="--d:0.08s"><div class="fv fv-tv">
+      <div class="fv-screen"><svg viewBox="0 0 400 150" preserveAspectRatio="none" aria-hidden="true"><path class="fv-trail" d="M30,110 C110,40 190,120 270,60 S360,40 390,30"/></svg>
+        <span class="fv-fly a slow" style="offset-path:path('M30,110 C110,40 190,120 270,60 S360,40 390,30')"><img src="/assets/img/lucht_kustwacht_aw189.webp" alt=""></span>
+        <div class="fv-side"><b>In de lucht</b><span>Lifeliner 1</span><span>Zulu 26</span><span>Kustwacht</span></div></div></div><h3>Apple TV</h3><p>Een groot meldkamerscherm met de kaart en alles wat nu in de lucht is.</p></article>
     </div>
   </div>
 </section>
@@ -192,6 +213,6 @@
     Een toestel dat zijn positie niet uitzendt, staat niet op de kaart.</p>
   </div>
 </footer>
-<script type="module" src="/assets/js/home.js?v=2"></script>
+<script type="module" src="/assets/js/home.js?v=3"></script>
 </body>
 </html>
