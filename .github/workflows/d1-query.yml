@@ -1,0 +1,28 @@
+# Diagnose: run a read-only SELECT on the D1 database of the 112Heli worker and print the result in the log.
+# Start it by hand (Actions → D1 query → Run workflow). Only SELECT statements are allowed.
+name: D1 query
+on:
+  workflow_dispatch:
+    inputs:
+      sql:
+        description: "SELECT … (alleen lezen)"
+        required: true
+        default: "SELECT COUNT(*) AS apparaten, SUM(enabled) AS aan, SUM(takeoff) AS opstijgen FROM devices"
+jobs:
+  query:
+    runs-on: ubuntu-latest
+    defaults: { run: { working-directory: worker } }
+    env:
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+      SQL: ${{ inputs.sql }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 24 }
+      - run: npm ci --no-audit --no-fund || npm i --no-audit --no-fund
+      - name: Query
+        run: |
+          echo "$SQL" | grep -qiE '^[[:space:]]*(SELECT|WITH)[[:space:]]' || { echo "::error::Alleen SELECT"; exit 1; }
+          echo "$SQL" | grep -qiE '(INSERT|UPDATE|DELETE|DROP|ALTER|CREATE|REPLACE|ATTACH|PRAGMA)[[:space:]]' && { echo "::error::Alleen lezen"; exit 1; }
+          npx wrangler d1 execute 112heli --remote --json --command "$SQL" | node -e 'let s="";process.stdin.on("data",d=>s+=d).on("end",()=>{const i=s.indexOf("[");const r=JSON.parse(s.slice(i));for(const x of r)console.log(JSON.stringify(x.results,null,1))})'
