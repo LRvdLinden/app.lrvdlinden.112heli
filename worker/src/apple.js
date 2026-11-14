@@ -78,3 +78,21 @@ export async function sendPush(env, device, payload, { kind = "alert", priority 
 }
 
 export const isDeadToken = (r) => r.status === 410 || ["BadDeviceToken", "Unregistered", "DeviceTokenNotForTopic"].includes(r.reason);
+
+// ------------------------------------------------------------------ MapKit JS (website live map)
+
+export const mapkitConfigured = (env) => hasKey(env.WEB_MAPKIT_JS_KEY_ID, env.WEB_MAPKIT_JS_TEAM_ID || env.APN_TEAM_ID, env.WEB_MAPKIT_JS_P8);
+
+const DEFAULT_ORIGINS = "https://112heli.lrvdlinden.app,https://www.112heli.lrvdlinden.app";
+
+/** Short-lived MapKit JS token, only for our own website (origin-bound). Null when not configured or a foreign origin. */
+export async function mapkitToken(env, origin) {
+  if (!mapkitConfigured(env)) return null;
+  const origins = String(env.SITE_ORIGINS || DEFAULT_ORIGINS).split(",").map((s) => s.trim()).filter(Boolean);
+  const local = /^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(origin || "");
+  if (origin && !origins.includes(origin) && !local) return null;
+  const now = Math.floor(Date.now() / 1000);
+  const claims = { iss: env.WEB_MAPKIT_JS_TEAM_ID || env.APN_TEAM_ID, iat: now, exp: now + 30 * 60 };
+  if (origin && !local) claims.origin = origin;
+  return es256({ alg: "ES256", kid: env.WEB_MAPKIT_JS_KEY_ID, typ: "JWT" }, claims, env.WEB_MAPKIT_JS_P8);
+}

@@ -2,6 +2,7 @@
 //  cron (every minute): ADS-B ingest a few times per run, pushes, Live Activity updates, cleanup
 //  GET  /health
 //  GET  /v1/live                        all followed aircraft with their latest state + active grote inzetten
+//  GET  /v1/mapkit-token                MapKit JS token for the website (origin-bound)
 //  GET  /v1/aircraft/:hex/track?minutes=60
 //  GET  /v1/flights?days=30[&hex=]      flights (newest first)
 //  GET  /v1/flights/:id/track
@@ -15,7 +16,7 @@
 //  POST /v1/beheer/reports/:id          { status } – mark a report as handled
 import { fetchADSB, ingest, cleanup } from "./engine.js";
 import { refreshWeer, currentWeer } from "./weer.js";
-import { apnsConfigured } from "./apple.js";
+import { apnsConfigured, mapkitToken, mapkitConfigured } from "./apple.js";
 import { SOORTEN, STANDAARD_SOORTEN, plekVan, bovenPlaats } from "./fleet.js";
 const now = () => Math.floor(Date.now() / 1000);
 
@@ -103,9 +104,13 @@ async function route(request, env) {
 
   if (p === "/" || p === "/health") {
     const last = await env.DB.prepare("SELECT value, at FROM kv WHERE key = 'last_ingest'").first();
-    return json({ ok: true, app: "112Heli", lastIngest: last?.at ?? null, lastResult: last?.value ?? null, apns: apnsConfigured(env), verkeer: Boolean(env.VERKEER_URL && env.VERKEER_TOKEN) });
+    return json({ ok: true, app: "112Heli", lastIngest: last?.at ?? null, lastResult: last?.value ?? null, apns: apnsConfigured(env), mapkit: mapkitConfigured(env), verkeer: Boolean(env.VERKEER_URL && env.VERKEER_TOKEN) });
   }
   if (p === "/v1/live" && m === "GET") return json(await live(env), 200, 5);
+  if (p === "/v1/mapkit-token" && m === "GET") {
+    const token = await mapkitToken(env, request.headers.get("origin"));
+    return token ? json({ token }) : bad("geen kaarttoken", 503);
+  }
 
   let r;
   if ((r = p.match(/^\/v1\/aircraft\/([0-9a-f]{6})\/track$/i)) && m === "GET") {

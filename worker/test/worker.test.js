@@ -192,3 +192,8 @@ test("reports and beheer", async () => {
   const body = await yes.json();
   assert.equal(body.reports[0].naam, "Lifeliner 4");
 });
+
+test("mapkit token: 503 without keys", async () => {
+  const res = await worker.fetch(new Request("https://x/v1/mapkit-token", { headers: { origin: "https://112heli.lrvdlinden.app" } }), { DB: d1() });
+  assert.equal(res.status, 503);
+});
