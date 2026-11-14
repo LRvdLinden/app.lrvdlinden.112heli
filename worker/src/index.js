@@ -26,6 +26,7 @@ import { refreshWeer, currentWeer } from "./weer.js";
 import { apnsConfigured, mapkitToken, mapkitConfigured } from "./apple.js";
 import { SOORTEN, STANDAARD_SOORTEN, plekVan, bovenPlaats } from "./fleet.js";
 import * as beheer from "./beheer.js";
+import { syncDownloads } from "./asc.js";
 import { plaatsenUit } from "./aalerts/plaats.js";
 import { distanceKm } from "./fleet.js";
 const now = () => Math.floor(Date.now() / 1000);
@@ -278,6 +279,8 @@ async function runIngest(env) {
   await env.DB.prepare("INSERT OR REPLACE INTO kv (key, value, at) VALUES ('last_ingest', ?, ?)").bind(JSON.stringify(results.at(-1)), now()).run();
   await refreshWeer(env);
   await cleanup(env);
+  // Hourly: downloads from App Store Connect (beheer).
+  try { await syncDownloads(env); } catch (e) { console.error("[asc]", e.message); }
 }
 
 export default {

@@ -119,6 +119,7 @@ function overviewView(o) {
       ${tile("Live Activities", t.liveActivities, "nu gevolgd")}
       ${tile("Toestellen", t.toestellen, "bekend bij 112Heli")}
       ${tile("Open meldingen", t.openMeldingen, "van gebruikers")}
+      ${tile("Downloads", o.downloads?.downloads ?? 0, o.downloads?.configured ? "eerste downloads, App Store" : "App Store Connect niet gekoppeld")}
     </div>
     <div class="bh-two">
       <div class="bh-card"><h2>Vluchten per dag</h2>
@@ -131,12 +132,32 @@ function overviewView(o) {
         <div><span>Apple Kaarten (website)</span>${flag(s.mapkit)}</div>
         <div><span>Weerbeperking</span><span>${ago(s.weer)}</span></div>
       </div></div>
+      ${downloadsCard(o.downloads)}
       <div class="bh-card"><h2>Vluchten per soort (7 dagen)</h2>${o.perSoort.length ? o.perSoort.map((r) => `<div class="bh-row"><span>${esc(r.naam)}</span><b>${fmt(r.n)}</b></div>`).join("") : '<p class="bh-note">Nog geen vluchten.</p>'}</div>
       <div class="bh-card"><h2>Apparaten</h2>
         ${o.platforms.map((r) => `<div class="bh-row"><span>${esc(PLATFORM[r.platform] || r.platform)}</span><b>${fmt(r.n)}</b></div>`).join("") || '<p class="bh-note">Nog geen apparaten met meldingen.</p>'}
         ${o.versies.length ? `<h2 style="margin-top:16px">Versies</h2>${o.versies.map((r) => `<div class="bh-row"><span>${esc(r.versie)}</span><b>${fmt(r.n)}</b></div>`).join("")}` : ""}
       </div>
     </div>`;
+}
+
+function downloadsCard(d) {
+  if (!d) return "";
+  const kleuren = { iPhone: "#4c6bff", iPad: "#2ed3a3", Mac: "#a08cff", appleTV: "#f2a15e", overig: "#8a97a6" };
+  const tot = (x) => x.iPhone + x.iPad + x.Mac + x.appleTV + x.overig;
+  const max = Math.max(1, ...d.dagen.map(tot));
+  const bars = d.dagen.map((x) => `<div class="bh-bar" title="${x.dag}: ${tot(x)} downloads"><span>${tot(x) || ""}</span>
+    <div style="width:100%;height:${(tot(x) / max) * 100}%;display:flex;flex-direction:column-reverse;border-radius:6px 6px 2px 2px;overflow:hidden">
+    ${Object.keys(kleuren).map((k) => (x[k] ? `<i style="height:${(x[k] / tot(x)) * 100}%;background:${kleuren[k]};border-radius:0;min-height:0"></i>` : "")).join("")}</div>
+    <span>${x.dag.slice(8)}</span></div>`).join("");
+  return `<div class="bh-card"><h2>Downloads</h2>
+    ${d.configured ? "" : '<p class="bh-note warn">App Store Connect is nog niet gekoppeld: start <b>112Heli push</b> in app.lrvdlinden.secrets.</p>'}
+    <div class="bh-bars">${bars}</div>
+    <p class="bh-note">${Object.entries({ iPhone: "iPhone", iPad: "iPad", Mac: "Mac", appleTV: "Apple TV" }).map(([k, n]) => `<span style="color:${kleuren[k]}">■</span> ${n}`).join(" &nbsp; ")}</p>
+    ${Object.entries(d.perApparaat || {}).map(([k, v]) => `<div class="bh-row"><span>${esc(k)}</span><b>${fmt(v)}</b></div>`).join("")}
+    <div class="bh-row"><span>Opnieuw gedownload</span><b>${fmt(d.opnieuw)}</b></div>
+    <div class="bh-row"><span>Updates</span><b>${fmt(d.updates)}</b></div>
+    <p class="bh-note">30 dagen, uit de dagelijkse verkoopoverzichten van App Store Connect (een dag later binnen).${d.laatsteDag ? ` Laatste dag: ${esc(d.laatsteDag)}.` : ""}</p></div>`;
 }
 
 // ------------------------------------------------------------------ toestellen

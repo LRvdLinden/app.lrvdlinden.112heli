@@ -295,6 +295,7 @@ toestellen = """<main class="page"><div class="wrap">
   <span class="eyebrow">Toestellen</span>
   <h1>Alle toestellen, live</h1>
   <p class="lead">Elk toestel dat 112Heli de afgelopen twee weken zag, met waar het nu is. <span class="pill"><span class="dot"></span><span data-inair>…</span></span></p>
+  <div class="chips" id="filter" style="margin-top:18px" aria-label="Wat wil je zien"></div>
   <div id="live"><div class="empty">Laden…</div></div>
   <h2 id="soorten" style="margin-top:80px">Alles wat vliegt</h2>
   <p class="lead">Wie het zijn en wat ze doen.</p>

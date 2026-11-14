@@ -9,6 +9,7 @@ struct AircraftListView: View {
     @State private var showReport = false
 
     private func matches(_ a: Aircraft) -> Bool {
+        guard store.toont(a), !store.hideOffline || a.isOnline else { return false }
         guard !search.isEmpty else { return true }
         return [a.title, a.reg, a.callsign, a.type, a.soort.naam, a.boven, a.plek].compactMap { $0 }
             .contains { $0.localizedCaseInsensitiveContains(search) }
@@ -65,6 +66,7 @@ struct AircraftListView: View {
         .refreshable { await store.refresh() }
         .navigationTitle("Toestellen")
         .toolbar {
+            ToolbarItem(placement: .primaryAction) { FilterMenu() }
             ToolbarItem(placement: .primaryAction) {
                 Button { showReport = true } label: { Label("Toestel ontbreekt", systemImage: "exclamationmark.bubble") }
             }

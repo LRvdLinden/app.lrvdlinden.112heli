@@ -77,12 +77,12 @@ struct TVMapView: View {
                 if let weer = store.weer {
                     Label(weer.tekst, systemImage: "cloud.fog.fill").font(.caption).foregroundStyle(.orange)
                 }
-                if store.airborne.isEmpty {
+                if store.airborne.filter({ store.toont($0) }).isEmpty {
                     Text("Er is nu niets in de lucht.").foregroundStyle(.secondary)
                 }
                 ScrollView {
                     VStack(spacing: 12) {
-                        ForEach(store.airborne) { a in
+                        ForEach(store.airborne.filter { store.toont($0) }) { a in
                             Button { select(a) } label: {
                                 HStack(spacing: 16) {
                                     AircraftThumb(a, width: 110)
@@ -129,7 +129,7 @@ struct TVListView: View {
                 if store.aircraft.isEmpty {
                     Text(store.failed ? "Geen verbinding met de server." : "Nog geen toestellen gezien.").foregroundStyle(.secondary)
                 }
-                ForEach(store.aircraft) { a in
+                ForEach(store.aircraft.filter { store.toont($0) && (!store.hideOffline || $0.isOnline) }) { a in
                     Button {} label: {
                         HStack(spacing: 24) {
                             AircraftThumb(a, width: 140)
@@ -161,6 +161,9 @@ struct TVInfoView: View {
                     Picker("Weergave", selection: $appearance) {
                         ForEach(AppearanceSetting.allCases) { Text($0.label).tag($0) }
                     }
+                }
+                Section("Wat wil je zien") {
+                    FilterToggles()
                 }
                 Section("Over 112Heli") {
                     Text("Alles wat vliegt voor de hulpdiensten, live: Lifeliners, politiehelikopters (Zulu), Kustwacht, Defensie, Marechaussee en PH-GOV. En voor de lol de jet van Max Verstappen.")

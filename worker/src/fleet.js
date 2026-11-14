@@ -79,7 +79,38 @@ export function plekVan(lat, lon) {
 }
 
 /** "Boven Teuge, Voorst": the nearest Dutch place, or null above sea or abroad. */
-export const bovenPlaats = (lat, lon) => (lat == null || lon == null ? null : plaatsBij(lat, lon)?.tekst || null);
+export const bovenPlaats = (lat, lon) => (lat == null || lon == null ? null : plaatsBij(lat, lon)?.tekst || wereldPlaats(lat, lon));
+
+// Abroad (Max Verstappen's jet flies all over the world): the nearest big city or airport, within 120 km.
+const WERELD = [
+  ["Brussel", "België", 50.85, 4.35], ["Antwerpen", "België", 51.22, 4.40], ["Luik", "België", 50.63, 5.57], ["Düsseldorf", "Duitsland", 51.23, 6.78],
+  ["Keulen", "Duitsland", 50.94, 6.96], ["Frankfurt", "Duitsland", 50.11, 8.68], ["München", "Duitsland", 48.14, 11.58], ["Berlijn", "Duitsland", 52.52, 13.40],
+  ["Hamburg", "Duitsland", 53.55, 9.99], ["Stuttgart", "Duitsland", 48.78, 9.18], ["Parijs", "Frankrijk", 48.86, 2.35], ["Lyon", "Frankrijk", 45.76, 4.84],
+  ["Nice", "Frankrijk", 43.70, 7.27], ["Marseille", "Frankrijk", 43.30, 5.37], ["Monaco", "Monaco", 43.74, 7.42], ["Genève", "Zwitserland", 46.20, 6.14],
+  ["Zürich", "Zwitserland", 47.38, 8.54], ["Milaan", "Italië", 45.46, 9.19], ["Rome", "Italië", 41.90, 12.50], ["Bologna", "Italië", 44.49, 11.34],
+  ["Wenen", "Oostenrijk", 48.21, 16.37], ["Graz", "Oostenrijk", 47.07, 15.44], ["Salzburg", "Oostenrijk", 47.81, 13.06], ["Boedapest", "Hongarije", 47.50, 19.04],
+  ["Barcelona", "Spanje", 41.39, 2.17], ["Madrid", "Spanje", 40.42, -3.70], ["Lissabon", "Portugal", 38.72, -9.14], ["Faro", "Portugal", 37.02, -7.93],
+  ["Londen", "Verenigd Koninkrijk", 51.51, -0.13], ["Silverstone", "Verenigd Koninkrijk", 52.07, -1.02], ["Manchester", "Verenigd Koninkrijk", 53.48, -2.24],
+  ["Dublin", "Ierland", 53.35, -6.26], ["Kopenhagen", "Denemarken", 55.68, 12.57], ["Stockholm", "Zweden", 59.33, 18.07], ["Oslo", "Noorwegen", 59.91, 10.75],
+  ["Praag", "Tsjechië", 50.08, 14.44], ["Warschau", "Polen", 52.23, 21.01], ["Athene", "Griekenland", 37.98, 23.73], ["Istanbul", "Turkije", 41.01, 28.98],
+  ["Bakoe", "Azerbeidzjan", 40.41, 49.87], ["Dubai", "Verenigde Arabische Emiraten", 25.20, 55.27], ["Abu Dhabi", "Verenigde Arabische Emiraten", 24.45, 54.38],
+  ["Doha", "Qatar", 25.29, 51.53], ["Bahrein", "Bahrein", 26.03, 50.51], ["Jeddah", "Saoedi-Arabië", 21.49, 39.19], ["Riyad", "Saoedi-Arabië", 24.71, 46.68],
+  ["Caïro", "Egypte", 30.04, 31.24], ["Singapore", "Singapore", 1.35, 103.82], ["Shanghai", "China", 31.23, 121.47], ["Suzuka", "Japan", 34.84, 136.54],
+  ["Tokio", "Japan", 35.68, 139.69], ["Melbourne", "Australië", -37.81, 144.96], ["Montréal", "Canada", 45.50, -73.57], ["Miami", "Verenigde Staten", 25.76, -80.19],
+  ["Austin", "Verenigde Staten", 30.27, -97.74], ["Las Vegas", "Verenigde Staten", 36.17, -115.14], ["New York", "Verenigde Staten", 40.71, -74.01],
+  ["Mexico-Stad", "Mexico", 19.43, -99.13], ["São Paulo", "Brazilië", -23.55, -46.63], ["Reykjavik", "IJsland", 64.15, -21.94], ["Gander", "Canada", 48.95, -54.61],
+];
+export function wereldPlaats(lat, lon) {
+  if (lat == null || lon == null) return null;
+  // Inside the Dutch circle: above sea or a border area, keep it null (A-Alerts behaviour).
+  if (distanceKm(lat, lon, 52.2, 5.4) < 150) return null;
+  let best = null;
+  for (const [stad, land, la, lo] of WERELD) {
+    const d = distanceKm(lat, lon, la, lo);
+    if (d < 120 && (!best || d < best.d)) best = { d, tekst: stad === land ? stad : `${stad}, ${land}` };
+  }
+  return best?.tekst || null;
+}
 
 /**
  * Grote inzet (A-Alerts rule): two or more helicopters within 1.5 km of each other, on the ground or low and slow,

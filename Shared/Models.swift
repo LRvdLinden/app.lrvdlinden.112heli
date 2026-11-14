@@ -173,6 +173,11 @@ struct Aircraft: Codable, Identifiable, Hashable, Sendable {
         seen.map { max(0, now.timeIntervalSince1970 - $0) }
     }
 
+    /// Helicopter (Lifeliner, Zulu, Coastguard and Defence helicopters) or aeroplane (everything else).
+    var isHeli: Bool {
+        soort == .trauma || soort == .politie || ["heli", "kustwacht_aw189", "kustwacht_heli", "apache", "chinook", "cougar", "nh90"].contains(icoon ?? "")
+    }
+
     /// In the air and still sending its position (not on the ground, at the base or out of view).
     var isOnline: Bool { airborne && status_ != "uit_beeld" }
 

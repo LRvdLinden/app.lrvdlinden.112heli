@@ -40,8 +40,22 @@ export async function fetchADSB(env) {
   if (!res?.ok && service) res = await viaService().catch(() => null);
   if (!res?.ok) throw new Error(`ADS-B HTTP ${res?.status ?? "geen antwoord"}`);
   const body = await res.json();
-  return Array.isArray(body.ac) ? body.ac : [];
+  const list = Array.isArray(body.ac) ? body.ac : [];
+  // Followed worldwide (not only above the Netherlands): Max Verstappen's jet.
+  for (const hex of WERELDWIJD) {
+    if (list.some((a) => String(a.hex).toLowerCase() === hex)) continue;
+    const r = await fetch(`https://api.adsb.lol/v2/hex/${hex}`, {
+      headers: { accept: "application/json", "user-agent": "112Heli/1.0 (+https://lrvdlinden.app)" }, signal: AbortSignal.timeout(6_000),
+    }).catch(() => null);
+    if (!r?.ok) continue;
+    const b = await r.json().catch(() => null);
+    for (const a of b?.ac || []) list.push(a);
+  }
+  return list;
 }
+
+/** Aircraft followed all over the world (hex), not just within the circle around the Netherlands. */
+export const WERELDWIJD = ["4867e6"];
 
 /** Airframes recognised for sure before, so they are still known under another callsign (A-Alerts "learned"). */
 async function learned(env) {

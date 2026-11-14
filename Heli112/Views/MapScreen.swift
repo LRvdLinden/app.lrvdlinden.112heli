@@ -65,7 +65,7 @@ struct MapScreen: View {
             }
             ForEach(store.visibleAircraft.filter { $0.coordinate != nil }) { a in
                 Annotation(a.title, coordinate: a.coordinate!, anchor: .center) {
-                    HeliMarker(aircraft: a, selected: selectedHex == a.hex)
+                    HeliMarker(aircraft: a, selected: selectedHex == a.hex, toonNaam: selectedHex == a.hex)
                         .onTapGesture { select(a.hex) }
                         .accessibilityAddTraits(.isButton)
                 }
@@ -118,6 +118,7 @@ struct MapScreen: View {
                         HeliInfoKaart(aircraft: a, afstandKm: location.distanceKm(to: a), spoor: spoor) {
                             withAnimation(.spring(duration: 0.3)) { selectedHex = nil }
                         }
+                        .id(a.hex)
                     }
                     .scrollBounceBehavior(.basedOnSize)
                     .frame(maxHeight: geo.size.height * 0.62)
@@ -154,14 +155,7 @@ struct MapScreen: View {
                 }
                 .font(.subheadline.weight(.semibold))
                 Spacer()
-                Button {
-                    withAnimation { store.hideOffline.toggle() }
-                } label: {
-                    Image(systemName: store.hideOffline ? "eye.slash.fill" : "eye")
-                        .foregroundStyle(store.hideOffline ? Theme.accent : .primary)
-                }
-                .accessibilityLabel(store.hideOffline ? "Offline toestellen tonen" : "Offline toestellen verbergen")
-                .sensoryFeedback(.selection, trigger: store.hideOffline)
+                FilterMenu()
                 Button { showLayers = true } label: {
                     Image(systemName: "square.3.layers.3d")
                 }
@@ -224,11 +218,11 @@ struct LayersView: View {
     var body: some View {
         Form {
             Section {
-                Toggle(isOn: $hideOffline) {
-                    Label("Offline toestellen verbergen", systemImage: "eye.slash")
-                }
+                FilterToggles()
+            } header: {
+                Text("Wat wil je zien")
             } footer: {
-                Text("Alleen toestellen die nu in de lucht zijn. Op de grond, op de basis of uit beeld staan dan niet op de kaart.")
+                Text("Geldt ook voor de lijst en Apple TV. Offline: op de grond, op de basis of uit beeld.")
             }
             Section("Toestellen") {
                 ForEach(LuchtSoort.alle) { soort in

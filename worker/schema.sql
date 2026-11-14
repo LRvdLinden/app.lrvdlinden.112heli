@@ -143,3 +143,12 @@ CREATE TABLE IF NOT EXISTS broadcasts (
   ok INTEGER NOT NULL DEFAULT 0,
   fout INTEGER NOT NULL DEFAULT 0
 );
+
+-- Downloads from the App Store Connect sales reports (per day, device and kind), for beheer.
+CREATE TABLE IF NOT EXISTS downloads (
+  day TEXT NOT NULL,
+  device TEXT NOT NULL,
+  kind TEXT NOT NULL,              -- download, redownload, update
+  units INTEGER NOT NULL DEFAULT 0,
+  PRIMARY KEY (day, device, kind)
+);

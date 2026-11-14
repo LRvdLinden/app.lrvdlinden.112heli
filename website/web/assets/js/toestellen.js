@@ -1,5 +1,5 @@
 // Toestellen: live status per toestel en alle soorten met uitleg.
-import { initChrome, fetchLive, soort, drawing, esc, placeText, alt, age, ageOf, isOld, STATUS, statusOf, TYPES, reveal } from "./core.js";
+import { initChrome, fetchLive, soort, drawing, esc, placeText, alt, age, ageOf, isOld, STATUS, statusOf, TYPES, reveal, filter } from "./core.js";
 
 initChrome();
 
@@ -13,11 +13,17 @@ types.innerHTML = TYPES.map((t, i) => `
 reveal(types);
 
 const live = document.getElementById("live");
-async function refresh() {
-  let d;
-  try { d = await fetchLive(); } catch { live.innerHTML = `<div class="empty">Geen verbinding met de server.</div>`; return; }
+const chips = document.getElementById("filter");
+let laatste = null;
+if (chips) {
+  chips.innerHTML = filter.chips();
+  chips.addEventListener("click", (e) => { if (filter.klik(e.target.closest(".chip"))) refresh(laatste); });
+}
+async function refresh(cached) {
+  let d = cached;
+  try { if (!d) d = laatste = await fetchLive(); } catch { live.innerHTML = `<div class="empty">Geen verbinding met de server.</div>`; return; }
   const groups = { lucht: [], basis: [], grond: [], uit_beeld: [] };
-  for (const a of d.aircraft || []) (groups[statusOf(a)] || groups.grond).push(a);
+  for (const a of (d.aircraft || []).filter(filter.toont)) (groups[statusOf(a)] || groups.grond).push(a);
   document.querySelectorAll("[data-inair]").forEach((el) => (el.textContent = `${groups.lucht.length} in de lucht`));
   live.innerHTML = Object.entries(groups).filter(([, l]) => l.length).map(([k, l]) => `
     <div class="status-group"><h2>${STATUS[k]} <span class="pill">${l.length}</span></h2>

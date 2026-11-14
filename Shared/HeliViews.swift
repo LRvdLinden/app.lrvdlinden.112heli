@@ -46,6 +46,8 @@ struct HeliMarker: View {
     var selected = false
     /// Height of the drawing in points (it is about 2.8× as wide).
     var size: CGFloat = 30
+    /// The name under the drawing; on the phone map only the chosen aircraft shows it (as in A-Alerts).
+    var toonNaam = true
 
     var body: some View {
         TimelineView(.periodic(from: .now, by: 5)) { context in
@@ -55,10 +57,13 @@ struct HeliMarker: View {
                     .frame(width: size * 2.8, height: size)
                     .saturation(old ? 0 : 1)
                     .shadow(color: .black.opacity(0.35), radius: 3, y: 2)
+                if toonNaam || old {
                 VStack(spacing: 0) {
+                    if toonNaam {
                     Text(aircraft.title)
                         .font(.caption2.weight(.bold))
                         .lineLimit(1)
+                    }
                     if old, let age = aircraft.positionAge(at: context.date) {
                         Text("positie \(Format.age(age)) oud")
                             .font(.system(size: 9))
@@ -68,6 +73,7 @@ struct HeliMarker: View {
                 .padding(.horizontal, 6).padding(.vertical, 2)
                 .background(.regularMaterial, in: Capsule())
                 .overlay(Capsule().strokeBorder(aircraft.soort.color, lineWidth: selected ? 2 : 0))
+                }
             }
             .opacity(old ? 0.7 : 1)
             .scaleEffect(selected ? 1.15 : 1)

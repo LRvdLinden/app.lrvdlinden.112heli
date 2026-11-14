@@ -87,9 +87,13 @@ jobs:
           WEB_MAPKIT_JS_P8: ${{ secrets.WEB_MAPKIT_JS_P8 }}
           BEHEER_USER: ${{ secrets.BEHEER_APP_USER || secrets.BEHEER_USER }}
           BEHEER_PASSWORD: ${{ secrets.BEHEER_APP_PASSWORD || secrets.BEHEER_PASSWORD }}
+          ASC_KEY_ID: ${{ secrets.KEY_ID_APPSTORE_CONNECT }}
+          ASC_ISSUER_ID: ${{ secrets.ISSUER_ID_APPSTORE_CONNECT }}
+          ASC_KEY_P8: ${{ secrets.APPSTORE_CONNECT_P8 }}
+          ASC_VENDOR_NUMBER: ${{ secrets.VENDOR_APPSTORE_CONNECT }}
         run: |
           node -e '
-            const keys = ["APN_KEY_ID","APN_TEAM_ID","APN_P8_CERT","VERKEER_URL","VERKEER_TOKEN","WEB_MAPKIT_JS_KEY_ID","WEB_MAPKIT_JS_TEAM_ID","WEB_MAPKIT_JS_P8","BEHEER_USER","BEHEER_PASSWORD"];
+            const keys = ["APN_KEY_ID","APN_TEAM_ID","APN_P8_CERT","VERKEER_URL","VERKEER_TOKEN","WEB_MAPKIT_JS_KEY_ID","WEB_MAPKIT_JS_TEAM_ID","WEB_MAPKIT_JS_P8","BEHEER_USER","BEHEER_PASSWORD","ASC_KEY_ID","ASC_ISSUER_ID","ASC_KEY_P8","ASC_VENDOR_NUMBER"];
             const out = {}; for (const k of keys) if (process.env[k]) out[k] = process.env[k];
             require("fs").writeFileSync("secrets.json", JSON.stringify(out));
             console.log("Secrets:", Object.keys(out).join(", ") || "(geen)");'

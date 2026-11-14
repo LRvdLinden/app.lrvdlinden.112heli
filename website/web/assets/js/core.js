@@ -74,6 +74,28 @@ export function drawing(a) {
 }
 
 export const STATUS = { lucht: "In de lucht", basis: "Op de basis", grond: "Op de grond", uit_beeld: "Uit beeld" };
+/** Helicopter (Lifeliner, Zulu, Coastguard and Defence helicopters) or aeroplane – same split as the app. */
+const HELI_ICONEN = new Set(["heli", "kustwacht_aw189", "kustwacht_heli", "apache", "chinook", "cougar", "nh90"]);
+export const isHeli = (a) => a.soort === "trauma" || a.soort === "politie" || HELI_ICONEN.has(a.icoon);
+export const isOnline = (a) => a.airborne && (a.status || "lucht") !== "uit_beeld";
+
+/** "Wat wil je zien": helicopters, aeroplanes and offline aircraft, kept in this browser (map and list). */
+export const filter = (() => {
+  const get = (k, d) => { try { const v = localStorage.getItem(k); return v == null ? d : v === "1"; } catch { return d; } };
+  const f = { helis: get("heli.toonHelis", true), vliegtuigen: get("heli.toonVliegtuigen", true), offline: get("heli.alleenLucht", false) };
+  f.save = () => { try {
+    localStorage.setItem("heli.toonHelis", f.helis ? "1" : "0"); localStorage.setItem("heli.toonVliegtuigen", f.vliegtuigen ? "1" : "0");
+    localStorage.setItem("heli.alleenLucht", f.offline ? "1" : "0");
+  } catch {} };
+  f.toont = (a) => (isHeli(a) ? f.helis : f.vliegtuigen) && (!f.offline || isOnline(a));
+  f.chips = () => `<button class="chip" data-f="helis" aria-pressed="${f.helis}" style="--c:#2747e8"><i></i>Helikopters</button>
+    <button class="chip" data-f="vliegtuigen" aria-pressed="${f.vliegtuigen}" style="--c:#2747e8"><i></i>Vliegtuigen</button>
+    <button class="chip" data-f="offline" aria-pressed="${f.offline}" style="--c:#e11d48"><i></i>Offline verbergen</button>`;
+  /** Handles a click on one of the chips above; returns true when it was one of them. */
+  f.klik = (b) => { const k = b?.dataset.f; if (!k) return false; f[k] = !f[k]; b.setAttribute("aria-pressed", f[k]); f.save(); return true; };
+  return f;
+})();
+
 export const statusOf = (a) => a.status || (a.airborne ? "lucht" : "grond");
 export const placeText = (a) => (a.airborne ? (a.boven ? `Boven ${a.boven}` : "") : a.plek || "");
 

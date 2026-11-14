@@ -22,6 +22,18 @@ final class LiveStore: ObservableObject {
         didSet { UserDefaults.standard.set(hideOffline, forKey: "map.hideOffline") }
     }
 
+    /// Show helicopters and/or aeroplanes (map, lists and Apple TV).
+    @Published var toonHelis: Bool = UserDefaults.standard.object(forKey: "map.toonHelis") as? Bool ?? true {
+        didSet { UserDefaults.standard.set(toonHelis, forKey: "map.toonHelis") }
+    }
+    @Published var toonVliegtuigen: Bool = UserDefaults.standard.object(forKey: "map.toonVliegtuigen") as? Bool ?? true {
+        didSet { UserDefaults.standard.set(toonVliegtuigen, forKey: "map.toonVliegtuigen") }
+    }
+    /// Any filter switched on (to mark the filter button).
+    var filterActief: Bool { hideOffline || !toonHelis || !toonVliegtuigen }
+    /// Helicopter/aeroplane choice, used everywhere aircraft are listed.
+    func toont(_ a: Aircraft) -> Bool { a.isHeli ? toonHelis : toonVliegtuigen }
+
     private var pollTask: Task<Void, Never>?
 
     init() {
@@ -31,7 +43,7 @@ final class LiveStore: ObservableObject {
 
     /// On the map: the chosen layers plus favourites; with "offline verbergen" only what is in the air.
     var visibleAircraft: [Aircraft] {
-        aircraft.filter { (lagen.contains($0.laag) || favorites.contains($0.hex)) && (!hideOffline || $0.isOnline) }
+        aircraft.filter { (lagen.contains($0.laag) || favorites.contains($0.hex)) && (!hideOffline || $0.isOnline) && toont($0) }
     }
 
     private static func loadLagen() -> Set<String> {

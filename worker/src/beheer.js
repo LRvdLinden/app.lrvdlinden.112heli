@@ -3,6 +3,7 @@
 // Login with the shared beheer login (BEHEER_USER / BEHEER_PASSWORD) gives a signed token of 30 days.
 import { sendPush, isDeadToken, apnsConfigured, mapkitConfigured } from "./apple.js";
 import { SOORTEN } from "./fleet.js";
+import { downloadsSummary } from "./asc.js";
 
 export const SOORT_NAMEN = {
   trauma: "Lifeliner", politie: "Politie", kustwacht: "Kustwacht", defensie: "Defensie",
@@ -149,6 +150,7 @@ export async function overview(env) {
     versies,
     perSoort: perSoort.map((r) => ({ soort: r.soort, naam: SOORT_NAMEN[r.soort] || r.soort, n: r.n })),
     dagen: [...dagen.values()],
+    downloads: await downloadsSummary(env),
   };
 }
 

@@ -112,15 +112,24 @@ struct HeliInfoKaart: View {
     let aircraft: Aircraft
     var afstandKm: Double?
     var spoor: HeliSpoorStore
+    /// The card opens small (the aircraft and its trail stay in sight) and unfolds on "Meer" or a swipe up, as in A-Alerts.
+    var inklapbaar = true
     var onClose: () -> Void
 
     @EnvironmentObject private var store: LiveStore
     @State private var showReport = false
+    @State private var uitgevouwen = false
 
     private var a: Aircraft { aircraft }
+    private var klein: Bool { inklapbaar && !uitgevouwen }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
+            if inklapbaar {
+                Capsule().fill(Color.secondary.opacity(0.4)).frame(width: 38, height: 5)
+                    .frame(maxWidth: .infinity)
+                    .padding(.top, -4)
+            }
             HStack(spacing: 12) {
                 AircraftDrawing(afbeelding: a.afbeelding, west: a.vliegtWest)
                     .frame(width: 84, height: 30)
@@ -161,6 +170,56 @@ struct HeliInfoKaart: View {
                 }
             }
 
+            if klein {
+                // The basics on one line; everything else behind "Meer".
+                HStack(spacing: 14) {
+                    if a.airborne {
+                        kort(Format.heading(a.track), String(localized: "koers"))
+                        kort(a.hoogteTekst, String(localized: "hoogte"))
+                        kort(a.snelheidTekst, nil)
+                    } else if let seen = a.seenDate {
+                        kort(String(localized: "Positie van \(seen.formatted(date: .omitted, time: .shortened))"), nil)
+                    }
+                    Spacer(minLength: 0)
+                }
+                vouwKnop
+            } else {
+                uitgebreid
+                if inklapbaar { vouwKnop }
+            }
+        }
+        .padding(14)
+        .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 20, style: .continuous))
+        .shadow(color: .black.opacity(0.15), radius: 10, y: 4)
+        .gesture(DragGesture(minimumDistance: 24).onEnded { g in
+            guard inklapbaar, abs(g.translation.height) > abs(g.translation.width) else { return }
+            withAnimation(.snappy) { uitgevouwen = g.translation.height < 0 }
+        })
+        .sheet(isPresented: $showReport) { NavigationStack { ReportView(aircraft: a) } }
+    }
+
+    private var vouwKnop: some View {
+        Button {
+            withAnimation(.snappy) { uitgevouwen.toggle() }
+        } label: {
+            Label(uitgevouwen ? String(localized: "Minder") : String(localized: "Meer over deze vlucht"),
+                  systemImage: uitgevouwen ? "chevron.down" : "chevron.up")
+                .font(.subheadline.weight(.semibold))
+                .frame(maxWidth: .infinity)
+        }
+        .buttonStyle(.plain)
+        .foregroundStyle(Theme.accent)
+    }
+
+    private func kort(_ waarde: String, _ naam: String?) -> some View {
+        HStack(spacing: 4) {
+            Text(verbatim: waarde).font(.footnote.weight(.semibold)).monospacedDigit()
+            if let naam { Text(verbatim: naam).font(.footnote).foregroundStyle(.secondary) }
+        }
+    }
+
+    /// Everything of the full card below the header.
+    @ViewBuilder private var uitgebreid: some View {
             HStack(spacing: 8) {
                 waarde("Koers", a.airborne ? Format.heading(a.track) : "–", "location.north.line.fill", koers: a.airborne ? a.track : nil)
                 waarde("Hoogte", a.hoogteTekst, "arrow.up.and.down", tweede: a.hoogteTweede)
@@ -168,8 +227,7 @@ struct HeliInfoKaart: View {
             }
             .fixedSize(horizontal: false, vertical: true)
 
-            @Bindable var s = spoor
-            Picker("Routespoor", selection: $s.bereik) {
+            Picker("Routespoor", selection: Binding(get: { spoor.bereik }, set: { spoor.bereik = $0 })) {
                 ForEach(SpoorBereik.allCases) { Text($0.label).tag($0) }
             }
             .pickerStyle(.segmented)
@@ -201,11 +259,6 @@ struct HeliInfoKaart: View {
                     .foregroundStyle(.secondary)
             }
             .buttonStyle(.plain)
-        }
-        .padding(14)
-        .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 20, style: .continuous))
-        .shadow(color: .black.opacity(0.15), radius: 10, y: 4)
-        .sheet(isPresented: $showReport) { NavigationStack { ReportView(aircraft: a) } }
     }
 
     /// The bell: a push when this aircraft takes off (it becomes a favourite, like the bell in A-Alerts).

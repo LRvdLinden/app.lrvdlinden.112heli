@@ -242,3 +242,33 @@ test("spoor and vluchten in the A-Alerts format", async () => {
   const v = await (await worker.fetch(new Request("https://x/v1/aircraft/abc123/vluchten"), env)).json();
   assert.equal(v.vluchten[0].duur_min, 15);
 });
+
+test("abroad: nearest big city for Max Verstappen's jet", async () => {
+  const { wereldPlaats, bovenPlaats } = await import("../src/fleet.js");
+  assert.equal(wereldPlaats(43.66, 7.21), "Nice, Frankrijk");
+  assert.equal(bovenPlaats(43.73, 7.42), "Monaco");
+  assert.equal(wereldPlaats(52.3, 4.9), null);
+  assert.equal(wereldPlaats(10, -40), null);
+});
+
+test("App Store Connect: sales report of 112Heli and summary in beheer", async () => {
+  const { parseSalesReport, daysToFetch } = await import("../src/asc.js");
+  const tsv = ["Provider\tSKU\tTitle\tProduct Type Identifier\tUnits\tDevice\tParent Identifier\tApple Identifier",
+    "APPLE\tapp.lrvdlinden.112HELI\t112Heli\t1F\t3\tiPhone\t\t1",
+    "APPLE\tapp.lrvdlinden.112HELI\t112Heli\t1F\t1\tiPad\t\t1",
+    "APPLE\tapp.lrvdlinden.112HELI\t112Heli\tF1\t2\tDesktop\t\t1",
+    "APPLE\tapp.lrvdlinden.112HELI\t112Heli\t7F\t5\tiPhone\t\t1",
+    "APPLE\tapp.lrvdlinden.pairr\tPairr: codes\t1F\t9\tiPhone\t\t2"].join("\\n").replace(/\\\\n/g, "\\n");
+  const rows = parseSalesReport(tsv.split("\\n").join("\n"));
+  const dl = rows.filter((r) => r.kind === "download").reduce((s, r) => s + r.units, 0);
+  assert.equal(dl, 6);
+  assert.ok(rows.some((r) => r.device === "Mac" && r.units === 2));
+  assert.equal(daysToFetch("2026-11-14", ["2026-11-13"]).at(0), "2026-11-12");
+  const env = { DB: d1(), BEHEER_USER: "leon", BEHEER_PASSWORD: "geheim1" };
+  await env.DB.prepare("INSERT INTO downloads (day, device, kind, units) VALUES (?, 'iPhone', 'download', 4)").bind(new Date(Date.now() - 86400_000).toISOString().slice(0, 10)).run();
+  const login = await (await worker.fetch(new Request("https://x/v1/beheer/login", { method: "POST", body: JSON.stringify({ user: "leon", password: "geheim1" }) }), env)).json();
+  const o = await (await worker.fetch(new Request("https://x/v1/beheer/overview", { headers: { authorization: "Bearer " + login.token } }), env)).json();
+  assert.equal(o.downloads.downloads, 4);
+  assert.equal(o.downloads.configured, false);
+  assert.equal(o.downloads.dagen.length, 30);
+});
