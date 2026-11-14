@@ -2,6 +2,7 @@
 
 ## 1.0.0 (4)
 - Op de kaart weer de eigen tekeningen in zijaanzicht; het bovenaanzicht is weg.
+- Zulu AW139 opnieuw getekend: strak en zonder losse stukken, ook in het app-icoon, het Apple TV-icoon en het splashscreen.
 
 ## 1.0.0 (3)
 - Eigen server in het Cloudflare-account 112heli: `112heli-api.112heli.workers.dev`.
