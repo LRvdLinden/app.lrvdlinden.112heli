@@ -208,6 +208,8 @@ async function runIngest(env) {
       console.error("[ingest]", e.message);
       results.push({ error: e.message });
     }
+    // Write the result after every poll, so /health shows it even if the run is cut short.
+    await env.DB.prepare("INSERT OR REPLACE INTO kv (key, value, at) VALUES ('last_ingest', ?, ?)").bind(JSON.stringify(results.at(-1)), now()).run();
     if (i < polls - 1) await new Promise((res) => setTimeout(res, Math.max(0, 15_000 - (Date.now() - started))));
   }
   await env.DB.prepare("INSERT OR REPLACE INTO kv (key, value, at) VALUES ('last_ingest', ?, ?)").bind(JSON.stringify(results.at(-1)), now()).run();
@@ -219,7 +221,8 @@ export default {
   async fetch(request, env) {
     try { return await route(request, env); } catch (e) { console.error("[api]", e); return bad("serverfout", 500); }
   },
-  async scheduled(_event, env, ctx) {
-    ctx.waitUntil(runIngest(env));
+  // Awaited (not waitUntil): waitUntil stops 30 s after the event, and a run with 4 polls takes about 50 s.
+  async scheduled(_event, env) {
+    await runIngest(env);
   },
 };
