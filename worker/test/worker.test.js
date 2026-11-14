@@ -279,3 +279,14 @@ test("Medic 01: Lifeliner drawing, but its own name", () => {
   assert.equal(info.soort, "trauma");
   assert.equal(info.icoon ?? null, null);
 });
+
+test("Coastguard Dash 8 with a Canadian transponder address and callsign NCG01", () => {
+  const ac = { hex: "c005e9", flight: "NCG01   ", r: "C-FCGE", t: "DH8A", category: "A2", lat: 53.517, lon: 4.976, alt_baro: 1500, gs: 150 };
+  const info = classify(ac, new Map(), new Map());
+  assert.equal(info.soort, "kustwacht");
+  assert.equal(info.icoon, "kustwacht_dash8");
+  assert.equal(info.reg, "PH-CGE");
+  assert.equal(info.naam, "Kustwacht PH-CGE");
+  const far = classify({ ...ac, hex: "abcdef", r: "", lat: 54.6, lon: 2.5 }, new Map(), new Map());
+  assert.equal(far.naam, "Kustwacht NCG01");
+});

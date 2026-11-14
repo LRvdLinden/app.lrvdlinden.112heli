@@ -4,7 +4,7 @@
 //  - defence (Dutch only), coastguard, Marechaussee and PH-GOV, by airframe and type (aalerts/lucht.js)
 // This file adds the pure helpers 112Heli needs on top (no I/O, unit tested).
 import { identify } from "./aalerts/heli.js";
-import { luchtSoort } from "./aalerts/lucht.js";
+import { luchtSoort, kustwacht } from "./aalerts/lucht.js";
 import { plaatsBij } from "./aalerts/plaats.js";
 import locaties from "./aalerts/locaties.js";
 
@@ -38,6 +38,9 @@ export function classify(ac, learnedHeli = new Map(), learnedLucht = new Map()) 
 
   const h = identify(ac, learnedHeli);
   if (h) return { ...base, key: h.id, naam: h.naam, soort: h.soort, icoon: null, basis: h.basis || null, herkenning: h.herkenning };
+
+  const kw = kustwacht(ac);
+  if (kw) return { ...base, reg: kw.reg || base.reg, key: hex, naam: kw.naam, soort: kw.soort, icoon: kw.icoon, basis: null, herkenning: "registratie" };
 
   if (typeof ac.lat === "number" && typeof ac.lon === "number" && !inNL(ac.lat, ac.lon)) return null;
   const l = luchtSoort(ac, learnedLucht);

@@ -21,6 +21,30 @@ const KUSTWACHT = {
   "PH-CGD": "kustwacht_dash8", "PH-CGE": "kustwacht_dash8",
   "PH-NCG": "kustwacht_aw189", "PH-SAR": "kustwacht_aw189", "PH-RSQ": "kustwacht_aw189", "PH-BSR": "kustwacht_aw189",
 };
+/**
+ * 112Heli: airframes whose transponder carries another registration in the database (the Coastguard Dash 8 PH-CGE
+ * sends Canadian address c005e9, listed there as C-FCGE).
+ */
+const KUSTWACHT_HEX = { c005e9: "PH-CGE" };
+
+/**
+ * 112Heli: the Coastguard by registration, airframe address or callsign (NCG01 …), also above the North Sea outside the
+ * Dutch box. Returns { soort, icoon, naam, reg } or null.
+ */
+export function kustwacht(ac) {
+  const hex = String(ac.hex || "").trim().toLowerCase();
+  const reg = KUSTWACHT_HEX[hex] || String(ac.r || "").trim().toUpperCase();
+  const cs = String(ac.flight || "").trim().toUpperCase();
+  const type = String(ac.t || "").trim().toUpperCase();
+  const isHeli = HELI.has(type) || ac.category === "A7";
+  if (KUSTWACHT[reg]) return { soort: "kustwacht", icoon: KUSTWACHT[reg], naam: `Kustwacht ${reg}`, reg };
+  if (/^NCG\d{1,3}$/.test(cs)) {
+    const icoon = isHeli ? "kustwacht_aw189" : "kustwacht_dash8";
+    return { soort: "kustwacht", icoon, naam: reg.startsWith("PH-") ? `Kustwacht ${reg}` : `Kustwacht ${cs}`, reg: reg.startsWith("PH-") ? reg : null };
+  }
+  return null;
+}
+
 /** Koninklijke Marechaussee: two Diamond DA62 MPP patrol aircraft (German registrations, flown via QinetiQ). */
 const KMAR = new Set(["D-IAMT", "D-IBMT"]);
 
