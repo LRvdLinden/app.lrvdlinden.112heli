@@ -1,0 +1,33 @@
+WAT DE APP DOET
+112Heli toont live op een kaart de toestellen die vliegen voor de hulpdiensten in Nederland: de traumahelikopters (Lifeliner), de politiehelikopters (Zulu), de Kustwacht, Defensie, de Marechaussee en het regeringsvliegtuig, en als grapje de privéjet van Max Verstappen. Voor mensen in Nederland die een helikopter horen en willen weten wat het is en waar hij heen gaat. De app is in het Nederlands.
+
+HOE TE TESTEN
+1. Start de app: een korte splash en drie welkomstschermen. Scherm 2 vraagt om meldingen ("Meldingen aanzetten" of "Later"), scherm 3 om locatie ("Gebruik mijn locatie" of "Niet nu"). Weigeren kan.
+2. Tab "Kaart": de live kaart. Tik op een toestel voor de kaart onderaan: koers, hoogte, snelheid, "Nu boven <plaats>", de route (Deze vlucht / 30 min / 2 uur) met afspeelknop, de plaatsen waarboven hij vloog, de laatste vluchten en "Klopt dit toestel niet?". Het belletje maakt hem favoriet.
+3. Op de kaart: het oog verbergt toestellen die niet vliegen; de lagenknop kiest welke soorten je ziet.
+4. Tab "Toestellen": alle toestellen van de laatste 14 dagen, per status. Open er een voor details, favoriet, delen en "Volg op toegangsscherm" (Live Activity).
+5. Tab "Historie": vluchten en "meerdere helikopters op één plek" van 30 dagen.
+6. Tab "Instellingen": meldingen, eigen zones, gebied, weergave, privacy en support, "Wat is nieuw" en de kaart "Meer apps van de ontwikkelaar".
+7. Widgets: voeg de 112Heli-widgets toe via de widgetgalerij.
+8. iPad en Mac tonen dezelfde app; Apple TV toont de live kaart en de lijst.
+
+REGIO EN GEGEVENS
+Alleen Nederland. Toestellen staan er alleen op als ze hun positie uitzenden; 's nachts of bij slecht weer kan er weinig of niets in de lucht zijn. De kaart toont dan nog toestellen op de grond of op de basis, en de lijst alles van de laatste 14 dagen. Dat is geen fout.
+
+BRONNEN
+Posities: adsb.lol (ODbL); ziekenhuizen en bases: OpenStreetMap (ODbL); plaatsnamen: PDOK; weerbeperking: KNMI-waarschuwingen; weer bij een toestel: WeatherKit. 112Heli is onafhankelijk en hoort niet bij de politie, ANWB, Kustwacht, Defensie of de overheid.
+
+TOESTEMMINGEN
+- Meldingen: bij het welkomstscherm, voor opstijgen, zones en favorieten. Zonder werkt de app ook, alleen zonder meldingen.
+- Locatie (tijdens gebruik): voor de afstand en meldingen uit je omgeving, afgerond op ongeveer 1 km. Zonder krijg je meldingen uit heel Nederland.
+
+ACCOUNT
+Geen inlog nodig.
+
+AANKOPEN
+Gratis, geen in-app-aankopen, abonnementen of advertenties.
+
+OVERIG
+- Pushmeldingen komen van onze eigen server (Cloudflare Worker) via APNs; Live Activities worden per push bijgewerkt.
+- De vraag om een beoordeling komt hooguit één keer per week, nooit tijdens het welkomstscherm.
+- De kaart "Meer apps van de ontwikkelaar" linkt naar de pagina van de ontwikkelaar.

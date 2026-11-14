@@ -1,0 +1,33 @@
+WHAT THE APP DOES
+112Heli shows, live on a map, the aircraft that fly for the emergency services in the Netherlands: the air ambulances (Lifeliner), the police helicopters (Zulu), the Coastguard, Dutch Defence, the Royal Marechaussee and the government aircraft, plus (as a light-hearted extra) the private jet of Max Verstappen. It is meant for people in the Netherlands who hear a helicopter and want to know what it is and where it goes. The app is in Dutch.
+
+HOW TO TEST
+1. Launch the app: a short splash, then three welcome screens. Screen 2 asks for notifications ("Meldingen aanzetten" or "Later"), screen 3 for location ("Gebruik mijn locatie" or "Niet nu"). Both can be declined.
+2. Tab "Kaart": the live map. Tap an aircraft to open its card at the bottom: heading, altitude, speed, "Nu boven <place>", the route (Deze vlucht / 30 min / 2 uur) with a play button to replay the flight, the places it flew over, its last flights and "Klopt dit toestel niet?" (report a wrong or missing aircraft). The bell on the card makes it a favourite (alert when it takes off).
+3. On the map: the eye button hides aircraft that are not flying; the layers button chooses which kinds are shown.
+4. Tab "Toestellen": all aircraft seen in the last 14 days, grouped by status. Open one for details, favourite, share and "Volg op toegangsscherm" (Live Activity).
+5. Tab "Historie": flights and "several helicopters at one spot" of the last 30 days.
+6. Tab "Instellingen": push alert choices, own zones ("Zone toevoegen"), area radius, appearance, privacy/support links, "Wat is nieuw", and the "More apps by the developer" card.
+7. Widgets: add the 112Heli widgets from the Home Screen widget gallery.
+8. iPad and Mac show the same app; Apple TV shows the live map and the list.
+
+REGION AND DATA NOTES
+The app only covers the Netherlands. Aircraft appear only while they broadcast their position; at night or in bad weather there may be few or none in the air. Then the map still shows aircraft on the ground or at their base, and the "Toestellen" list shows every aircraft seen in the last 14 days. This is expected, not an error.
+
+DATA SOURCES
+Positions come from adsb.lol (public ADS-B data, Open Database License); hospitals and bases from OpenStreetMap (ODbL); place names from PDOK (Dutch government open data); the weather limit from public KNMI warnings; weather at an aircraft from WeatherKit. 112Heli is independent and not affiliated with the police, ANWB, the Coastguard, Defence or any government body; it only shows signals that aircraft broadcast publicly.
+
+PERMISSIONS
+- Notifications: asked during onboarding, for take-off alerts, own zones and favourites. Without it the app works fully, just without alerts.
+- Location (when in use): asked during onboarding or in Settings, to show the distance to an aircraft and to send alerts from the user's area. It is rounded to about 1 km before it is sent. Without it alerts cover the whole country.
+
+ACCOUNT
+No login required.
+
+IN-APP PURCHASES
+The app is free and contains no in-app purchases, subscriptions or ads.
+
+OTHER
+- Push notifications are sent by our own server (Cloudflare Worker) via APNs; Live Activities are updated by push.
+- A review prompt (requestReview) appears at most once a week, never during onboarding.
+- The "More apps by the developer" card links to the developer's page.

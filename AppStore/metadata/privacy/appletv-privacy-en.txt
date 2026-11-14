@@ -1,0 +1,1 @@
+112Heli on Apple TV only shows the live map and the list of aircraft. The Apple TV app collects no data: no account, no location, no push notifications, no tracking. Positions come from adsb.lol (Open Database License). Full privacy policy: https://112heli.lrvdlinden.app/privacy/

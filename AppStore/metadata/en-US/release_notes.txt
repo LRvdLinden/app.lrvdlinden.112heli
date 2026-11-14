@@ -1,0 +1,1 @@
+First version of 112Heli: everything that flies for the emergency services, live on the map, with take-off alerts, your own zones, 30 days of history, widgets and Live Activities.

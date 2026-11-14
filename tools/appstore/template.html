@@ -1,0 +1,401 @@
+<!doctype html>
+<html lang="nl"><head><meta charset="utf-8">
+<!-- App Store images of 112Heli: the app screens rebuilt in HTML from the SwiftUI code, in a marketing frame.
+     Rendered by tools/appstore/build.py (Playwright). Parameters in the URL hash. -->
+<style>
+@font-face{font-family:Poppins;src:url(../../website/web/assets/fonts/Poppins-Bold.woff2);font-weight:700}
+@font-face{font-family:Poppins;src:url(../../website/web/assets/fonts/Poppins-Medium.woff2);font-weight:500}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{width:var(--W);height:var(--H);overflow:hidden;font-family:Inter,system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+.bg{position:absolute;inset:0;background:radial-gradient(circle at 50% 78%,rgba(76,107,255,.38),transparent 55%),linear-gradient(170deg,#0d111c 0%,#141d3c 55%,#1b2a66 100%);overflow:hidden}
+.rings{position:absolute;left:50%;top:78%;transform:translate(-50%,-50%);width:150%;aspect-ratio:1;border-radius:50%}
+.rings i{position:absolute;border:2px solid rgba(76,107,255,.22);border-radius:50%}
+.head{position:absolute;left:7%;right:7%;text-align:center;color:#fff}
+.head h1{font-family:Poppins;font-weight:700;letter-spacing:-.01em;line-height:1.08}
+.head h1 b{color:#8aa0ff}
+.head p{font-family:Poppins;font-weight:500;color:#c8d0ea;line-height:1.3}
+.dev{position:absolute;left:50%;transform:translateX(-50%);background:#0b0b0f;box-shadow:0 40px 90px rgba(0,0,0,.55),0 0 0 3px #2a2d36 inset}
+.scr{position:absolute;overflow:hidden;background:#fff;transform-origin:0 0}
+/* ---------- app UI (iOS look) ---------- */
+.ui{position:absolute;inset:0;font-size:17px;color:#000;background:#f2f2f7}
+.sb{position:absolute;left:0;right:0;top:0;height:54px;display:flex;align-items:center;justify-content:space-between;padding:14px 34px 0 46px;font-weight:600;font-size:17px;z-index:20}
+.sb .r{display:flex;gap:7px;align-items:center}
+.map{position:absolute;inset:0;overflow:hidden;background:#f3f1ea}
+.map .sq{position:absolute}
+.mk{position:absolute;transform:translate(-50%,-50%);display:flex;flex-direction:column;align-items:center;gap:2px}
+.mk img{filter:drop-shadow(0 3px 3px rgba(0,0,0,.35))}
+.mk span{font-size:11px;font-weight:700;padding:2px 7px;border-radius:99px;background:rgba(255,255,255,.88);box-shadow:0 1px 3px rgba(0,0,0,.15);white-space:nowrap}
+.mk.sel span{box-shadow:0 0 0 2px var(--c)}
+.mk.old{opacity:.7}.mk.old img{filter:grayscale(1)}
+.mk .age{display:block;font-size:9px;font-weight:500;color:#666;text-align:center}
+.hosp{position:absolute;transform:translate(-50%,-50%);width:20px;height:20px;border-radius:6px;background:#fff;border:1.5px solid #e11d48;display:grid;place-items:center;color:#e11d48;font-weight:900;font-size:14px;box-shadow:0 1px 3px rgba(0,0,0,.25)}
+.hosp.b{border-color:#9333ea;color:#9333ea;font-size:12px}
+.cap{position:absolute;display:flex;align-items:center;gap:12px;padding:11px 16px;border-radius:99px;background:rgba(255,255,255,.82);backdrop-filter:blur(20px);box-shadow:0 2px 10px rgba(0,0,0,.08);font-weight:600;font-size:15px}
+.dotg{width:8px;height:8px;border-radius:50%;background:#22c55e}
+.ic{width:22px;height:22px;color:#2747e8}
+.tabs{position:absolute;left:18px;right:18px;bottom:24px;height:62px;border-radius:99px;background:rgba(255,255,255,.85);backdrop-filter:blur(20px);box-shadow:0 6px 24px rgba(0,0,0,.12);display:flex;justify-content:space-around;align-items:center;z-index:15}
+.tab{display:flex;flex-direction:column;align-items:center;gap:2px;font-size:10px;font-weight:600;color:#1c1c1e;padding:6px 14px;border-radius:99px}
+.tab.on{color:#2747e8;background:rgba(39,71,232,.1)}
+.tab svg{width:24px;height:24px}
+/* card (A-Alerts) */
+.card{position:absolute;left:12px;right:12px;bottom:96px;padding:14px;border-radius:20px;background:rgba(246,246,248,.92);backdrop-filter:blur(24px);box-shadow:0 4px 20px rgba(0,0,0,.15);z-index:12}
+.row{display:flex;align-items:center;gap:12px}
+.t1{font-size:22px;font-weight:700}
+.t2{font-size:12px;color:#6b6b70}
+.vals{display:flex;gap:8px;margin-top:12px}
+.val{flex:1;padding:10px;border-radius:12px;background:rgba(120,120,128,.1)}
+.val .k{font-size:11px;font-weight:500;color:#6b6b70;display:flex;gap:4px;align-items:center}
+.val .v{font-size:15px;font-weight:600;margin-top:3px;display:flex;gap:6px;align-items:center}
+.val .w{font-size:11px;color:#6b6b70;font-weight:500;margin-top:2px}
+.seg{display:flex;background:rgba(118,118,128,.12);border-radius:9px;padding:2px;margin-top:12px}
+.seg div{flex:1;text-align:center;font-size:13px;font-weight:500;padding:6px 0;border-radius:7px}
+.seg .on{background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.12);font-weight:600}
+.play{display:flex;align-items:center;gap:10px;margin-top:12px;font-size:12px;font-weight:600}
+.play .tr{flex:1;height:4px;border-radius:2px;background:#2747e8;position:relative}
+.play .tr i{position:absolute;right:-2px;top:-12px;width:28px;height:28px;border-radius:50%;background:#fff;box-shadow:0 1px 5px rgba(0,0,0,.25)}
+.lh{font-size:12px;font-weight:600;color:#6b6b70;margin:12px 0 5px}
+.pl{display:flex;gap:8px;font-size:13px;margin:3px 0;align-items:baseline}
+.pl .tm{width:86px;font-size:12px;color:#6b6b70;font-variant-numeric:tabular-nums}
+.pl b{font-weight:600}.pl .g{font-size:12px;color:#6b6b70}
+.fl{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:600;margin-top:4px}
+.fl .s{margin-left:auto;font-size:12px;color:#6b6b70;font-weight:400}
+.foot{font-size:11px;color:#6b6b70;margin-top:12px}
+/* lists */
+.nav{position:absolute;left:0;right:0;top:54px;padding:6px 20px 0}
+.nav h2{font-size:34px;font-weight:700;letter-spacing:-.01em}
+.search{margin-top:10px;height:36px;border-radius:10px;background:rgba(118,118,128,.12);display:flex;align-items:center;gap:6px;padding:0 10px;color:#8e8e93;font-size:17px}
+.sec{margin:22px 16px 0}
+.sec h3{font-size:13px;font-weight:500;color:#6b6b70;text-transform:uppercase;margin:0 16px 7px}
+.grp{background:#fff;border-radius:12px;overflow:hidden}
+.li{display:flex;align-items:center;gap:12px;padding:10px 16px;min-height:64px;border-bottom:.5px solid #e1e1e6;margin-left:0}
+.li:last-child{border-bottom:0}
+.thumb{width:64px;height:32px;border-radius:9px;display:grid;place-items:center;position:relative;flex:none}
+.thumb img{width:88%;height:88%;object-fit:contain}
+.thumb i{position:absolute;right:4px;bottom:4px;width:8px;height:8px;border-radius:50%}
+.li .m{flex:1;min-width:0}.li .m b{font-size:17px;font-weight:600;display:block;white-space:nowrap}
+.li .m span{font-size:15px;color:#6b6b70;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:block}
+.li .rt{text-align:right;font-size:15px;font-variant-numeric:tabular-nums}.li .rt small{display:block;font-size:12px;color:#6b6b70}
+.chev{color:#c4c4c7;font-size:20px;margin-left:4px}
+.tg{width:51px;height:31px;border-radius:99px;background:#34c759;position:relative;flex:none}
+.tg::after{content:"";position:absolute;right:2px;top:2px;width:27px;height:27px;border-radius:50%;background:#fff;box-shadow:0 2px 4px rgba(0,0,0,.2)}
+.tg.off{background:#e9e9eb}.tg.off::after{right:auto;left:2px}
+.ft{font-size:13px;color:#6b6b70;margin:7px 16px 0;line-height:1.35}
+.dot{width:12px;height:12px;border-radius:50%;flex:none}
+/* lock screen */
+.lock{position:absolute;inset:0;background:linear-gradient(180deg,#22305e,#0d111c 70%);color:#fff}
+.la{position:absolute;left:12px;right:12px;border-radius:24px;background:rgba(18,23,38,.78);backdrop-filter:blur(20px);padding:16px;color:#fff}
+.nt{position:absolute;left:12px;right:12px;border-radius:24px;background:rgba(255,255,255,.18);backdrop-filter:blur(30px);padding:14px 16px;color:#fff;display:flex;gap:12px}
+</style></head><body><div id="root"></div>
+<script>
+const P = JSON.parse(decodeURIComponent(location.hash.slice(1)));
+const IMG = "../../website/web/assets/img/";
+document.documentElement.style.setProperty("--W", P.W + "px");
+document.documentElement.style.setProperty("--H", P.H + "px");
+
+// ------------------------------------------------------------------ icons (SF Symbol look-alikes)
+const I = {
+  map: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M9 4 3 6v14l6-2 6 2 6-2V4l-6 2-6-2Z"/><path d="M9 4v14M15 6v14"/></svg>',
+  plane: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M21 15.5v-2l-8-5V3.5a1.5 1.5 0 0 0-3 0V8.5l-8 5v2l8-2.5V18l-2 1.5V21l3.5-1 3.5 1v-1.5L13 18v-5Z"/></svg>',
+  clock: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>',
+  gear: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 8.5a3.5 3.5 0 1 0 0 7 3.5 3.5 0 0 0 0-7Zm9 4.6v-2.2l-2.4-.6a7 7 0 0 0-.7-1.6l1.3-2.1-1.6-1.6-2.1 1.3a7 7 0 0 0-1.6-.7L13.3 3h-2.2l-.6 2.4a7 7 0 0 0-1.6.7L6.8 4.8 5.2 6.4l1.3 2.1a7 7 0 0 0-.7 1.6L3.4 10.9v2.2l2.4.6c.2.6.4 1.1.7 1.6l-1.3 2.1 1.6 1.6 2.1-1.3c.5.3 1 .5 1.6.7l.6 2.4h2.2l.6-2.4c.6-.2 1.1-.4 1.6-.7l2.1 1.3 1.6-1.6-1.3-2.1c.3-.5.5-1 .7-1.6Z"/></svg>',
+  layers: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="m12 3 9 5-9 5-9-5 9-5Z"/><path d="m3 13 9 5 9-5"/></svg>',
+  eye: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/></svg>',
+  bell: '<svg viewBox="0 0 24 24" fill="#ff9500"><path d="M12 22a2.5 2.5 0 0 0 2.4-2h-4.8a2.5 2.5 0 0 0 2.4 2Zm7-6V11a7 7 0 0 0-5.5-6.8V3a1.5 1.5 0 0 0-3 0v1.2A7 7 0 0 0 5 11v5l-2 2v1h18v-1Z"/></svg>',
+  x: '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#8e8e93" opacity=".55"/><path d="m8 8 8 8M16 8l-8 8" stroke="#fff" stroke-width="2.2" stroke-linecap="round"/></svg>',
+  search: '<svg viewBox="0 0 24 24" width="17" fill="none" stroke="currentColor" stroke-width="2.4"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg>',
+  play: '<svg viewBox="0 0 24 24" width="28"><circle cx="12" cy="12" r="11" fill="#2747e8"/><path d="M10 8v8l6-4Z" fill="#fff"/></svg>',
+  dep: '<svg viewBox="0 0 24 24" width="18" fill="#34c759"><path d="M2.5 19h19v2h-19zM22 9.5c-.3-1-1.4-1.6-2.4-1.3L14.3 9.6 7.4 3.1l-1.9.5 4.1 7.2-5 1.3-2-1.5-1.5.4 2.6 4.5 16.8-4.5c1-.3 1.6-1.4 1.4-2.5Z"/></svg>',
+  arr: '<svg viewBox="0 0 24 24" width="18" fill="#8e8e93"><path d="M2.5 19h19v2h-19zM9.8 13.6 15 15l2.2.6c1 .3 2-.3 2.3-1.3s-.3-2-1.3-2.3l-5.3-1.4L10.1 3 8.2 2.5v8.3L3.2 9.4 2.3 7 .9 6.6v5.2Z"/></svg>',
+  bubble: '<svg viewBox="0 0 24 24" width="16" fill="none" stroke="#6b6b70" stroke-width="2"><path d="M4 5h16v11H9l-5 4Z"/><path d="M12 8v3M12 13v.5"/></svg>',
+};
+const statusBar = (dark) => `<div class="sb" style="color:${dark ? "#fff" : "#000"}"><span>9:41</span><span class="r">
+  <svg width="18" height="12" viewBox="0 0 18 12" fill="currentColor"><rect x="0" y="8" width="3" height="4" rx="1"/><rect x="5" y="5" width="3" height="7" rx="1"/><rect x="10" y="2.5" width="3" height="9.5" rx="1"/><rect x="15" y="0" width="3" height="12" rx="1"/></svg>
+  <svg width="16" height="12" viewBox="0 0 16 12" fill="currentColor"><path d="M8 2.5a9 9 0 0 1 6.4 2.6l1.1-1.1A10.6 10.6 0 0 0 8 1 10.6 10.6 0 0 0 .5 4l1.1 1.1A9 9 0 0 1 8 2.5Zm0 3a6 6 0 0 1 4.2 1.7l1.1-1.1A7.6 7.6 0 0 0 8 4a7.6 7.6 0 0 0-5.3 2.1l1.1 1.1A6 6 0 0 1 8 5.5Zm0 3a3 3 0 0 1 2.1.9L8 11.5 5.9 9.4A3 3 0 0 1 8 8.5Z"/></svg>
+  <svg width="27" height="13" viewBox="0 0 27 13"><rect x=".5" y=".5" width="23" height="12" rx="3.5" fill="none" stroke="currentColor" opacity=".4"/><rect x="2" y="2" width="20" height="9" rx="2" fill="currentColor"/><rect x="25" y="4" width="1.5" height="5" rx=".7" fill="currentColor" opacity=".4"/></svg></span></div>`;
+const tabBar = (on) => `<div class="tabs">${[["kaart", "Kaart", I.map], ["toestellen", "Toestellen", I.plane], ["historie", "Historie", I.clock], ["instellingen", "Instellingen", I.gear]]
+  .map(([k, t, ic]) => `<div class="tab ${k === on ? "on" : ""}">${ic}${t}</div>`).join("")}</div>`;
+
+// ------------------------------------------------------------------ fake map of central Netherlands (1000×1000)
+const PLACES = [["Amsterdam", 300, 250, 1], ["Haarlem", 210, 255, 0], ["Utrecht", 420, 480, 1], ["Amersfoort", 565, 435, 1], ["Apeldoorn", 790, 400, 1],
+  ["Arnhem", 765, 620, 1], ["Nijmegen", 745, 735, 0], ["Zwolle", 840, 175, 1], ["Deventer", 880, 445, 0], ["Ede", 660, 560, 0], ["Hilversum", 450, 360, 0],
+  ["Leiden", 175, 430, 0], ["Den Haag", 85, 515, 1], ["Rotterdam", 175, 650, 1], ["Gouda", 290, 590, 0], ["Lelystad", 600, 220, 0], ["Almere", 450, 255, 0],
+  ["Harderwijk", 680, 300, 0], ["Veenendaal", 590, 545, 0], ["Dordrecht", 260, 735, 0], ["Teuge", 830, 380, 0]];
+function mapSVG() {
+  const roads = [
+    "M300 250 C380 330 500 420 565 435 S720 410 790 400 S860 430 880 445", "M300 250 C340 340 390 420 420 480 S430 620 440 760",
+    "M85 515 C200 520 320 500 420 480 S620 560 660 560 S740 600 765 620", "M420 480 C480 460 520 450 565 435 S640 380 680 300 S780 220 840 175",
+    "M790 400 C785 480 775 560 765 620 S750 700 745 735", "M300 250 C240 330 180 420 85 515", "M175 650 C230 600 330 540 420 480", "M175 650 C200 690 230 715 260 735 S340 760 440 760",
+  ];
+  const water = `<path d="M380 0 L760 0 L780 90 L700 170 L640 190 L560 180 L520 230 L470 220 L420 200 L380 160 Z" fill="#a9d3f5"/>
+    <path d="M330 300 L400 290 L420 230 L360 230 Z" fill="#a9d3f5"/><path d="M0 0 L40 0 L60 400 L10 640 L0 660 Z" fill="#a9d3f5"/>
+    <path d="M1000 640 C900 650 820 690 760 650 S620 690 520 700 S330 690 230 700 S90 720 0 700" fill="none" stroke="#a9d3f5" stroke-width="14"/>
+    <path d="M1000 600 C880 590 800 570 765 620" fill="none" stroke="#a9d3f5" stroke-width="10"/><path d="M880 0 C860 150 870 300 880 445 S880 560 900 640" fill="none" stroke="#a9d3f5" stroke-width="9"/>`;
+  const green = `<path d="M640 330 C720 310 780 330 820 360 S800 520 720 520 S620 470 640 330Z" fill="#d7e9c9"/><path d="M430 320 C480 300 520 330 510 380 S440 420 420 380Z" fill="#d7e9c9"/>
+    <path d="M60 380 C110 360 140 420 120 470 S50 470 60 380Z" fill="#d7e9c9"/><path d="M600 600 C650 590 690 610 680 650 S600 660 600 600Z" fill="#d7e9c9"/>`;
+  const towns = PLACES.map(([n, x, y, big]) => `<circle cx="${x}" cy="${y}" r="${big ? 26 : 15}" fill="#ece7dc"/>`).join("");
+  return `<svg viewBox="0 0 1000 1000" width="100%" height="100%" style="position:absolute;inset:0">${water}${green}${towns}
+    ${roads.map((d) => `<path d="${d}" fill="none" stroke="#e6a94a" stroke-width="7" stroke-linecap="round"/><path d="${d}" fill="none" stroke="#fbd27d" stroke-width="4.5" stroke-linecap="round"/>`).join("")}
+    ${PLACES.map(([n, x, y, big]) => `<text x="${x}" y="${y + (big ? 4 : 3)}" text-anchor="middle" font-family="Inter" font-weight="${big ? 700 : 600}" font-size="${big ? 15 : 11.5}" fill="#4a4a4f" stroke="#f3f1ea" stroke-width="3" paint-order="stroke">${n}</text>`).join("")}</svg>`;
+}
+
+// ------------------------------------------------------------------ data (neutral sample positions)
+const AC = {
+  ll1: { naam: "Lifeliner 1", img: "heli_lifeliner_ec135", c: "#9333ea", x: 318, y: 296, w: 0 },
+  ll3: { naam: "Lifeliner 3", img: "heli_lifeliner_ec135", c: "#9333ea", x: 705, y: 470, w: 1 },
+  z5: { naam: "Zulu 05", img: "heli_politie_ec135", c: "#3f74d8", x: 470, y: 520, w: 0 },
+  z26: { naam: "Zulu 26", img: "heli_politie_aw139", c: "#3f74d8", x: 240, y: 600, w: 1 },
+  kw: { naam: "Kustwacht", img: "lucht_kustwacht_aw189", c: "#0891b2", x: 120, y: 330, w: 0 },
+  ch: { naam: "Chinook", img: "lucht_chinook", c: "#7d9148", x: 600, y: 640, w: 1 },
+};
+const HOSP = [[300, 270, "+"], [425, 470, "+"], [770, 610, "+"], [180, 640, "+"], [830, 382, "H"], [520, 470, "H"]];
+
+function mapLayer(W, H, opts = {}) {
+  const S = Math.max(W, H) * (opts.zoom || 1.05);
+  const ox = (W - S) / 2 + (opts.dx || 0) * S, oy = (H - S) / 2 + (opts.dy || 0) * S;
+  const pos = (x, y) => `left:${ox + (x / 1000) * S}px;top:${oy + (y / 1000) * S}px`;
+  const mw = opts.mw || 78;
+  const trail = opts.trail ? `<svg style="position:absolute;left:${ox}px;top:${oy}px;width:${S}px;height:${S}px" viewBox="0 0 1000 1000">
+      <path d="${opts.trail}" fill="none" stroke="#9333ea" stroke-width="${3.4 * 1000 / S}" stroke-linecap="round" stroke-linejoin="round"/></svg>` : "";
+  const hosp = HOSP.map(([x, y, t]) => `<div class="hosp ${t === "H" ? "b" : ""}" style="${pos(x, y)}">${t === "H" ? "H" : "✚"}</div>`).join("");
+  const mks = (opts.ac || Object.keys(AC)).map((k) => {
+    const a = AC[k];
+    const [ax, ay] = (opts.at && opts.at[k]) || [a.x, a.y];
+    return `<div class="mk ${opts.sel === k ? "sel" : ""} ${opts.old === k ? "old" : ""}" style="${pos(ax, ay)};--c:${a.c}">
+      <img src="${IMG}${a.img}.webp" style="width:${mw}px;height:${mw / 2.8}px;object-fit:contain;${a.w ? "transform:scaleX(-1)" : ""}">
+      <span>${a.naam}${opts.old === k ? '<i class="age">positie 3 min oud</i>' : ""}</span></div>`;
+  }).join("");
+  return `<div class="map">${mapSVG().replace('style="position:absolute;inset:0"', `style="position:absolute;left:${ox}px;top:${oy}px;width:${S}px;height:${S}px"`)}${trail}${hosp}${mks}</div>`;
+}
+
+// ------------------------------------------------------------------ the A-Alerts aircraft card
+function card(pad = 12, bottom = 96, maxW) {
+  return `<div class="card" style="left:${pad}px;right:${pad}px;bottom:${bottom}px;${maxW ? `max-width:${maxW}px;margin:0 auto` : ""}">
+    <div class="row"><img src="${IMG}heli_lifeliner_ec135.webp" style="width:84px;height:30px;object-fit:contain;transform:scaleX(-1)">
+      <div style="flex:1"><div class="t1">Lifeliner 3</div><div class="t2">Traumahelikopter · basis Volkel</div></div>
+      <span style="width:32px;height:32px;display:grid;place-items:center">${I.bell.replace("<svg", '<svg width="24"')}</span><span style="width:26px">${I.x}</span></div>
+    <div style="display:flex;gap:8px;align-items:baseline;margin-top:12px"><b style="font-size:15px;font-weight:600">Nu boven Ede</b><span style="font-size:12px;font-weight:600;color:#22a447">18 min in de lucht</span></div>
+    <div class="vals">
+      <div class="val"><div class="k">⌖ Koers</div><div class="v"><span style="width:20px;height:20px;border-radius:50%;border:1.5px solid rgba(120,120,128,.35);display:grid;place-items:center;color:#e11d48;font-size:11px;transform:rotate(250deg)">▲</span>250° W</div></div>
+      <div class="val"><div class="k">↕ Hoogte</div><div class="v">460 m</div><div class="w">1.500 ft</div></div>
+      <div class="val"><div class="k">◔ Snelheid</div><div class="v">241 km/u</div><div class="w">130 kn</div></div></div>
+    <div class="seg"><div class="on">Deze vlucht</div><div>30 min</div><div>2 uur</div></div>
+    <div class="play">${I.play}<div class="tr"><i></i></div><span style="color:#2747e8">60×</span></div>
+    <div class="lh">Waar geweest</div>
+    <div class="pl"><span class="tm">10:27</span><b style="color:#22a447">Ede</b></div>
+    <div class="pl"><span class="tm">10:22–10:27</span><b>Arnhem</b></div>
+    <div class="pl"><span class="tm">10:16–10:22</span><b>Apeldoorn</b></div>
+    <div class="pl"><span class="tm">10:09–10:16</span><b>Teuge</b><span class="g">Voorst</span></div>
+    <div class="lh">Vluchten</div>
+    <div class="fl">${I.dep}10:09 – nog in de lucht<span class="s">18 min · 52 km</span></div>
+    <div class="fl">${I.arr}07:42 – 08:31<span class="s">49 min · 96 km</span></div>
+    <div class="foot">12,4 km van je af · Positie van 10:27:41</div>
+    <div class="foot" style="display:flex;gap:6px;align-items:center;font-size:13px">${I.bubble}Klopt dit toestel niet?</div></div>`;
+}
+const TRAIL_LL3 = "M830 382 C815 390 800 395 790 400 C785 480 775 560 765 620 C730 605 690 575 660 555";
+
+// ------------------------------------------------------------------ screens (logical points)
+function scrMap(W, H, opt = {}) {
+  const top = opt.top ?? 62;
+  return `<div class="ui">${mapLayer(W, H, opt.map || {})}${statusBar()}
+    <div class="cap" style="left:16px;right:16px;top:${top}px"><span class="dotg"></span>In de lucht: ${opt.inAir ?? 6}<span style="flex:1"></span>
+      <span class="ic">${I.eye}</span><span class="ic">${I.layers}</span></div>
+    ${opt.card ? card(opt.cardPad || 12, opt.cardBottom || 96, opt.cardMax) : ""}${opt.noTabs ? "" : tabBar("kaart")}</div>`;
+}
+const thumb = (img, c, w = 1) => `<div class="thumb" style="background:${c}22"><img src="${IMG}${img}.webp" style="${w ? "" : ""}"><i style="background:${c}"></i></div>`;
+function rowAc(img, c, naam, sub, r1, r2, r3, star) {
+  return `<div class="li">${thumb(img, c)}<div class="m"><b>${naam}${star ? ' <i style="color:#ffcc00;font-size:13px;font-style:normal">★</i>' : ""}</b><span>${sub}</span></div>
+    <div class="rt">${r1}<small>${r2}</small>${r3 ? `<small>${r3}</small>` : ""}</div><span class="chev">›</span></div>`;
+}
+function scrList(W, H) {
+  return `<div class="ui">${statusBar()}<div class="nav"><h2>Toestellen</h2><div class="search">${I.search}Naam, registratie of plaats</div></div>
+    <div style="position:absolute;top:150px;left:0;right:0">
+    <div class="sec"><h3>Mijn toestellen</h3><div class="grp">
+      ${rowAc("heli_lifeliner_ec135", "#9333ea", "Lifeliner 3", "In de lucht · Boven Ede", "460 m", "241 km/u", "12 km", 1)}
+      ${rowAc("lucht_verstappen", "#ff6600", "Max Verstappen", "Uit beeld · Privéjet", "", "2 dagen geleden", "", 1)}</div></div>
+    <div class="sec"><h3>In de lucht</h3><div class="grp">
+      ${rowAc("heli_lifeliner_ec135", "#9333ea", "Lifeliner 1", "Boven Amsterdam", "310 m", "198 km/u", "61 km")}
+      ${rowAc("heli_politie_aw139", "#3f74d8", "Zulu 26", "Boven Gouda", "260 m", "150 km/u", "78 km")}
+      ${rowAc("heli_politie_ec135", "#3f74d8", "Zulu 05", "Boven Utrecht", "420 m", "176 km/u", "44 km")}
+      ${rowAc("lucht_kustwacht_aw189", "#0891b2", "Kustwacht", "Boven zee bij IJmuiden", "150 m", "130 km/u", "95 km")}
+      ${rowAc("lucht_chinook", "#7d9148", "Chinook", "Boven Veenendaal", "610 m", "220 km/u", "31 km")}</div></div>
+    <div class="sec"><h3>Op de basis</h3><div class="grp">
+      ${rowAc("heli_lifeliner_ec135", "#9333ea", "Lifeliner 2", "Basis Rotterdam The Hague Airport", "", "gezien 14 min geleden", "")}
+      ${rowAc("heli_politie_ec135", "#3f74d8", "Zulu 04", "Basis Schiphol-Oost", "", "gezien 1 uur geleden", "")}</div></div>
+    </div>${tabBar("toestellen")}</div>`;
+}
+const tgRow = (t, on = 1, ic) => `<div class="li" style="min-height:50px">${ic || ""}<div class="m"><b style="font-weight:400">${t}</b></div><div class="tg ${on ? "" : "off"}"></div></div>`;
+function scrSettings(W, H) {
+  const soort = (n, c, on) => tgRow(n, on, `<span class="dot" style="background:${c}"></span>`);
+  return `<div class="ui">${statusBar()}<div class="nav"><h2>Instellingen</h2></div>
+    <div style="position:absolute;top:104px;left:0;right:0">
+    <div class="sec"><h3>Pushmeldingen</h3><div class="grp">${tgRow("Opstijgen in mijn gebied")}${tgRow("Meerdere helikopters op één plek")}${tgRow("Favorieten: opstijgen en landen")}${tgRow("Favoriet wisselt van roepnaam")}</div></div>
+    <div class="sec"><h3>Opstijgen melden van</h3><div class="grp">${soort("Lifeliners", "#9333ea", 1)}${soort("Politie (Zulu)", "#3f74d8", 1)}${soort("Kustwacht", "#0891b2", 1)}${soort("Defensie", "#7d9148", 0)}${soort("Max Verstappen", "#ff6600", 1)}</div></div>
+    <div class="sec"><h3>Mijn zones</h3><div class="grp">
+      <div class="li" style="min-height:50px"><div class="m"><b style="font-weight:400">Thuis</b></div><span style="color:#6b6b70">5 km</span></div>
+      <div class="li" style="min-height:50px"><div class="m"><b style="font-weight:400">Werk</b></div><span style="color:#6b6b70">3 km</span></div>
+      <div class="li" style="min-height:50px;color:#2747e8"><b style="font-weight:400">⊕ Zone toevoegen</b></div></div>
+      <p class="ft">Een melding als er een toestel van de gekozen soorten boven je wijk of plaats vliegt, welk toestel het ook is.</p></div>
+    </div>${tabBar("instellingen")}</div>`;
+}
+function flightRow(img, c, naam, route, tijd, duur, live) {
+  return `<div class="li">${thumb(img, c)}<div class="m"><b style="font-size:15px">${naam}</b><span style="font-size:13px">${route}</span></div>
+    <div class="rt" style="font-size:12px">${tijd}<small style="${live ? "color:#22a447" : ""}">${duur}</small></div><span class="chev">›</span></div>`;
+}
+function scrHistory(W, H) {
+  return `<div class="ui">${statusBar()}<div class="nav"><h2>Historie</h2></div>
+    <div style="position:absolute;top:104px;left:0;right:0">
+    <div class="sec"><div class="grp" style="padding:10px 12px"><div class="seg" style="margin:0"><div class="on">Vluchten</div><div>Meerdere heli's</div></div>
+      <div style="display:flex;justify-content:space-between;padding:12px 4px 2px;font-size:17px"><span>Soort</span><span style="color:#6b6b70">Alles ⌃⌄</span></div></div></div>
+    <div class="sec"><h3>Zaterdag 14 november</h3><div class="grp">
+      ${flightRow("heli_lifeliner_ec135", "#9333ea", "Lifeliner 3", "Basis Volkel → op locatie", "10:09", "nu in de lucht", 1)}
+      ${flightRow("heli_politie_aw139", "#3f74d8", "Zulu 26", "Rotterdam → Schiphol-Oost", "09:51", "1 u 12 min")}
+      ${flightRow("heli_lifeliner_ec135", "#9333ea", "Lifeliner 1", "VUmc → AMC Amsterdam", "08:40", "34 min")}
+      ${flightRow("heli_lifeliner_ec135", "#9333ea", "Lifeliner 3", "Basis Volkel → Radboudumc", "07:42", "49 min")}
+      ${flightRow("lucht_kustwacht_aw189", "#0891b2", "Kustwacht", "Den Helder → boven zee", "07:15", "2 u 05 min")}</div></div>
+    <div class="sec"><h3>Vrijdag 13 november</h3><div class="grp">
+      ${flightRow("heli_politie_ec135", "#3f74d8", "Zulu 05", "Schiphol-Oost → Utrecht", "22:31", "58 min")}
+      ${flightRow("lucht_chinook", "#7d9148", "Chinook", "Gilze-Rijen → Ede", "15:02", "41 min")}</div></div>
+    </div>${tabBar("historie")}</div>`;
+}
+function scrLock(W, H) {
+  return `<div class="ui lock">${statusBar(true)}
+    <div style="position:absolute;top:90px;left:0;right:0;text-align:center"><div style="font-size:20px;font-weight:600;opacity:.85">zaterdag 14 november</div>
+      <div style="font-size:96px;font-weight:700;letter-spacing:-.02em;line-height:1.05">9:41</div></div>
+    <div class="nt" style="top:300px"><img src="../../website/web/assets/img/app-icon.png" style="width:38px;height:38px;border-radius:9px">
+      <div style="flex:1"><div style="display:flex;justify-content:space-between;font-size:15px"><b>Lifeliner 3 is opgestegen</b><span style="opacity:.6;font-size:13px">nu</span></div>
+      <div style="font-size:15px;opacity:.9;margin-top:2px">Traumahelikopter vertrok van basis Volkel.</div></div></div>
+    <div class="nt" style="top:400px"><img src="../../website/web/assets/img/app-icon.png" style="width:38px;height:38px;border-radius:9px">
+      <div style="flex:1"><div style="display:flex;justify-content:space-between;font-size:15px"><b>Zulu 26 vliegt boven Thuis</b><span style="opacity:.6;font-size:13px">2 min</span></div>
+      <div style="font-size:15px;opacity:.9;margin-top:2px">Politiehelikopter</div></div></div>
+    <div class="la" style="bottom:120px">
+      <div style="display:flex;align-items:center;gap:12px"><img src="${IMG}heli_lifeliner_ec135.webp" style="width:100px;height:36px;object-fit:contain">
+        <div style="flex:1"><div style="font-size:17px;font-weight:600">Lifeliner 3</div><div style="font-size:12px;opacity:.7">Traumahelikopter</div></div>
+        <span style="font-size:12px;font-weight:700;padding:3px 8px;border-radius:99px;background:rgba(52,199,89,.3)">In de lucht</span></div>
+      <div style="display:flex;justify-content:space-between;margin-top:12px;font-size:12px">
+        ${[["Hoogte", "460 m"], ["Snelheid", "241 km/u"], ["Koers", "250° W"], ["Bijgewerkt", "09:41"]].map(([k, v]) => `<div><div style="font-size:11px;opacity:.7">${k}</div><b style="font-weight:600">${v}</b></div>`).join("")}</div></div>
+    <div style="position:absolute;bottom:22px;left:50%;transform:translateX(-50%);width:140px;height:5px;border-radius:3px;background:#fff"></div></div>`;
+}
+function scrMax(W, H) {
+  AC.max = { naam: "Max Verstappen", img: "lucht_verstappen", c: "#ff6600", x: 560, y: 410, w: 0 };
+  return scrMap(W, H, { inAir: 7, map: { dx: 0.05, ac: ["ll1", "z5", "kw", "max", "ll3", "z26"], mw: 74, sel: "max", at: PHONE_AT } });
+}
+const PHONE_AT = { ll1: [318, 282], kw: [520, 110], z5: [430, 505], z26: [300, 610], ch: [585, 640], ll3: [610, 420], max: [560, 330] };
+const CARD_MAP = { sel: "ll3", trail: TRAIL_LL3, zoom: 1.15, dx: -0.16, dy: -0.27, ac: ["ll3", "z5", "ch"], at: { ll3: [660, 555], z5: [520, 520], ch: [600, 700] } };
+const SCREENS = { kaart: (W, H) => scrMap(W, H, { map: { dx: 0.05, at: PHONE_AT } }), kaart_kaart: (W, H) => scrMap(W, H, { card: 1, inAir: 6, map: CARD_MAP }),
+  toestellen: scrList, instellingen: scrSettings, historie: scrHistory, toegangsscherm: scrLock, max: scrMax };
+
+// ------------------------------------------------------------------ devices and frames
+function rings() { return `<div class="rings">${[0, 14, 28, 40].map((p) => `<i style="inset:${p}%"></i>`).join("")}</div>`; }
+function headline(top, size, sub) {
+  return `<div class="head" style="top:${top}px"><h1 style="font-size:${size}px">${P.title}</h1>${P.sub ? `<p style="font-size:${size * 0.48}px;margin-top:${size * 0.32}px">${P.sub}</p>` : ""}</div>`;
+}
+function phone(W, H, screenHTML, lw, lh) {
+  // device occupies ~80% of the width, starting under the headline
+  const devW = W * 0.8, s = (devW * 0.94) / lw, scrW = lw * s, scrH = lh * s;
+  const bez = (devW - scrW) / 2, devH = scrH + bez * 2, top = H - devH * 0.975;
+  return `<div class="dev" style="top:${top}px;width:${devW}px;height:${devH}px;border-radius:${devW * 0.14}px">
+    <div class="scr" style="left:${bez}px;top:${bez}px;width:${lw}px;height:${lh}px;transform:scale(${s});border-radius:${(devW * 0.14 - bez) / s}px">${screenHTML}
+      <div style="position:absolute;left:50%;top:11px;width:126px;height:37px;margin-left:-63px;border-radius:20px;background:#000;z-index:30"></div></div></div>`;
+}
+function tablet(W, H, screenHTML, lw, lh) {
+  const devW = W * 0.8, s = (devW * 0.955) / lw, scrW = lw * s, scrH = lh * s;
+  const bez = (devW - scrW) / 2, devH = scrH + bez * 2, top = H - devH * 0.965;
+  return `<div class="dev" style="top:${top}px;width:${devW}px;height:${devH}px;border-radius:${devW * 0.05}px">
+    <div class="scr" style="left:${bez}px;top:${bez}px;width:${lw}px;height:${lh}px;transform:scale(${s});border-radius:${(devW * 0.05 - bez) / s}px">${screenHTML}</div></div>`;
+}
+function mac(W, H, screenHTML, lw, lh) {
+  const winW = W * 0.74, s = winW / lw, winH = lh * s, top = H - winH - H * 0.05;
+  return `<div style="position:absolute;left:50%;transform:translateX(-50%);top:${top}px;width:${winW}px;height:${winH}px;border-radius:${14 * s}px;overflow:hidden;box-shadow:0 40px 100px rgba(0,0,0,.6),0 0 0 1px rgba(255,255,255,.12)">
+    <div class="scr" style="left:0;top:0;width:${lw}px;height:${lh}px;transform:scale(${s})">${screenHTML}</div></div>`;
+}
+
+// iPad / Mac / TV screens: wide map with the card at the bottom left, a sidebar for lists.
+function wideMap(W, H, opt = {}) {
+  const tb = opt.mac ? `<div style="position:absolute;left:0;right:0;top:0;height:52px;background:rgba(246,246,248,.92);backdrop-filter:blur(20px);border-bottom:1px solid #ddd;display:flex;align-items:center;padding:0 20px;gap:10px;z-index:20">
+      <span style="display:flex;gap:8px">${["#ff5f57", "#febc2e", "#28c840"].map((c) => `<i style="width:12px;height:12px;border-radius:50%;background:${c};display:block"></i>`).join("")}</span>
+      <b style="margin-left:18px;font-size:15px">112Heli</b><span style="flex:1"></span>
+      ${["Kaart", "Toestellen", "Historie", "Instellingen"].map((t, i) => `<span style="font-size:13px;font-weight:600;padding:5px 12px;border-radius:7px;${i === 0 ? "background:rgba(39,71,232,.12);color:#2747e8" : "color:#333"}">${t}</span>`).join("")}<span style="flex:1"></span></div>` : "";
+  const top = opt.mac ? 66 : 62;
+  return `<div class="ui">${mapLayer(W, H, opt.map || {})}${opt.mac ? "" : statusBar()}${tb}
+    <div class="cap" style="left:${W / 2 - 230}px;width:460px;top:${top}px"><span class="dotg"></span>In de lucht: 6<span style="flex:1"></span><span class="ic">${I.eye}</span><span class="ic">${I.layers}</span></div>
+    ${opt.card ? `<div style="position:absolute;left:${W / 2 - 260}px;width:520px;bottom:${opt.mac ? 20 : 96}px;height:0">${card(0, 0)}</div>` : ""}
+    ${opt.mac ? "" : `<div class="tabs" style="left:${W / 2 - 230}px;right:auto;width:460px">${[["Kaart", I.map, 1], ["Toestellen", I.plane], ["Historie", I.clock], ["Instellingen", I.gear]].map(([t, ic, on]) => `<div class="tab ${on ? "on" : ""}">${ic}${t}</div>`).join("")}</div>`}</div>`;
+}
+function wideList(W, H, kind) {
+  const inner = kind === "historie" ? scrHistory(W, H) : kind === "instellingen" ? scrSettings(W, H) : scrList(W, H);
+  return `<div style="position:absolute;inset:0">${inner.replace('<div class="tabs">', `<div class="tabs" style="left:${W / 2 - 230}px;right:auto;width:460px">`)}</div>`;
+}
+function tvScreen(kind) {
+  const W = 1920, H = 1080;
+  const tabs = `<div style="position:absolute;top:40px;left:50%;transform:translateX(-50%);display:flex;gap:6px;padding:8px;border-radius:99px;background:rgba(20,24,38,.72);backdrop-filter:blur(30px);z-index:20">
+    ${["Kaart", "Toestellen", "Info"].map((t, i) => `<span style="font-size:29px;font-weight:600;padding:12px 34px;border-radius:99px;${(kind === "tv_kaart" ? i === 0 : i === 1) ? "background:#fff;color:#000" : "color:#fff"}">${t}</span>`).join("")}</div>`;
+  if (kind === "tv_kaart") {
+    const side = `<div style="position:absolute;right:60px;top:140px;bottom:60px;width:520px;border-radius:36px;background:rgba(20,24,38,.8);backdrop-filter:blur(30px);color:#fff;padding:34px;z-index:10">
+      <div style="font-size:31px;font-weight:700;margin-bottom:22px">In de lucht</div>
+      ${[["heli_lifeliner_ec135", "Lifeliner 3", "Boven Ede", "460 m · 241 km/u", 1], ["heli_lifeliner_ec135", "Lifeliner 1", "Boven Amsterdam", "310 m · 198 km/u"], ["heli_politie_aw139", "Zulu 26", "Boven Gouda", "260 m · 150 km/u"], ["heli_politie_ec135", "Zulu 05", "Boven Utrecht", "420 m · 176 km/u"], ["lucht_chinook", "Chinook", "Boven Veenendaal", "610 m · 220 km/u"]]
+        .map(([img, n, b, v, f]) => `<div style="display:flex;gap:18px;align-items:center;padding:16px;border-radius:22px;margin-bottom:10px;${f ? "background:rgba(255,255,255,.16);transform:scale(1.03)" : ""}">
+          <img src="${IMG}${img}.webp" style="width:120px;height:44px;object-fit:contain"><div><div style="font-size:27px;font-weight:600">${n}</div><div style="font-size:21px;opacity:.7">${b}</div><div style="font-size:19px;opacity:.55">${v}</div></div></div>`).join("")}
+      <div style="position:absolute;bottom:30px;font-size:19px;opacity:.55">Bijgewerkt 09:41</div></div>`;
+    return `<div class="ui" style="background:#000">${mapLayer(W, H, { mw: 120, zoom: 1.0, dx: -0.12 })}${tabs}${side}</div>`;
+  }
+  const tile = (img, c, n, s, st, pl, on) => `<div style="border-radius:28px;background:${on ? "#fff" : "rgba(255,255,255,.08)"};color:${on ? "#000" : "#fff"};padding:26px;${on ? "transform:scale(1.06);box-shadow:0 30px 60px rgba(0,0,0,.5)" : ""}">
+      <div style="height:110px;border-radius:18px;background:${c}33;display:grid;place-items:center"><img src="${IMG}${img}.webp" style="height:84px;max-width:88%;object-fit:contain"></div>
+      <div style="font-size:29px;font-weight:700;margin-top:18px">${n}</div><div style="font-size:21px;opacity:.65">${s}</div>
+      <div style="font-size:21px;font-weight:700;margin-top:10px;color:${st === "In de lucht" ? "#22c55e" : "inherit"}">${st}</div><div style="font-size:19px;opacity:.6">${pl}</div></div>`;
+  return `<div class="ui" style="background:linear-gradient(180deg,#1b2340,#0d111c);color:#fff">${tabs}
+    <div style="position:absolute;left:90px;top:150px;font-size:58px;font-weight:700">Toestellen</div>
+    <div style="position:absolute;left:90px;right:90px;top:250px;display:grid;grid-template-columns:repeat(4,1fr);gap:40px">
+      ${tile("heli_lifeliner_ec135", "#9333ea", "Lifeliner 3", "Traumahelikopter · basis Volkel", "In de lucht", "Boven Ede", 1)}
+      ${tile("heli_lifeliner_ec135", "#9333ea", "Lifeliner 1", "Traumahelikopter · basis Amsterdam", "In de lucht", "Boven Amsterdam")}
+      ${tile("heli_politie_aw139", "#3f74d8", "Zulu 26", "Politiehelikopter · PH-PXZ", "In de lucht", "Boven Gouda")}
+      ${tile("heli_politie_ec135", "#3f74d8", "Zulu 05", "Politiehelikopter · PH-PXE", "In de lucht", "Boven Utrecht")}
+      ${tile("lucht_kustwacht_aw189", "#0891b2", "Kustwacht", "Kustwacht helikopter · AW189", "Op de basis", "Den Helder")}
+      ${tile("lucht_chinook", "#7d9148", "Chinook", "Defensie · CH-47", "In de lucht", "Boven Veenendaal")}
+      ${tile("heli_lifeliner_ec135", "#9333ea", "Lifeliner 2", "Traumahelikopter · basis Rotterdam", "Op de basis", "Rotterdam The Hague Airport")}
+      ${tile("lucht_verstappen", "#ff6600", "Max Verstappen", "Privéjet · PH-UTL", "Uit beeld", "Gezien 2 dagen geleden")}</div></div>`;
+}
+
+// ------------------------------------------------------------------ marketing heroes (header / search results)
+function hero(W, H) {
+  const u = Math.min(W / 1920, H / 1080);   // unit
+  const phoneW = H * 0.42, lw = 402, lh = 874, s = (phoneW * 0.94) / lw, scrH = lh * s, bez = (phoneW - lw * s) / 2, devH = scrH + bez * 2;
+  const ph = (x, y, html) => `<div class="dev" style="left:${x}px;transform:none;top:${y}px;width:${phoneW}px;height:${devH}px;border-radius:${phoneW * 0.14}px">
+      <div class="scr" style="left:${bez}px;top:${bez}px;width:${lw}px;height:${lh}px;transform:scale(${s});border-radius:${(phoneW * 0.14 - bez) / s}px">${html}
+      <div style="position:absolute;left:50%;top:11px;width:126px;height:37px;margin-left:-63px;border-radius:20px;background:#000;z-index:30"></div></div></div>`;
+  const wide = W / H > 2;
+  const textW = wide ? W * 0.42 : W * 0.46;
+  return `<div class="bg">${rings()}</div>
+    <div style="position:absolute;left:${W * 0.07}px;top:${H * (wide ? 0.24 : 0.2)}px;width:${textW}px;color:#fff">
+      <div style="display:flex;align-items:center;gap:${40 * u}px"><img src="../../website/web/assets/img/app-icon.png" style="width:${170 * u}px;height:${170 * u}px;border-radius:22%;box-shadow:0 ${20 * u}px ${50 * u}px rgba(0,0,0,.5)">
+        <span style="font-family:Poppins;font-weight:700;font-size:${110 * u}px">112Heli</span></div>
+      <h1 style="font-family:Poppins;font-weight:700;font-size:${(wide ? 92 : 84) * u}px;line-height:1.08;margin-top:${50 * u}px">Alles wat vliegt voor de <b style="color:#8aa0ff">hulpdiensten</b>. Live.</h1>
+      <p style="font-family:Poppins;font-weight:500;font-size:${(wide ? 40 : 38) * u}px;color:#c8d0ea;margin-top:${30 * u}px;line-height:1.35">Lifeliner, politiehelikopter, Kustwacht en Defensie op de kaart. Met melding bij opstijgen.</p></div>
+    ${ph(W * (wide ? 0.6 : 0.56), H * 0.16, scrMap(lw, lh, { card: 1, map: CARD_MAP }))}
+    ${ph(W * (wide ? 0.6 : 0.56) + phoneW * 0.78, H * 0.26, scrList(lw, lh))}`;
+}
+
+// ------------------------------------------------------------------ assemble
+const W = P.W, H = P.H;
+let html = "";
+if (P.kind === "header" || P.kind === "search") {
+  html = hero(W, H);
+} else if (P.kind === "tv") {
+  html = `<div style="position:absolute;left:0;top:0;width:1920px;height:1080px;transform:scale(${W / 1920});transform-origin:0 0">${tvScreen(P.screen)}</div>`;
+} else {
+  const isPhone = P.kind === "iphone", isPad = P.kind === "ipad";
+  const hs = isPhone ? W * 0.083 : isPad ? W * 0.062 : W * 0.04;
+  let dev;
+  if (isPhone) dev = phone(W, H, (SCREENS[P.screen])(402, 874), 402, 874);
+  else if (isPad) {
+    const lw = 1032, lh = 1376;
+    const scr = P.screen.startsWith("kaart") ? wideMap(lw, lh, { card: P.screen === "kaart_kaart", map: P.screen === "kaart_kaart" ? { sel: "ll3", trail: TRAIL_LL3, zoom: 1.6, dy: -0.06, dx: -0.12, mw: 92 } : { mw: 92 } }) : wideList(lw, lh, P.screen);
+    dev = tablet(W, H, scr, lw, lh);
+  } else {
+    const lw = 1440, lh = 860;
+    const scr = P.screen === "mac_lijst" ? wideList(lw, lh, "toestellen").replace(/<div class="tabs"[\s\S]*?<\/div><\/div>$/, "") : wideMap(lw, lh, { mac: 1, card: P.screen === "mac_kaart", map: { mw: 96, zoom: P.screen === "mac_kaart" ? 1.5 : 1.0, sel: P.screen === "mac_kaart" ? "ll3" : null, trail: P.screen === "mac_kaart" ? TRAIL_LL3 : null, dy: P.screen === "mac_kaart" ? -0.04 : 0, dx: P.screen === "mac_kaart" ? -0.13 : 0 } });
+    dev = mac(W, H, scr, lw, lh);
+  }
+  html = `<div class="bg">${rings()}</div>${headline(isPhone ? H * 0.045 : isPad ? H * 0.04 : H * 0.05, hs)}${dev}`;
+}
+document.getElementById("root").innerHTML = html;
+</script></body></html>

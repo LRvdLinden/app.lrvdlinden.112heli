@@ -1,0 +1,18 @@
+Privacyverklaring 112Heli
+
+112Heli verzamelt zo weinig mogelijk. Geen account, geen advertenties, geen tracking.
+
+De app
+- Pushmeldingen. Zet je meldingen aan, dan bewaren we het pushadres van je toestel en je keuzes (welke soorten, je favorieten, je zones) om je meldingen te kunnen sturen. Zet je ze uit, dan sturen we niets meer.
+- Locatie. Alleen als je dat toestaat, en afgerond op ongeveer een kilometer, om meldingen uit je eigen omgeving te sturen en de afstand tot een toestel te tonen. We houden geen locatiegeschiedenis bij.
+- Toestel melden. Stuur je een melding dat een toestel ontbreekt of niet klopt, dan bewaren we je tekst en het toestel, zonder je naam.
+- Live Activity. Volg je een toestel op het toegangsscherm, dan bewaren we het adres van die Live Activity tot de vlucht voorbij is.
+- Weer. Het weer bij een toestel komt van Apple Weer (WeatherKit), voor de positie van het toestel, niet die van jou.
+
+De gegevens over toestellen
+Posities komen van adsb.lol (Open Database License): signalen die toestellen zelf openbaar uitzenden. We tonen alleen hulpdiensten, Defensie (alleen Nederlandse toestellen), Kustwacht, Marechaussee, het regeringsvliegtuig en, voor de lol, de jet van Max Verstappen. Vluchten bewaren we 30 dagen.
+
+Vragen
+https://112heli.lrvdlinden.app/support/
+
+Laatst bijgewerkt: november 2026.

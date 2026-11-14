@@ -1,0 +1,1 @@
+112Heli op Apple TV toont alleen de live kaart en de lijst met toestellen. De Apple TV-app verzamelt geen gegevens: geen account, geen locatie, geen pushmeldingen, geen tracking. Posities komen van adsb.lol (Open Database License). Volledige privacyverklaring: https://112heli.lrvdlinden.app/privacy/

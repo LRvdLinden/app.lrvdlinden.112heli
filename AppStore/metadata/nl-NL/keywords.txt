@@ -1,0 +1,1 @@
+helikopter,lifeliner,zulu,politie,traumaheli,kustwacht,defensie,p2000,adsb,radar,vliegtuig,chinook

@@ -1,0 +1,18 @@
+112Heli privacy policy
+
+112Heli collects as little as possible. No account, no ads, no tracking.
+
+The app
+- Push notifications. If you turn on notifications, we store your device's push address and your choices (which kinds of aircraft, your favourites, your zones) so we can send you alerts. If you turn them off, we send nothing.
+- Location. Only if you allow it, rounded to about one kilometre, to send alerts from your own area and to show the distance to an aircraft. We keep no location history.
+- Report an aircraft. If you report that an aircraft is missing or wrong, we store your text and the aircraft, without your name.
+- Live Activity. If you follow an aircraft on your Lock Screen, we store the address of that Live Activity until the flight is over.
+- Weather. The weather at an aircraft comes from Apple Weather (WeatherKit), for the aircraft's position, not yours.
+
+Aircraft data
+Positions come from adsb.lol (Open Database License): signals that aircraft broadcast publicly themselves. We only show emergency services, Defence (Dutch aircraft only), Coastguard, Royal Marechaussee, the government aircraft and, just for fun, Max Verstappen's jet. Flights are kept for 30 days.
+
+Questions
+https://112heli.lrvdlinden.app/support/
+
+Last updated: November 2026.

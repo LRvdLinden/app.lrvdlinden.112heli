@@ -1,0 +1,32 @@
+Hoor je een helikopter en vraag je je af waar hij heen gaat? Met 112Heli zie je live alles wat voor de hulpdiensten vliegt boven Nederland: de Lifeliners (traumahelikopters), de politiehelikopters (Zulu), de Kustwacht, Defensie, de Marechaussee en het regeringsvliegtuig. En voor de lol ook de jet van Max Verstappen.
+
+LIVE KAART
+• Alle toestellen op Apple Kaarten, met hun eigen tekening en naam
+• Tik op een toestel voor koers, hoogte en snelheid, en waar het nu boven vliegt
+• Bekijk de route van deze vlucht, de laatste 30 minuten of 2 uur, en speel de vlucht terug
+• Waar geweest: een lijst van plaatsen met tijden, en de laatste vluchten met duur en afstand
+• Ziekenhuizen en helikopterbases op de kaart
+• Verberg toestellen die niet vliegen met één tik
+
+MELDINGEN
+• Een melding als een Lifeliner of Zulu opstijgt in jouw gebied
+• Eigen zones: een melding als er iets boven je wijk of plaats vliegt
+• Een melding bij meerdere helikopters op één plek, vaak bij een groot incident
+• Favorieten: een melding als ze opstijgen of landen, en als ze van roepnaam wisselen
+• Een eigen helikoptergeluid
+
+MEER
+• Lijst van alle toestellen: in de lucht, op de basis, op de grond of uit beeld
+• Historie van 30 dagen, met de landingsplek: ziekenhuis, basis of op locatie
+• Volg een toestel op je toegangsscherm met een Live Activity
+• Widgets voor wat er in de lucht is en voor je favorieten
+• Weer dat vliegen beperkt (KNMI)
+• Ook op iPad, Mac en Apple TV
+
+PRIVACY
+Geen account, geen advertenties en geen tracking. Je locatie wordt alleen gebruikt als je dat toestaat, afgerond op ongeveer een kilometer.
+
+GOED OM TE WETEN
+112Heli toont signalen die toestellen zelf openbaar uitzenden (ADS-B, via adsb.lol). Een toestel dat zijn positie niet uitzendt, staat niet op de kaart. 112Heli is een onafhankelijke app en hoort niet bij de politie, de ANWB, de Kustwacht of Defensie.
+
+Gemaakt door LRvdLinden. In de app vind je ook de andere apps van de ontwikkelaar.
