@@ -103,9 +103,22 @@ const WERELD = [
   ["Austin", "Verenigde Staten", 30.27, -97.74], ["Las Vegas", "Verenigde Staten", 36.17, -115.14], ["New York", "Verenigde Staten", 40.71, -74.01],
   ["Mexico-Stad", "Mexico", 19.43, -99.13], ["São Paulo", "Brazilië", -23.55, -46.63], ["Reykjavik", "IJsland", 64.15, -21.94], ["Gander", "Canada", 48.95, -54.61],
 ];
+/** The Dutch coast (lat → lon) from Vlissingen to Den Helder, for "boven de Noordzee". */
+const KUST = [[51.40, 3.45], [51.70, 3.65], [51.98, 4.10], [52.10, 4.26], [52.46, 4.55], [52.96, 4.72], [53.20, 4.85]];
+function kustLon(lat) {
+  if (lat <= KUST[0][0]) return KUST[0][1];
+  for (let i = 1; i < KUST.length; i++) {
+    const [a, b] = [KUST[i - 1], KUST[i]];
+    if (lat <= b[0]) return a[1] + ((lat - a[0]) / (b[0] - a[0])) * (b[1] - a[1]);
+  }
+  return KUST.at(-1)[1];
+}
+
 export function wereldPlaats(lat, lon) {
   if (lat == null || lon == null) return null;
-  // Inside the Dutch circle: above sea or a border area, keep it null (A-Alerts behaviour).
+  // Off the Dutch coast and north of the Wadden islands: the North Sea.
+  if (lat > 51.2 && lat < 56 && lon > 1.5 && lon < 7.2 && (lon < kustLon(lat) - 0.03 || lat > 53.55)) return "de Noordzee";
+  // Inside the Dutch circle: a border area, keep it null (A-Alerts behaviour).
   if (distanceKm(lat, lon, 52.2, 5.4) < 150) return null;
   let best = null;
   for (const [stad, land, la, lo] of WERELD) {

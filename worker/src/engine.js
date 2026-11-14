@@ -68,6 +68,28 @@ async function learned(env) {
   return { heli, lucht };
 }
 
+/**
+ * Speed (kn) and track (°). Some records (e.g. a Dash 8 of the Coastguard) come without them: then they are worked out from
+ * the previous position (at most 3 minutes old), or the last known values are kept.
+ */
+export function speedAndTrack(ac, prev, t) {
+  let gs = Number.isFinite(ac.gs) ? ac.gs : null;
+  let track = Number.isFinite(ac.track) ? ac.track : Number.isFinite(ac.true_heading) ? ac.true_heading : null;
+  if ((gs == null || track == null) && prev?.lat != null && prev?.seen_at && t - prev.seen_at > 0 && t - prev.seen_at <= 180) {
+    const km = distanceKm(prev.lat, prev.lon, ac.lat, ac.lon);
+    if (km > 0.05) {
+      if (gs == null) gs = Math.round((km / ((t - prev.seen_at) / 3600)) / 1.852);
+      if (track == null) {
+        const rad = Math.PI / 180, dLon = (ac.lon - prev.lon) * rad;
+        const y = Math.sin(dLon) * Math.cos(ac.lat * rad);
+        const x = Math.cos(prev.lat * rad) * Math.sin(ac.lat * rad) - Math.sin(prev.lat * rad) * Math.cos(ac.lat * rad) * Math.cos(dLon);
+        track = Math.round(((Math.atan2(y, x) / rad) + 360) % 360);
+      }
+    }
+  }
+  return { gs: gs ?? prev?.gs ?? null, track: track ?? prev?.track ?? null };
+}
+
 /** One ingest pass. Returns a small summary for logging. */
 export async function ingest(env, records) {
   const t = now();
@@ -101,7 +123,7 @@ export async function ingest(env, records) {
     const airborne = isAirborne(ac);
     const alt = altitude(ac);
     const s = {
-      lat: ac.lat, lon: ac.lon, alt, gs: Number.isFinite(ac.gs) ? ac.gs : null, track: Number.isFinite(ac.track) ? ac.track : null,
+      lat: ac.lat, lon: ac.lon, alt, ...speedAndTrack(ac, prev, t),
       airborne: airborne ? 1 : 0, seen_at: t,
       airborne_since: prev?.airborne_since ?? null, landed_at: prev?.landed_at ?? null,
       flight_id: prev?.flight_id ?? null, pos_at: prev?.pos_at ?? null,

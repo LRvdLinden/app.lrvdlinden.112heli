@@ -290,3 +290,15 @@ test("Coastguard Dash 8 with a Canadian transponder address and callsign NCG01",
   const far = classify({ ...ac, hex: "abcdef", r: "", lat: 54.6, lon: 2.5 }, new Map(), new Map());
   assert.equal(far.naam, "Kustwacht NCG01");
 });
+
+test("speed and track worked out when the record lacks them; North Sea", async () => {
+  const { speedAndTrack } = await import("../src/engine.js");
+  const { bovenPlaats } = await import("../src/fleet.js");
+  const r = speedAndTrack({ lat: 53.466, lon: 4.730 }, { lat: 53.517, lon: 4.976, seen_at: 1000, gs: null, track: null }, 1060);
+  assert.ok(r.gs > 500 && r.gs < 600, String(r.gs));
+  assert.ok(r.track > 240 && r.track < 260, String(r.track));
+  assert.deepEqual(speedAndTrack({ lat: 1, lon: 1, gs: 150, track: 90 }, null, 0), { gs: 150, track: 90 });
+  assert.equal(bovenPlaats(53.466, 4.30), "de Noordzee");
+  assert.equal(bovenPlaats(53.70, 5.5), "de Noordzee");
+  assert.notEqual(bovenPlaats(52.37, 4.9), "de Noordzee");
+});
