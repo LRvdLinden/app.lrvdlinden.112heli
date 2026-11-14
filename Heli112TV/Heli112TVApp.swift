@@ -65,7 +65,7 @@ struct TVMapView: View {
                 }
                 ForEach(store.visibleAircraft.filter { $0.coordinate != nil }) { a in
                     Annotation(a.title, coordinate: a.coordinate!, anchor: .center) {
-                        HeliMarker(aircraft: a, selected: selectedHex == a.hex, size: 44, topView: true)
+                        HeliMarker(aircraft: a, selected: selectedHex == a.hex, size: 44)
                     }
                     .annotationTitles(.hidden)
                 }

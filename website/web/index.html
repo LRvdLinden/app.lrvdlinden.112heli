@@ -1,0 +1,178 @@
+<!doctype html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>112Heli – Lifeliners, politiehelikopters en Kustwacht live op de kaart</title>
+<meta name="description" content="Zie live waar de Lifeliners, politiehelikopters (Zulu), Kustwacht en Defensie vliegen. Met melding bij opstijgen, landingsplek en historie.">
+<link rel="canonical" href="https://112heli.lrvdlinden.app/">
+<meta name="theme-color" content="#0d111c">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" href="/favicon.png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="manifest" href="/site.webmanifest">
+<link rel="preload" href="/assets/fonts/Poppins-Bold.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/assets/css/site.css?v=1">
+<script src="/assets/js/config.js?v=1"></script>
+</head>
+<body>
+<header class="nav">
+  <div class="wrap">
+    <a class="brand" href="/"><img src="/assets/img/app-icon.png" alt="" width="34" height="34">112Heli</a>
+    <nav class="nav-links" aria-label="Hoofdmenu">
+      <a href="/kaart/" class="keep">Live kaart</a>
+      <a href="/toestellen/" class="">Toestellen</a>
+      <a href="/support/" class="">Hulp</a>
+      <a class="nav-cta" href="/#download" data-appstore><span>Download</span></a>
+    </nav>
+  </div>
+</header>
+<main>
+<section class="hero">
+  <div class="flyby" aria-hidden="true"><img src="/assets/img/heli_lifeliner_ec135.webp" alt=""></div>
+  <div class="flyby two" aria-hidden="true"><img src="/assets/img/heli_politie_aw139.webp" alt=""></div>
+  <div class="wrap">
+    <div>
+      <span class="pill reveal"><span class="dot"></span><span data-inair>Live</span></span>
+      <h1 class="reveal" style="--d:.08s;margin-top:18px">Alles wat vliegt voor de <span class="glow">hulpdiensten</span>. Live.</h1>
+      <p class="lead reveal" style="--d:.16s">Lifeliners, politiehelikopters, Kustwacht, Defensie en meer op één kaart. Zie wie er opstijgt, waar ze landen en wat er boven jouw wijk vliegt.</p>
+      <div class="hero-actions reveal" style="--d:.24s">
+        <a class="btn btn-primary" href="/kaart/">Open de live kaart</a>
+        <a class="btn btn-ghost" href="#download" data-appstore><span>Download de app</span></a>
+      </div>
+      <p class="muted reveal" style="--d:.3s;font-size:.9rem">Voor iPhone, iPad, Mac en Apple TV · <span class="badge-112">112</span></p>
+      <div id="weer" class="banner weer" hidden></div>
+    </div>
+    <div class="radar reveal" style="--d:.15s" role="img" aria-label="Radar met de toestellen die nu in de lucht zijn">
+      <span class="pulse"></span><span class="pulse"></span>
+      <span class="ring" style="--i:0"></span><span class="ring" style="--i:16%"></span><span class="ring" style="--i:32%"></span>
+      <span class="cross"></span><span class="sweep"></span>
+      <div id="radarBlips"></div>
+    </div>
+  </div>
+  <a class="scroll-hint" href="#live" aria-label="Naar beneden"><span></span></a>
+</section>
+
+<div class="ticker" id="live" aria-label="Nu in de lucht"><div class="ticker-move" id="tickerMove"></div></div>
+
+<section class="block">
+  <div class="wrap center">
+    <span class="eyebrow reveal">Op dit moment</span>
+    <h2 class="reveal">De lucht boven Nederland, nu</h2>
+    <div class="stats">
+      <div class="stat reveal"><b id="sAir">0</b><span>toestellen in de lucht</span></div>
+      <div class="stat reveal" style="--d:.06s"><b id="sHeli">0</b><span>helikopters daarvan</span></div>
+      <div class="stat reveal" style="--d:.12s"><b id="sKnown">0</b><span>gezien in 14 dagen</span></div>
+      <div class="stat reveal" style="--d:.18s"><b id="sInc">0</b><span>keer meerdere heli's op één plek</span></div>
+    </div>
+  </div>
+</section>
+
+<section class="block" style="padding-top:0">
+  <div class="wrap">
+    <div class="center">
+      <span class="eyebrow reveal">Wat 112Heli doet</span>
+      <h2 class="reveal">Weten wat er boven je vliegt</h2>
+      <p class="lead reveal">Gemaakt voor iedereen die opkijkt als er een helikopter overkomt.</p>
+    </div>
+    <div class="features">
+      <article class="feature reveal" style="--d:0.00s"><div class="ico">🗺️</div><h3>Live kaart</h3><p>Alle hulpdiensttoestellen op Apple Kaarten, met route, hoogte, snelheid en koers.</p></article>
+      <article class="feature reveal" style="--d:0.07s"><div class="ico">🔔</div><h3>Melding bij opstijgen</h3><p>Een pushmelding als een Lifeliner of Zulu in jouw buurt de lucht in gaat, met een eigen helikoptergeluid.</p></article>
+      <article class="feature reveal" style="--d:0.14s"><div class="ico">📍</div><h3>Eigen zone</h3><p>Een melding als er iets boven jouw wijk of plaats vliegt, welk toestel het ook is.</p></article>
+      <article class="feature reveal" style="--d:0.21s"><div class="ico">🚨</div><h3>Meerdere heli's op één plek</h3><p>Staan twee of meer helikopters bij elkaar, niet bij een ziekenhuis of basis? Dan is er vaak iets groots aan de hand.</p></article>
+      <article class="feature reveal" style="--d:0.00s"><div class="ico">🏥</div><h3>Landingsplek</h3><p>Geland bij een ziekenhuis, terug op de basis of op locatie: je ziet het meteen, en in de vluchtenlijst.</p></article>
+      <article class="feature reveal" style="--d:0.07s"><div class="ico">🌫️</div><h3>Weer dat vliegen beperkt</h3><p>Bij mist, onweer of harde wind (KNMI) zie je dat er weinig helikopterinzet te verwachten is.</p></article>
+      <article class="feature reveal" style="--d:0.14s"><div class="ico">⭐</div><h3>Favorieten en widgets</h3><p>Volg je favoriete toestel op het beginscherm, in een widget en als Live Activity op het toegangsscherm.</p></article>
+      <article class="feature reveal" style="--d:0.21s"><div class="ico">📺</div><h3>Apple TV</h3><p>Een groot meldkamerscherm met de kaart en alles wat nu in de lucht is.</p></article>
+    </div>
+  </div>
+</section>
+
+<section class="block">
+  <div class="wrap routes">
+    <div>
+      <span class="eyebrow reveal">Volg elke vlucht</span>
+      <h2 class="reveal">Van basis tot landingsplek</h2>
+      <p class="lead reveal">Elk toestel laat een spoor achter. Zo zie je waar een Lifeliner vandaan komt, waar hij naartoe gaat en waar hij landt: bij een ziekenhuis, op locatie of terug op de basis.</p>
+      <a class="btn btn-primary reveal" href="/kaart/">Bekijk de live kaart</a>
+    </div>
+    <div class="routemap reveal" style="--d:.1s"><svg viewBox="0 0 600 545" preserveAspectRatio="none" aria-hidden="true">
+  <path id="r1" class="path" stroke="#9333ea" d="M90,420 C170,300 260,260 330,250 S470,170 520,80"/>
+  <path id="r2" class="path" stroke="#3f74d8" d="M60,120 C180,150 230,250 300,300 S420,420 540,470"/>
+  <path id="r3" class="path" stroke="#0891b2" d="M30,260 C120,230 140,120 230,90 S360,60 420,140 S500,300 580,280"/>
+</svg>
+<div class="mover" style="offset-path:path('M90,420 C170,300 260,260 330,250 S470,170 520,80');--t:12s"><img src="/assets/img/heli_lifeliner_ec135.webp" alt=""></div>
+<div class="mover" style="offset-path:path('M60,120 C180,150 230,250 300,300 S420,420 540,470');--t:15s;--delay:-5s"><img src="/assets/img/heli_politie_aw139.webp" alt=""></div>
+<div class="mover" style="offset-path:path('M30,260 C120,230 140,120 230,90 S360,60 420,140 S500,300 580,280');--t:18s;--delay:-9s"><img src="/assets/img/lucht_kustwacht_aw189.webp" alt=""></div>
+<span class="spot" style="left:15%;top:77%;--c:#a855f7">Basis</span>
+<span class="spot incident" style="left:55%;top:46%">Meerdere heli's op één plek</span>
+<span class="spot" style="left:87%;top:15%;--c:#ef4444">Ziekenhuis</span></div>
+  </div>
+</section>
+
+<section class="block" style="padding-top:0">
+  <div class="wrap">
+    <div class="center">
+      <span class="eyebrow reveal">Alles wat vliegt</span>
+      <h2 class="reveal">Zeventien soorten, elk met een eigen tekening</h2>
+      <p class="lead reveal">Van Lifeliner tot Chinook en van Kustwacht tot het regeringsvliegtuig. Bij Defensie alleen Nederlandse toestellen.</p>
+    </div>
+    <div class="gallery" id="gallery"></div>
+  </div>
+</section>
+
+<section class="block max">
+  <div class="wrap">
+    <div>
+      <span class="eyebrow reveal" style="color:var(--orange)">En voor de lol</span>
+      <h2 class="reveal">Volg ook de jet van <span>Max Verstappen</span></h2>
+      <p class="lead reveal">PH-UTL, een Falcon 8X. Vliegt hij boven Nederland, dan zie je hem in 112Heli, met een eigen oranje tekening.</p>
+      <a class="btn reveal" style="background:var(--orange);color:#fff" href="/toestellen/#verstappen">Over de jet</a>
+    </div>
+    <img class="jet reveal" src="/assets/img/lucht_verstappen.webp" alt="De jet van Max Verstappen" loading="lazy">
+  </div>
+</section>
+
+<section class="block download" id="download">
+  <div class="wrap">
+    <img class="appicon reveal" src="/assets/img/app-icon.png" alt="112Heli app-icoon" width="128" height="128">
+    <h2 class="reveal">112Heli in je broekzak</h2>
+    <p class="lead reveal" style="margin:0 auto 26px">Gratis. Met pushmeldingen, widgets, Live Activities en een meldkamerscherm op je Apple TV.</p>
+    <a class="btn btn-primary reveal" href="#download" data-appstore><span>Binnenkort in de App Store</span></a>
+    <div class="platforms reveal"><span>iPhone</span><span>iPad</span><span>Mac</span><span>Apple TV</span></div>
+  </div>
+</section>
+</main>
+<footer>
+  <div class="wrap">
+    <div class="foot">
+      <div>
+        <a class="brand" href="/"><img src="/assets/img/app-icon.png" alt="" width="34" height="34">112Heli</a>
+        <p class="muted" style="margin-top:12px;max-width:30em">Alles wat vliegt voor de hulpdiensten, live: Lifeliners, politiehelikopters, Kustwacht, Defensie, Marechaussee en PH-GOV.</p>
+        <nav aria-label="Voettekst">
+          <a href="/kaart/">Live kaart</a><a href="/toestellen/">Toestellen</a><a href="/support/">Hulp</a><a href="/privacy/">Privacy</a>
+        </nav>
+      </div>
+      <div>
+        <p class="eyebrow">Ontdekken</p>
+        <a class="more-apps" href="https://lrvdlinden.app" rel="noopener">
+          <svg class="lr" viewBox="0 0 512 512" aria-hidden="true"><rect width="512" height="512" rx="116" fill="#121726"/>
+<path d="M132 146v224h100M292 370V146h48a62 62 0 0 1 0 124h-48M338 270l52 100" fill="none" stroke="#fff" stroke-width="46" stroke-linecap="round" stroke-linejoin="round"/>
+<circle cx="404" cy="126" r="34" fill="#4c6bff" stroke="#121726" stroke-width="14"/></svg>
+          <span><b>Meer apps van de ontwikkelaar</b><small>Apps voor iPhone, iPad, Apple TV en Homey</small></span>
+          <span class="go">Bekijk</span>
+        </a>
+      </div>
+    </div>
+    <div class="app-info">
+      <img src="/assets/img/app-icon.png" alt="" width="56" height="56">
+      <span>Versie: <span data-version>1.0.0</span></span>
+      <span>© <span data-year>2026</span> 112Heli</span>
+    </div>
+    <p class="credits">Posities: adsb.lol (ODbL) · Ziekenhuizen en bases: OpenStreetMap (ODbL) · Plaatsen: PDOK · Kaart: Apple Kaarten.
+    Een toestel dat zijn positie niet uitzendt, staat niet op de kaart.</p>
+  </div>
+</footer>
+<script type="module" src="/assets/js/home.js?v=1"></script>
+</body>
+</html>

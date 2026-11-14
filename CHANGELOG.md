@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.0.0 (4)
+- Op de kaart weer de eigen tekeningen in zijaanzicht; het bovenaanzicht is weg.
+
 ## 1.0.0 (3)
 - Eigen server in het Cloudflare-account 112heli: `112heli-api.112heli.workers.dev`.
 
@@ -20,7 +23,7 @@
 - Melding als een favoriet van roepnaam wisselt.
 - Status per toestel (in de lucht, op de basis, op de grond, uit beeld) en de leeftijd van elke positie.
 - Weer dat vliegen beperkt (KNMI, via A-Alerts).
-- Bovenaanzicht op de kaart dat meedraait met de koers; eigen helikoptergeluid.
+- Eigen helikoptergeluid.
 - Meld een toestel dat ontbreekt of niet klopt.
 - Bundle ID en App Group gelijk aan wat al in het developer-account stond (`app.lrvdlinden.112HELI`).
 - Apple TV: meldkamer-kaart met de toestellen in de lucht.

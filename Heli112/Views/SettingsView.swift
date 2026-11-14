@@ -134,7 +134,7 @@ struct WhatsNewView: View {
                 Label("Status per toestel en de leeftijd van elke positie", systemImage: "clock")
                 Label("Melding als een favoriet van roepnaam wisselt", systemImage: "arrow.triangle.2.circlepath")
                 Label("Weer dat vliegen beperkt (KNMI)", systemImage: "cloud.fog")
-                Label("Bovenaanzicht dat meedraait met de koers, en een eigen helikoptergeluid", systemImage: "location.north.line")
+                Label("Een eigen helikoptergeluid bij meldingen", systemImage: "speaker.wave.2")
                 Label("Meld een toestel dat ontbreekt of niet klopt", systemImage: "exclamationmark.bubble")
                 Label("En voor de lol: de jet van Max Verstappen", systemImage: "flag.checkered")
             }

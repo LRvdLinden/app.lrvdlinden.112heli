@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Live kaart – 112Heli</title>
+<meta name="description" content="Live kaart met Apple Kaarten: Lifeliners, politiehelikopters, Kustwacht en Defensie in de lucht boven Nederland.">
+<link rel="canonical" href="https://112heli.lrvdlinden.app/kaart/">
+<meta name="theme-color" content="#0d111c">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" href="/favicon.png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="manifest" href="/site.webmanifest">
+<link rel="preload" href="/assets/fonts/Poppins-Bold.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/assets/css/site.css?v=1">
+<script src="/assets/js/config.js?v=1"></script>
+</head>
+<body>
+<header class="nav" data-solid="1">
+  <div class="wrap">
+    <a class="brand" href="/"><img src="/assets/img/app-icon.png" alt="" width="34" height="34">112Heli</a>
+    <nav class="nav-links" aria-label="Hoofdmenu">
+      <a href="/kaart/" class="keep" aria-current="page">Live kaart</a>
+      <a href="/toestellen/" class="">Toestellen</a>
+      <a href="/support/" class="">Hulp</a>
+      <a class="nav-cta" href="/#download" data-appstore><span>Download</span></a>
+    </nav>
+  </div>
+</header>
+<main class="mapapp">
+  <aside>
+    <h1 style="font-size:1.5rem;margin-bottom:12px">Live kaart</h1>
+    <div class="chips" id="chips" aria-label="Soorten tonen"></div>
+    <div id="banners"></div>
+    <div id="detail" class="detail" hidden></div>
+    <div id="list"><div class="empty">Laden…</div></div>
+    <p class="credits" style="text-align:left">Posities: adsb.lol (ODbL). Een icoon met "positie … oud" zendt even niets uit.</p>
+  </aside>
+  <div id="map" aria-label="Kaart met toestellen"></div>
+</main>
+<script type="module" src="/assets/js/kaart.js?v=1"></script>
+</body>
+</html>

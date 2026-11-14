@@ -39,35 +39,22 @@ extension AircraftThumb {
     }
 }
 
-/// Map marker. Top view (default): turns with the course. Side view: the A-Alerts drawing, mirrored when flying west.
+/// Map marker like in A-Alerts: the drawing, mirrored when flying west, and the name.
 /// Older than a minute it turns grey with "positie 40 s oud", so a standing icon is not taken for live.
 struct HeliMarker: View {
     let aircraft: Aircraft
     var selected = false
-    /// Height of the side-view drawing in points (it is about 2.8× as wide); the top view is 1.4× this.
+    /// Height of the drawing in points (it is about 2.8× as wide).
     var size: CGFloat = 30
-    var topView = true
 
     var body: some View {
         TimelineView(.periodic(from: .now, by: 5)) { context in
             let old = aircraft.isOld(at: context.date)
             VStack(spacing: 2) {
-                if topView {
-                    Image(aircraft.bovenaanzicht)
-                        .renderingMode(.template)
-                        .resizable()
-                        .scaledToFit()
-                        .foregroundStyle(old ? Color.gray : aircraft.soort.color)
-                        .frame(width: size * 1.4, height: size * 1.4)
-                        .rotationEffect(.degrees(aircraft.track ?? 0))
-                        .shadow(color: .white, radius: 0.8)
-                        .shadow(color: .black.opacity(0.35), radius: 2, y: 1)
-                } else {
-                    AircraftDrawing(afbeelding: aircraft.afbeelding, west: aircraft.vliegtWest)
-                        .frame(width: size * 2.8, height: size)
-                        .saturation(old ? 0 : 1)
-                        .shadow(color: .black.opacity(0.35), radius: 3, y: 2)
-                }
+                AircraftDrawing(afbeelding: aircraft.afbeelding, west: aircraft.vliegtWest)
+                    .frame(width: size * 2.8, height: size)
+                    .saturation(old ? 0 : 1)
+                    .shadow(color: .black.opacity(0.35), radius: 3, y: 2)
                 VStack(spacing: 0) {
                     Text(aircraft.title)
                         .font(.caption2.weight(.bold))
@@ -85,7 +72,7 @@ struct HeliMarker: View {
             .opacity(old ? 0.7 : 1)
             .scaleEffect(selected ? 1.15 : 1)
             .animation(.spring(duration: 0.25), value: selected)
-            .animation(.easeInOut(duration: 0.6), value: aircraft.track)
+            .animation(.easeInOut(duration: 0.3), value: aircraft.vliegtWest)
         }
         .accessibilityElement(children: .ignore)
         .accessibilityLabel("\(aircraft.title), \(aircraft.soort.naam), \(aircraft.status)")

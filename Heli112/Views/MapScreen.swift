@@ -14,7 +14,6 @@ struct MapScreen: View {
     @AppStorage("map.places") private var showPlaces = true
     @AppStorage("map.traffic") private var showTraffic = false
     @AppStorage("map.satellite") private var satellite = false
-    @AppStorage("map.topview") private var topView = true
 
     static let netherlands = MKCoordinateRegion(center: CLLocationCoordinate2D(latitude: 52.2, longitude: 5.4),
                                                 span: MKCoordinateSpan(latitudeDelta: 3.4, longitudeDelta: 3.8))
@@ -47,7 +46,7 @@ struct MapScreen: View {
             }
             ForEach(store.visibleAircraft.filter { $0.coordinate != nil }) { a in
                 Annotation(a.title, coordinate: a.coordinate!, anchor: .center) {
-                    HeliMarker(aircraft: a, selected: selectedHex == a.hex, topView: topView)
+                    HeliMarker(aircraft: a, selected: selectedHex == a.hex)
                         .onTapGesture { select(a.hex) }
                         .accessibilityAddTraits(.isButton)
                 }
@@ -83,7 +82,7 @@ struct MapScreen: View {
         }
         .sheet(isPresented: $showLayers) {
             NavigationStack {
-                LayersView(showPlaces: $showPlaces, showTraffic: $showTraffic, satellite: $satellite, topView: $topView)
+                LayersView(showPlaces: $showPlaces, showTraffic: $showTraffic, satellite: $satellite)
             }
             #if os(iOS)
             .presentationDetents([.medium, .large])
@@ -196,7 +195,6 @@ struct LayersView: View {
     @Binding var showPlaces: Bool
     @Binding var showTraffic: Bool
     @Binding var satellite: Bool
-    @Binding var topView: Bool
 
     var body: some View {
         Form {
@@ -213,15 +211,11 @@ struct LayersView: View {
                 }
             }
             Section {
-                Picker("Iconen op de kaart", selection: $topView) {
-                    Text("Bovenaanzicht").tag(true)
-                    Text("Zijaanzicht").tag(false)
-                }
                 Toggle("Ziekenhuizen en bases", isOn: $showPlaces)
                 Toggle("Verkeer", isOn: $showTraffic)
                 Toggle("Satelliet", isOn: $satellite)
             } footer: {
-                Text("Het bovenaanzicht draait mee met de koers. Favorieten staan altijd op de kaart.")
+                Text("Favorieten staan altijd op de kaart.")
             }
         }
         .formStyle(.grouped)

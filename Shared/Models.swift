@@ -176,21 +176,6 @@ struct Aircraft: Codable, Identifiable, Hashable, Sendable {
     /// Older than a minute: shown grey with "positie 40 s oud", so a standing icon is not taken for live.
     func isOld(at now: Date = .now) -> Bool { (positionAge(at: now) ?? .infinity) > 60 }
 
-    /// Top-view drawing for the map (nose up = north), turned with the course.
-    var bovenaanzicht: String {
-        switch icoon {
-        case nil, "":
-            return (type ?? "").uppercased() == "A139" || ["zulu24", "zulu25", "zulu26"].contains(key ?? "") ? "top_heli_big" : "top_heli"
-        case "kustwacht_aw189", "kustwacht_heli", "nh90", "cougar", "heli": return "top_heli_big"
-        case "apache": return "top_heli"
-        case "chinook": return "top_chinook"
-        case "f35": return "top_fighter"
-        case "hercules": return "top_hercules"
-        case "les", "kmar", "kustwacht_dash8": return "top_prop"
-        case "phgov": return "top_jet_big"
-        default: return "top_jet"
-        }
-    }
 }
 
 struct Incident: Codable, Identifiable, Hashable, Sendable {
