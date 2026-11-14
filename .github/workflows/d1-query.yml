@@ -24,7 +24,7 @@ jobs:
       - name: Query
         run: |
           echo "$SQL" | grep -qiE '^[[:space:]]*(SELECT|WITH)[[:space:]]' || { echo "::error::Alleen SELECT"; exit 1; }
-          echo "$SQL" | grep -qiE '(INSERT|UPDATE|DELETE|DROP|ALTER|CREATE|REPLACE|ATTACH|PRAGMA)[[:space:]]' && { echo "::error::Alleen lezen"; exit 1; }
+          if echo "$SQL" | grep -qiE '(INSERT|UPDATE|DELETE|DROP|ALTER|CREATE|REPLACE|ATTACH|PRAGMA)[[:space:]]'; then echo "::error::Alleen lezen"; exit 1; fi
           npx wrangler d1 execute 112heli --remote --json --command "$SQL" > out.json
           echo "----- RESULTAAT -----"
           node -e 'const s=require("fs").readFileSync("out.json","utf8");const i=s.search(/^\s*\[/m);const r=JSON.parse(s.slice(i));for(const x of r)for(const row of x.results||[])console.log(JSON.stringify(row))'
