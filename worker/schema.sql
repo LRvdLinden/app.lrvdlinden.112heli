@@ -131,3 +131,15 @@ CREATE TABLE IF NOT EXISTS reports (
   app_version TEXT,
   status TEXT NOT NULL DEFAULT 'nieuw'
 );
+
+-- Own pushmeldingen sent from beheer.
+CREATE TABLE IF NOT EXISTS broadcasts (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  created_at INTEGER NOT NULL,
+  titel TEXT,
+  tekst TEXT NOT NULL,
+  soorten TEXT NOT NULL DEFAULT '[]',
+  bereik INTEGER NOT NULL DEFAULT 0,
+  ok INTEGER NOT NULL DEFAULT 0,
+  fout INTEGER NOT NULL DEFAULT 0
+);

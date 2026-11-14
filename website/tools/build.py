@@ -370,8 +370,16 @@ notfound = """<main class="page"><div class="wrap center">
 """
 page("/404.html", "Niet gevonden | 112Heli", "Deze pagina bestaat niet. Bekijk de live kaart met alle hulpdiensthelikopters.", "", notfound, robots="noindex")
 
+# ------------------------------------------------------------------ beheer (same features as LRbeheer → 112Heli)
+beheer_page = """<main class="page beheer"><div class="wrap">
+  <div id="beheer"><div class="empty">Laden…</div></div>
+</div></main>
+"""
+page("/beheer/", "Beheer | 112Heli", "Beheer van 112Heli: status, toestellen, meldingen en pushberichten.", "", beheer_page, "beheer.js",
+     footer=False, robots="noindex, nofollow", extra_head=f'<link rel="stylesheet" href="/assets/css/beheer.css?v={V}">\n')
+
 # ------------------------------------------------------------------ robots.txt and sitemap.xml
-open(os.path.join(WEB, "robots.txt"), "w").write(f"User-agent: *\nAllow: /\n\nSitemap: {SITE}/sitemap.xml\n")
+open(os.path.join(WEB, "robots.txt"), "w").write(f"User-agent: *\nAllow: /\nDisallow: /beheer/\n\nSitemap: {SITE}/sitemap.xml\n")
 open(os.path.join(WEB, "sitemap.xml"), "w").write('<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
     + "".join(f"  <url><loc>{SITE}{u}</loc><lastmod>{LASTMOD}</lastmod></url>\n" for u in SITEMAP) + "</urlset>\n")
 
