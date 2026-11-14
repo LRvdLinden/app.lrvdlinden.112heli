@@ -156,7 +156,7 @@ ROUTES = """<svg viewBox="0 0 600 545" preserveAspectRatio="none" aria-hidden="t
   <path id="r3" class="path" stroke="#0891b2" d="M30,260 C120,230 140,120 230,90 S360,60 420,140 S500,300 580,280"/>
 </svg>
 <div class="mover" style="offset-path:path('M90,420 C170,300 260,260 330,250 S470,170 520,80');--t:12s"><img src="/assets/img/heli_lifeliner_ec135.webp" alt=""></div>
-<div class="mover" style="offset-path:path('M60,120 C180,150 230,250 300,300 S420,420 540,470');--t:15s;--delay:-5s"><img src="/assets/img/heli_politie_aw139.webp" alt=""></div>
+<div class="mover" style="offset-path:path('M60,120 C180,150 230,250 300,300 S420,420 540,470');--t:15s;--delay:-5s"><img src="/assets/img/heli_politie_ec135.webp" alt=""></div>
 <div class="mover" style="offset-path:path('M30,260 C120,230 140,120 230,90 S360,60 420,140 S500,300 580,280');--t:18s;--delay:-9s"><img src="/assets/img/lucht_kustwacht_aw189.webp" alt=""></div>
 <span class="spot" style="left:15%;top:77%;--c:#a855f7">Basis</span>
 <span class="spot incident" style="left:55%;top:46%">Meerdere heli's op één plek</span>
@@ -165,7 +165,7 @@ ROUTES = """<svg viewBox="0 0 600 545" preserveAspectRatio="none" aria-hidden="t
 home = f"""<main>
 <section class="hero">
   <div class="flyby" aria-hidden="true"><img src="/assets/img/heli_lifeliner_ec135.webp" alt=""></div>
-  <div class="flyby two" aria-hidden="true"><img src="/assets/img/heli_politie_aw139.webp" alt=""></div>
+  <div class="flyby two" aria-hidden="true"><img src="/assets/img/heli_politie_ec135.webp" alt=""></div>
   <div class="wrap">
     <div>
       <span class="pill reveal"><span class="dot"></span><span data-inair>Live</span></span>

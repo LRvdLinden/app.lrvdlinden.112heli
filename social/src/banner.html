@@ -1,0 +1,37 @@
+<!doctype html><html lang="nl"><head><meta charset="utf-8"><style>
+@font-face{font-family:P;src:url(../../website/web/assets/fonts/Poppins-Bold.woff2);font-weight:700}
+@font-face{font-family:P;src:url(../../website/web/assets/fonts/Poppins-Medium.woff2);font-weight:500}
+*{box-sizing:border-box}
+html,body{margin:0;width:var(--w);height:var(--h);overflow:hidden;background:#0d111c;font-family:P,sans-serif;color:#fff}
+.bg{position:absolute;inset:0;background:radial-gradient(circle at var(--rx) var(--ry),rgba(76,107,255,.32),transparent calc(var(--rs)*.75)),linear-gradient(160deg,#0d111c,#131c3a)}
+.radar{position:absolute;left:calc(var(--rx) - var(--rs)/2);top:calc(var(--ry) - var(--rs)/2);width:var(--rs);height:var(--rs);border-radius:50%}
+.radar i{position:absolute;border:2px solid rgba(76,107,255,.3);border-radius:50%}
+.sweep{position:absolute;inset:0;border-radius:50%;background:conic-gradient(from 30deg,rgba(76,107,255,.45),transparent 70deg)}
+.blip{position:absolute;width:14px;height:14px;border-radius:50%;background:#e11d48;box-shadow:0 0 0 8px rgba(225,29,72,.25)}
+.craft{position:absolute;filter:drop-shadow(0 18px 30px rgba(0,0,0,.55))}
+.txt{position:absolute;left:var(--m);right:var(--m);top:var(--ty)}
+.brand{display:flex;align-items:center;gap:calc(var(--f)*.4);font-size:calc(var(--f)*.75);font-weight:700}
+.brand img{width:calc(var(--f)*1.5);height:calc(var(--f)*1.5);border-radius:22%}
+h1{font-size:calc(var(--f)*1.45);line-height:1.08;margin:calc(var(--f)*.7) 0 calc(var(--f)*.4);letter-spacing:-.5px;max-width:var(--tw)}
+h1 b{color:#8aa0ff}
+p{font-size:calc(var(--f)*.58);font-weight:500;color:#c8d0ea;margin:0;line-height:1.38;max-width:var(--tw)}
+.pills{display:var(--pd,flex);flex-wrap:wrap;gap:12px;margin-top:calc(var(--f)*.55);max-width:var(--tw)}
+.pills span{padding:8px 18px;border-radius:999px;background:rgba(255,255,255,.09);font-size:calc(var(--f)*.42);font-weight:500}
+.cta{position:absolute;left:var(--m);right:var(--m);bottom:var(--cb);display:flex;align-items:center;gap:22px;flex-wrap:wrap}
+.btn{padding:calc(var(--f)*.32) calc(var(--f)*.7);border-radius:999px;background:#2747e8;font-size:calc(var(--f)*.5);font-weight:700;box-shadow:0 12px 30px rgba(39,71,232,.4)}
+.url{font-size:calc(var(--f)*.48);font-weight:500;color:#c8d0ea}
+.r112{display:inline-block;padding:2px 14px;border-radius:999px;background:#e11d48;font-size:.55em;vertical-align:middle;position:relative;top:-.12em}
+</style></head><body><div class="bg"></div>
+<div class="radar" id="radar"><i style="inset:0"></i><i style="inset:16%"></i><i style="inset:32%"></i><div class="sweep"></div>
+<div class="blip" style="left:22%;top:30%"></div><div class="blip" style="left:70%;top:62%"></div></div>
+<div id="crafts"></div>
+<div class="txt"><div class="brand"><img src="../../website/web/assets/img/app-icon.png" alt="">112Heli</div>
+<h1>Alles wat vliegt voor de <b>hulpdiensten</b>. Live.</h1>
+<p>Lifeliner, politiehelikopter, Kustwacht en Defensie live op de kaart.</p>
+<div class="pills"><span>Melding bij opstijgen</span><span>Landingsplek</span><span>Eigen zones</span><span>Volg Max Verstappen ✈︎</span></div></div>
+<div class="cta"><span class="btn">Binnenkort in de App Store</span><span class="url">112heli.lrvdlinden.app</span></div>
+<script>
+const q=JSON.parse(decodeURIComponent(location.hash.slice(1)));
+for(const k in q.v)document.documentElement.style.setProperty('--'+k,q.v[k]);
+document.getElementById('crafts').innerHTML=q.c.map(c=>`<img class="craft" src="../../website/web/assets/img/${c[0]}.webp" style="left:${c[1]}px;top:${c[2]}px;width:${c[3]}px${c[4]?';transform:scaleX(-1)':''}">`).join('');
+</script></body></html>

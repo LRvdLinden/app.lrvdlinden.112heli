@@ -37,7 +37,7 @@ struct OnboardingView: View {
     private var welcome: some View {
         VStack(spacing: 22) {
             Spacer()
-            AircraftDrawing(afbeelding: "heli_politie_aw139").frame(maxWidth: 300)
+            AircraftDrawing(afbeelding: "heli_politie_ec135").frame(maxWidth: 300)
             Text("Alles wat vliegt voor de hulpdiensten").font(.largeTitle.bold()).multilineTextAlignment(.center)
             Text("Lifeliners, politiehelikopters, Kustwacht en Defensie live op de kaart, met waar ze vandaan komen en waar ze staan.")
                 .font(.title3).foregroundStyle(.secondary).multilineTextAlignment(.center)
