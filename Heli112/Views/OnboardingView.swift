@@ -41,6 +41,15 @@ struct OnboardingView: View {
             Text("Alles wat vliegt voor de hulpdiensten").font(.largeTitle.bold()).multilineTextAlignment(.center)
             Text("Lifeliners, politiehelikopters, Kustwacht en Defensie live op de kaart, met waar ze vandaan komen en waar ze staan.")
                 .font(.title3).foregroundStyle(.secondary).multilineTextAlignment(.center)
+            HStack(spacing: 10) {
+                AircraftDrawing(afbeelding: "lucht_verstappen").frame(width: 84, height: 30)
+                Text("Psst… je kunt ook de jet van Max Verstappen volgen.")
+                    .font(.footnote.weight(.semibold))
+                    .foregroundStyle(Color(hex: 0xFF6600))
+                    .multilineTextAlignment(.leading)
+            }
+            .padding(.horizontal, 14).padding(.vertical, 8)
+            .background(Color(hex: 0xFF6600).opacity(0.12), in: Capsule())
             Spacer()
             primary("Volgende") { page = 1 }
         }
