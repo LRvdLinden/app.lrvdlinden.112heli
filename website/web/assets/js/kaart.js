@@ -14,10 +14,21 @@ let aircraft = [], incidents = [], weer = null;
 let selected = params.get("hex");
 const shown = new Set(JSON.parse(localStorage.getItem?.("heli.lagen") || "null") || ["trauma", "politie", "kustwacht", "kmar", "regering", "bijzonder", "defensie"]);
 
-chipsEl.innerHTML = Object.entries(SOORT).map(([k, s]) =>
+let alleenLucht = false;
+try { alleenLucht = localStorage.getItem("heli.alleenLucht") === "1"; } catch {}
+const isOnline = (a) => a.airborne && statusOf(a) !== "uit_beeld";
+
+chipsEl.innerHTML = `<button class="chip" data-offline="1" aria-pressed="${alleenLucht}" style="--c:#e11d48"><i></i>Offline verbergen</button>` +
+  Object.entries(SOORT).map(([k, s]) =>
   `<button class="chip" data-k="${k}" aria-pressed="${shown.has(k)}" style="--c:${s.kleur}"><i></i>${esc(s.kort)}</button>`).join("");
 chipsEl.addEventListener("click", (e) => {
   const b = e.target.closest(".chip"); if (!b) return;
+  if (b.dataset.offline) {
+    alleenLucht = !alleenLucht;
+    b.setAttribute("aria-pressed", alleenLucht);
+    try { localStorage.setItem("heli.alleenLucht", alleenLucht ? "1" : "0"); } catch {}
+    return render();
+  }
   const k = b.dataset.k;
   shown.has(k) ? shown.delete(k) : shown.add(k);
   b.setAttribute("aria-pressed", shown.has(k));
@@ -39,7 +50,7 @@ async function initMap() {
   render();
 }
 
-function visible() { return aircraft.filter((a) => a.lat != null && shown.has(a.soort)); }
+function visible() { return aircraft.filter((a) => a.lat != null && shown.has(a.soort) && (!alleenLucht || isOnline(a))); }
 
 function render() {
   const vis = visible();
@@ -65,7 +76,7 @@ function render() {
 
   // list
   const groups = { lucht: [], basis: [], grond: [], uit_beeld: [] };
-  for (const a of aircraft.filter((x) => shown.has(x.soort))) (groups[statusOf(a)] || groups.grond).push(a);
+  for (const a of aircraft.filter((x) => shown.has(x.soort) && (!alleenLucht || isOnline(x)))) (groups[statusOf(a)] || groups.grond).push(a);
   listEl.innerHTML = Object.entries(groups).filter(([, l]) => l.length).map(([k, l]) => `
     <div class="status-group"><h2>${STATUS[k]} <span class="pill">${l.length}</span></h2>
     ${l.map((a) => `

@@ -5,11 +5,11 @@ import MapKit
 struct MapScreen: View {
     @EnvironmentObject private var store: LiveStore
     @EnvironmentObject private var router: Router
+    @EnvironmentObject private var location: LocationManager
 
     @State private var position: MapCameraPosition = .region(MapScreen.netherlands)
     @State private var selectedHex: String?
-    @State private var track: [TrackPoint] = []
-    @State private var routeMinutes = 60
+    @State private var spoor = HeliSpoorStore()
     @State private var showLayers = false
     @AppStorage("map.places") private var showPlaces = true
     @AppStorage("map.traffic") private var showTraffic = false
@@ -34,9 +34,28 @@ struct MapScreen: View {
                     .annotationTitles(.hidden)
                 }
             }
-            if track.count > 1, let a = selected {
-                MapPolyline(coordinates: track.map(\.coordinate) + (a.coordinate.map { [$0] } ?? []))
-                    .stroke(a.soort.color, style: StrokeStyle(lineWidth: 3, lineCap: .round, lineJoin: .round, dash: [6, 4]))
+            if let a = selected {
+                let lijn = spoor.coordinates(live: spoor.afspeel == nil && a.airborne ? a.coordinate : nil)
+                if lijn.count > 1 {
+                    MapPolyline(coordinates: lijn)
+                        .stroke(a.soort.color.opacity(spoor.afspeel == nil ? 0.9 : 0.35),
+                                style: StrokeStyle(lineWidth: 3, lineCap: .round, lineJoin: .round))
+                }
+                if spoor.afspeel != nil {
+                    let gespeeld = spoor.afgespeeldeLijn
+                    if gespeeld.count > 1 {
+                        MapPolyline(coordinates: gespeeld)
+                            .stroke(a.soort.color, style: StrokeStyle(lineWidth: 4, lineCap: .round, lineJoin: .round))
+                    }
+                    if let p = spoor.afspeelPunt {
+                        Annotation(a.title, coordinate: p.coordinate, anchor: .center) {
+                            AircraftDrawing(afbeelding: a.afbeelding)
+                                .frame(width: 70, height: 25)
+                                .shadow(color: .black.opacity(0.35), radius: 3, y: 2)
+                        }
+                        .annotationTitles(.hidden)
+                    }
+                }
             }
             ForEach(store.incidents) { incident in
                 Annotation(incident.title, coordinate: incident.coordinate, anchor: .center) {
@@ -62,27 +81,10 @@ struct MapScreen: View {
             MapScaleView()
         }
         .safeAreaInset(edge: .top) { statusBar }
-        .sheet(isPresented: detailBinding) {
-            if let hex = selectedHex {
-                NavigationStack {
-                    AircraftDetailView(hex: hex, routeMinutes: $routeMinutes)
-                        .toolbar {
-                            ToolbarItem(placement: .cancellationAction) {
-                                Button("Sluiten") { selectedHex = nil }
-                            }
-                        }
-                }
-                #if os(iOS)
-                .presentationDetents([.fraction(0.42), .large])
-                .presentationBackgroundInteraction(.enabled(upThrough: .fraction(0.42)))
-                #else
-                .frame(minWidth: 460, minHeight: 560)
-                #endif
-            }
-        }
+        .overlay(alignment: .bottom) { infoKaart }
         .sheet(isPresented: $showLayers) {
             NavigationStack {
-                LayersView(showPlaces: $showPlaces, showTraffic: $showTraffic, satellite: $satellite)
+                LayersView(showPlaces: $showPlaces, showTraffic: $showTraffic, satellite: $satellite, hideOffline: $store.hideOffline)
             }
             #if os(iOS)
             .presentationDetents([.medium, .large])
@@ -90,7 +92,7 @@ struct MapScreen: View {
             .frame(minWidth: 420, minHeight: 520)
             #endif
         }
-        .task(id: "\(selectedHex ?? "")-\(routeMinutes)-\(store.updated?.timeIntervalSince1970 ?? 0)") { await loadTrack() }
+        .onChange(of: selectedHex, initial: true) { _, hex in spoor.volg(hex) }
         .onChange(of: router.focusHex) { _, hex in
             guard let hex else { return }
             select(hex)
@@ -106,23 +108,37 @@ struct MapScreen: View {
         .sensoryFeedback(.selection, trigger: selectedHex)
     }
 
-    private var detailBinding: Binding<Bool> {
-        Binding(get: { selectedHex != nil }, set: { if !$0 { selectedHex = nil } })
+    /// The A-Alerts card, floating over the bottom of the map; scrolls when it is taller than the space left.
+    @ViewBuilder private var infoKaart: some View {
+        if let a = selected {
+            GeometryReader { geo in
+                VStack {
+                    Spacer(minLength: 0)
+                    ScrollView {
+                        HeliInfoKaart(aircraft: a, afstandKm: location.distanceKm(to: a), spoor: spoor) {
+                            withAnimation(.spring(duration: 0.3)) { selectedHex = nil }
+                        }
+                    }
+                    .scrollBounceBehavior(.basedOnSize)
+                    .frame(maxHeight: geo.size.height * 0.62)
+                    .fixedSize(horizontal: false, vertical: true)
+                }
+                .frame(maxWidth: 520)
+                .frame(maxWidth: .infinity)
+                .padding(.horizontal, 12)
+                .padding(.bottom, 8)
+            }
+            .transition(.move(edge: .bottom).combined(with: .opacity))
+        }
     }
 
     private func select(_ hex: String) {
-        selectedHex = hex
-        track = []
+        withAnimation(.spring(duration: 0.3)) { selectedHex = hex }
         if let c = store.aircraft(hex: hex)?.coordinate {
             withAnimation(.easeInOut) {
                 position = .region(MKCoordinateRegion(center: c, span: MKCoordinateSpan(latitudeDelta: 0.6, longitudeDelta: 0.6)))
             }
         }
-    }
-
-    private func loadTrack() async {
-        guard let hex = selectedHex else { track = []; return }
-        if let points = try? await HeliAPI.shared.track(hex: hex, minutes: routeMinutes) { track = points }
     }
 
     // MARK: - Status bar
@@ -138,6 +154,14 @@ struct MapScreen: View {
                 }
                 .font(.subheadline.weight(.semibold))
                 Spacer()
+                Button {
+                    withAnimation { store.hideOffline.toggle() }
+                } label: {
+                    Image(systemName: store.hideOffline ? "eye.slash.fill" : "eye")
+                        .foregroundStyle(store.hideOffline ? Theme.accent : .primary)
+                }
+                .accessibilityLabel(store.hideOffline ? "Offline toestellen tonen" : "Offline toestellen verbergen")
+                .sensoryFeedback(.selection, trigger: store.hideOffline)
                 Button { showLayers = true } label: {
                     Image(systemName: "square.3.layers.3d")
                 }
@@ -195,9 +219,17 @@ struct LayersView: View {
     @Binding var showPlaces: Bool
     @Binding var showTraffic: Bool
     @Binding var satellite: Bool
+    @Binding var hideOffline: Bool
 
     var body: some View {
         Form {
+            Section {
+                Toggle(isOn: $hideOffline) {
+                    Label("Offline toestellen verbergen", systemImage: "eye.slash")
+                }
+            } footer: {
+                Text("Alleen toestellen die nu in de lucht zijn. Op de grond, op de basis of uit beeld staan dan niet op de kaart.")
+            }
             Section("Toestellen") {
                 ForEach(LuchtSoort.alle) { soort in
                     Toggle(isOn: Binding(
@@ -215,7 +247,7 @@ struct LayersView: View {
                 Toggle("Verkeer", isOn: $showTraffic)
                 Toggle("Satelliet", isOn: $satellite)
             } footer: {
-                Text("Favorieten staan altijd op de kaart.")
+                Text("Favorieten staan altijd op de kaart, behalve als je offline toestellen verbergt en ze niet vliegen.")
             }
         }
         .formStyle(.grouped)

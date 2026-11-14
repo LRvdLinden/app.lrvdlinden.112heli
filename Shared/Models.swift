@@ -173,6 +173,24 @@ struct Aircraft: Codable, Identifiable, Hashable, Sendable {
         seen.map { max(0, now.timeIntervalSince1970 - $0) }
     }
 
+    /// In the air and still sending its position (not on the ground, at the base or out of view).
+    var isOnline: Bool { airborne && status_ != "uit_beeld" }
+
+    // MARK: A-Alerts style values
+
+    /// Altitude in metres, and the same in feet.
+    var hoogteTekst: String { airborne ? Format.altitude(alt) : "–" }
+    var hoogteTweede: String? {
+        guard airborne, let alt else { return nil }
+        return "\(Int((alt / 25).rounded() * 25).formatted()) ft"
+    }
+    /// Speed in km/u, and the same in knots.
+    var snelheidTekst: String { airborne ? Format.speed(gs) : "–" }
+    var snelheidTweede: String? {
+        guard airborne, let gs else { return nil }
+        return "\(Int(gs.rounded())) kn"
+    }
+
     /// Older than a minute: shown grey with "positie 40 s oud", so a standing icon is not taken for live.
     func isOld(at now: Date = .now) -> Bool { (positionAge(at: now) ?? .infinity) > 60 }
 

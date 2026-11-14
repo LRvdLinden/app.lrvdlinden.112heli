@@ -223,3 +223,22 @@ test("beheer: login, token, overview, aircraft, reports and push", async () => {
   assert.equal((await (await call("/v1/beheer/push/bereik?soorten=trauma", {}, login.token)).json()).bereik, 0);
   assert.deepEqual((await (await call("/v1/beheer/push", {}, login.token)).json()).berichten, []);
 });
+
+test("spoor and vluchten in the A-Alerts format", async () => {
+  const env = { DB: d1() };
+  const t = Math.floor(Date.now() / 1000);
+  await env.DB.prepare("INSERT INTO flights (id, hex, start_ts, max_alt) VALUES (1, 'abc123', ?, 900)").bind(t - 900).run();
+  await env.DB.prepare("INSERT INTO state (hex, airborne, seen_at, flight_id) VALUES ('abc123', 1, ?, 1)").bind(t).run();
+  for (let i = 0; i < 10; i++) {
+    await env.DB.prepare("INSERT INTO positions (hex, ts, lat, lon, alt, flight_id) VALUES ('abc123', ?, ?, 6.0, 800, 1)").bind(t - 900 + i * 90, 52.2 + i * 0.01).run();
+  }
+  const s = await (await worker.fetch(new Request("https://x/v1/aircraft/abc123/spoor?scope=vlucht"), env)).json();
+  assert.equal(s.punten.length, 10);
+  assert.equal(s.vlucht.onderweg, true);
+  assert.ok(s.vlucht.afstand_km > 9 && s.vlucht.afstand_km < 11);
+  assert.ok(Array.isArray(s.plaatsen) && s.plaatsen.length >= 1);
+  const k = await (await worker.fetch(new Request("https://x/v1/aircraft/abc123/spoor?scope=kort"), env)).json();
+  assert.equal(k.punten.length, 10);
+  const v = await (await worker.fetch(new Request("https://x/v1/aircraft/abc123/vluchten"), env)).json();
+  assert.equal(v.vluchten[0].duur_min, 15);
+});

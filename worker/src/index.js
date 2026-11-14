@@ -4,6 +4,8 @@
 //  GET  /v1/live                        all followed aircraft with their latest state + active grote inzetten
 //  GET  /v1/mapkit-token                MapKit JS token for the website (origin-bound)
 //  GET  /v1/aircraft/:hex/track?minutes=60
+//  GET  /v1/aircraft/:hex/spoor?scope=vlucht|kort|lang   trail (A-Alerts format): punten, plaatsen, vlucht
+//  GET  /v1/aircraft/:hex/vluchten      last flights (A-Alerts format)
 //  GET  /v1/flights?days=30[&hex=]      flights (newest first)
 //  GET  /v1/flights/:id/track
 //  GET  /v1/incidents?days=30
@@ -24,6 +26,8 @@ import { refreshWeer, currentWeer } from "./weer.js";
 import { apnsConfigured, mapkitToken, mapkitConfigured } from "./apple.js";
 import { SOORTEN, STANDAARD_SOORTEN, plekVan, bovenPlaats } from "./fleet.js";
 import * as beheer from "./beheer.js";
+import { plaatsenUit } from "./aalerts/plaats.js";
+import { distanceKm } from "./fleet.js";
 const now = () => Math.floor(Date.now() / 1000);
 
 const CORS = {
@@ -124,6 +128,12 @@ async function route(request, env) {
     const rows = await env.DB.prepare("SELECT * FROM positions WHERE hex = ? AND ts > ? ORDER BY ts").bind(r[1].toLowerCase(), now() - minutes * 60).all();
     return json({ hex: r[1].toLowerCase(), points: (rows.results || []).map(pointJSON) }, 200, 10);
   }
+  if ((r = p.match(/^\/v1\/aircraft\/([0-9a-f]{6})\/spoor$/i)) && m === "GET") {
+    return json(await spoor(env, r[1].toLowerCase(), url.searchParams.get("scope") || "vlucht"), 200, 10);
+  }
+  if ((r = p.match(/^\/v1\/aircraft\/([0-9a-f]{6})\/vluchten$/i)) && m === "GET") {
+    return json(await vluchten(env, r[1].toLowerCase()), 200, 20);
+  }
   if (p === "/v1/flights" && m === "GET") {
     const days = clampInt(url.searchParams.get("days"), 1, 30, 30);
     const hex = (url.searchParams.get("hex") || "").toLowerCase();
@@ -183,6 +193,51 @@ async function route(request, env) {
     }
   }
   return bad("niet gevonden", 404);
+}
+
+// ------------------------------------------------------------------ trail and flights in the A-Alerts format
+
+const iso = (ts) => new Date(ts * 1000).toISOString();
+const routeKm = (pts) => pts.reduce((sum, q, i) => (i ? sum + distanceKm(pts[i - 1].lat, pts[i - 1].lon, q.lat, q.lon) : 0), 0);
+
+function vluchtJSON(f, pts, t) {
+  const einde = f.end_ts ?? null;
+  return {
+    start: iso(f.start_ts), einde: einde ? iso(einde) : null, onderweg: einde == null,
+    duur_min: Math.max(0, Math.round(((einde ?? t) - f.start_ts) / 60)),
+    afstand_km: Math.round(routeKm(pts) * 10) / 10, max_hoogte_ft: f.max_alt ?? 0,
+  };
+}
+
+/** Trail of one aircraft: the current (or last) flight, the last 30 minutes or the last 2 hours. */
+async function spoor(env, hex, scope) {
+  const t = now();
+  const state = await env.DB.prepare("SELECT flight_id, airborne FROM state WHERE hex = ?").bind(hex).first();
+  const flight = state?.flight_id
+    ? await env.DB.prepare("SELECT * FROM flights WHERE id = ?").bind(state.flight_id).first()
+    : await env.DB.prepare("SELECT * FROM flights WHERE hex = ? ORDER BY start_ts DESC LIMIT 1").bind(hex).first();
+  const flightPts = flight ? (await env.DB.prepare("SELECT ts, lat, lon, alt FROM positions WHERE flight_id = ? ORDER BY ts").bind(flight.id).all()).results || [] : [];
+  let pts = flightPts;
+  if (scope === "kort" || scope === "lang") {
+    pts = (await env.DB.prepare("SELECT ts, lat, lon, alt FROM positions WHERE hex = ? AND ts > ? ORDER BY ts").bind(hex, t - (scope === "kort" ? 1800 : 7200)).all()).results || [];
+  }
+  return {
+    punten: pts.map((q) => ({ t: iso(q.ts), lat: q.lat, lon: q.lon, hoogte_ft: q.alt, grond: false })),
+    plaatsen: plaatsenUit(flightPts.map((q) => ({ at: q.ts * 1000, lat: q.lat, lon: q.lon, grond: false }))),
+    vlucht: flight ? vluchtJSON(flight, flightPts, t) : null,
+  };
+}
+
+/** Last 10 flights of one aircraft, with duration and distance. */
+async function vluchten(env, hex) {
+  const t = now();
+  const rows = (await env.DB.prepare("SELECT * FROM flights WHERE hex = ? ORDER BY start_ts DESC LIMIT 10").bind(hex).all()).results || [];
+  const out = [];
+  for (const f of rows) {
+    const pts = (await env.DB.prepare("SELECT lat, lon FROM positions WHERE flight_id = ? ORDER BY ts").bind(f.id).all()).results || [];
+    out.push(vluchtJSON(f, pts, t));
+  }
+  return { vluchten: out };
 }
 
 async function routeBeheer(request, env, url, p, m) {

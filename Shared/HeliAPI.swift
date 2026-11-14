@@ -27,6 +27,9 @@ struct HeliAPI: Sendable {
         return try JSONDecoder().decode(T.self, from: data)
     }
 
+    /// GET with JSON decoding, for extensions in other files.
+    func getJSON<T: Decodable>(_ path: String, query: [URLQueryItem] = []) async throws -> T { try await get(path, query: query) }
+
     private func send(_ method: String, _ path: String, body: [String: Any]? = nil) async throws {
         var request = URLRequest(url: base.appending(path: path))
         request.httpMethod = method

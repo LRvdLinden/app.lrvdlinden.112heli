@@ -17,6 +17,11 @@ final class LiveStore: ObservableObject {
     /// Map layers that are switched on (LuchtSoort ids); Lifeliners, Zulu and (for fun) Max Verstappen by default.
     @Published var lagen: Set<String> = LiveStore.loadLagen() { didSet { UserDefaults.standard.set(Array(lagen), forKey: "map.lagen") } }
 
+    /// "Offline verbergen": only aircraft in the air on the map (not on the ground, at the base or out of view).
+    @Published var hideOffline: Bool = UserDefaults.standard.bool(forKey: "map.hideOffline") {
+        didSet { UserDefaults.standard.set(hideOffline, forKey: "map.hideOffline") }
+    }
+
     private var pollTask: Task<Void, Never>?
 
     init() {
@@ -24,7 +29,10 @@ final class LiveStore: ObservableObject {
         if let cached = SnapshotCache.load() { apply(cached) }
     }
 
-    var visibleAircraft: [Aircraft] { aircraft.filter { lagen.contains($0.laag) || favorites.contains($0.hex) } }
+    /// On the map: the chosen layers plus favourites; with "offline verbergen" only what is in the air.
+    var visibleAircraft: [Aircraft] {
+        aircraft.filter { (lagen.contains($0.laag) || favorites.contains($0.hex)) && (!hideOffline || $0.isOnline) }
+    }
 
     private static func loadLagen() -> Set<String> {
         if let list = UserDefaults.standard.stringArray(forKey: "map.lagen") { return Set(list) }
