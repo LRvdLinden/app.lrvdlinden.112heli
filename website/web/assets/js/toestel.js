@@ -22,7 +22,7 @@ function render() {
         <p class="lead">${esc([a.reg, a.type, a.callsign && `roepnaam ${a.callsign}`].filter(Boolean).join(" · "))}</p>
         <span class="pill">${a.airborne ? '<span class="dot"></span>' : ""}${STATUS[statusOf(a)]}${placeText(a) ? ` · ${esc(placeText(a))}` : ""}</span>
       </div>
-      <img src="${drawing(a)}" alt="${esc(a.naam)}" style="${west ? "transform:scaleX(-1)" : ""}">
+      <div class="ac-art" data-key="${esc(drawing(a))}|${west ? "w" : "o"}"><img src="${drawing(a)}" alt="${esc(a.naam)}" style="${west ? "transform:scaleX(-1)" : ""}"></div>
     </div>
     <div class="stats">
       <div class="stat"><b>${a.airborne ? alt(a.alt) : "–"}</b><span>Hoogte</span></div>
@@ -74,8 +74,13 @@ async function refresh(first = false) {
     a = (d.aircraft || []).find((x) => x.hex === hex) || null;
     if (first || !document.getElementById("minimap")) { render(); flights(); } else {
       // update numbers without rebuilding the map
+      // keep the map and, when the drawing and direction did not change, the floating drawing (no jump every 15 s)
       const keep = document.getElementById("minimap");
-      render(); const mm = document.getElementById("minimap"); mm.replaceWith(keep); flights();
+      const art = root.querySelector(".ac-art");
+      render(); const mm = document.getElementById("minimap"); mm.replaceWith(keep);
+      const fresh = root.querySelector(".ac-art");
+      if (art && fresh && art.dataset.key === fresh.dataset.key) fresh.replaceWith(art);
+      flights();
     }
     drawMap();
   } catch {

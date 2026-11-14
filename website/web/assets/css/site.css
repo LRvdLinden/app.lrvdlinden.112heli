@@ -224,7 +224,10 @@ footer { border-top: 1px solid var(--line); padding: 60px 0 40px; background: va
 
 /* aircraft page */
 .ac-hero { display: grid; grid-template-columns: 1.2fr 1fr; gap: 40px; align-items: center; }
-.ac-hero img { width: 100%; max-height: 240px; object-fit: contain; animation: bob 3s ease-in-out infinite; }
+.ac-hero .ac-art { animation: acfloat 4s ease-in-out infinite; }
+.ac-hero img { display: block; width: 100%; max-height: 240px; object-fit: contain; transition: transform .4s; }
+@keyframes acfloat { 50% { transform: translateY(-8px); } }
+@media (prefers-reduced-motion: reduce) { .ac-hero .ac-art { animation: none; } }
 @media (max-width: 860px) { .ac-hero { grid-template-columns: 1fr; } }
 .minimap { height: 380px; border-radius: 22px; overflow: hidden; border: 1px solid var(--line); margin-top: 26px; background: var(--navy3); }
 table.flights { width: 100%; border-collapse: collapse; margin-top: 12px; font-size: .95rem; }
