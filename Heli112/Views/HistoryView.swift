@@ -98,6 +98,8 @@ struct FlightMapView: View {
     let flight: Flight
     @State private var points: [TrackPoint] = []
     @State private var loaded = false
+    @AppStorage(KaartStijl.typeKey) private var kaartType = "standard"
+    @AppStorage(KaartStijl.rustigKey) private var rustig = true
 
     var body: some View {
         Map {
@@ -112,6 +114,8 @@ struct FlightMapView: View {
                 Marker("Einde", systemImage: "airplane.arrival", coordinate: last.coordinate).tint(.red)
             }
         }
+        .mapStyle(KaartStijl.style(type: kaartType, rustig: rustig))
+        .modifier(KaartKleuren())
         .overlay {
             if loaded && points.count < 2 {
                 ContentUnavailableView("Geen route", systemImage: "point.topleft.down.to.point.bottomright.curvepath",

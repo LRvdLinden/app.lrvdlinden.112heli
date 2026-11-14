@@ -41,7 +41,7 @@ async function drawMap() {
   const el = document.getElementById("minimap");
   if (!mk || !el) { if (el) el.innerHTML = `<div class="empty" style="margin:20px">De kaart kon niet worden geladen.</div>`; return; }
   if (!map || map.element !== el) {
-    map = new mk.Map(el, { region: NL_REGION(mk), showsPointsOfInterest: false,
+    map = new mk.Map(el, { mapType: mk.Map.MapTypes.MutedStandard, region: NL_REGION(mk), showsPointsOfInterest: false,
       colorScheme: matchMedia("(prefers-color-scheme: light)").matches ? mk.Map.ColorSchemes.Light : mk.Map.ColorSchemes.Dark });
     map.setRegionAnimated(new mk.CoordinateRegion(new mk.Coordinate(a.lat, a.lon), new mk.CoordinateSpan(0.6, 0.6)), false);
   }

@@ -13,7 +13,8 @@ struct MapScreen: View {
     @State private var showLayers = false
     @AppStorage("map.places") private var showPlaces = true
     @AppStorage("map.traffic") private var showTraffic = false
-    @AppStorage("map.satellite") private var satellite = false
+    @AppStorage(KaartStijl.typeKey) private var kaartType = "standard"
+    @AppStorage(KaartStijl.rustigKey) private var rustig = true
 
     static let netherlands = MKCoordinateRegion(center: CLLocationCoordinate2D(latitude: 52.2, longitude: 5.4),
                                                 span: MKCoordinateSpan(latitudeDelta: 3.4, longitudeDelta: 3.8))
@@ -72,9 +73,8 @@ struct MapScreen: View {
                 .annotationTitles(.hidden)
             }
         }
-        .mapStyle(satellite
-                  ? .hybrid(elevation: .flat, pointsOfInterest: .excludingAll, showsTraffic: showTraffic)
-                  : .standard(elevation: .flat, pointsOfInterest: .excludingAll, showsTraffic: showTraffic))
+        .mapStyle(KaartStijl.style(type: kaartType, rustig: rustig, traffic: showTraffic))
+        .modifier(KaartKleuren())
         .mapControls {
             MapUserLocationButton()
             MapCompass()
@@ -84,7 +84,7 @@ struct MapScreen: View {
         .overlay(alignment: .bottom) { infoKaart }
         .sheet(isPresented: $showLayers) {
             NavigationStack {
-                LayersView(showPlaces: $showPlaces, showTraffic: $showTraffic, satellite: $satellite, hideOffline: $store.hideOffline)
+                LayersView(showPlaces: $showPlaces, showTraffic: $showTraffic)
             }
             #if os(iOS)
             .presentationDetents([.medium, .large])
@@ -212,8 +212,6 @@ struct LayersView: View {
     @Environment(\.dismiss) private var dismiss
     @Binding var showPlaces: Bool
     @Binding var showTraffic: Bool
-    @Binding var satellite: Bool
-    @Binding var hideOffline: Bool
 
     var body: some View {
         Form {
@@ -237,9 +235,15 @@ struct LayersView: View {
                 }
             }
             Section {
+                KaartStijlInstellingen()
+            } header: {
+                Text("Kaart")
+            } footer: {
+                Text("Met rustige kleuren vallen de toestellen beter op. Automatisch volgt de lichte of donkere modus van je apparaat.")
+            }
+            Section {
                 Toggle("Ziekenhuizen en bases", isOn: $showPlaces)
                 Toggle("Verkeer", isOn: $showTraffic)
-                Toggle("Satelliet", isOn: $satellite)
             } footer: {
                 Text("Favorieten staan altijd op de kaart, behalve als je offline toestellen verbergt en ze niet vliegen.")
             }

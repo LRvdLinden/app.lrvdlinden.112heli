@@ -63,6 +63,13 @@ struct SettingsView: View {
                     ForEach(AppearanceSetting.allCases) { Text($0.label).tag($0) }
                 }
             }
+            Section {
+                KaartStijlInstellingen()
+            } header: {
+                Text("Kaart")
+            } footer: {
+                Text("Met rustige kleuren vallen de toestellen beter op. Satelliet en hybride tonen ook het reliëf in 3D.")
+            }
 
             Section {
                 if let url = Self.link("HeliPrivacyURL") {

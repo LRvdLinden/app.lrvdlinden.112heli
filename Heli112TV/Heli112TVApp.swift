@@ -70,7 +70,7 @@ struct TVMapView: View {
                     .annotationTitles(.hidden)
                 }
             }
-            .mapStyle(.standard(elevation: .flat, pointsOfInterest: .excludingAll))
+            .mapStyle(.standard(elevation: .realistic, emphasis: .muted, pointsOfInterest: .excludingAll))
 
             VStack(alignment: .leading, spacing: 16) {
                 Text("In de lucht").font(.title3.bold())

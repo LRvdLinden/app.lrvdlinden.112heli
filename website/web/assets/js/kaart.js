@@ -34,7 +34,7 @@ async function initMap() {
   mk = await loadMapKit();
   const el = document.getElementById("map");
   if (!mk) { el.innerHTML = `<div class="empty" style="margin:20px">De kaart kon niet worden geladen. De lijst hiernaast werkt wel.</div>`; return; }
-  map = new mk.Map(el, {
+  map = new mk.Map(el, { mapType: mk.Map.MapTypes.MutedStandard,
     region: NL_REGION(mk), showsPointsOfInterest: false, showsCompass: mk.FeatureVisibility.Adaptive,
     colorScheme: matchMedia("(prefers-color-scheme: light)").matches ? mk.Map.ColorSchemes.Light : mk.Map.ColorSchemes.Dark,
   });
