@@ -10,7 +10,7 @@ import re
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 WEB = os.path.join(ROOT, "web")
 SITE = "https://112heli.lrvdlinden.app"
-V = "5"  # cache-buster for css/js
+V = "6"  # cache-buster for css/js
 
 
 OG = {  # page -> og image (NL), alt text
