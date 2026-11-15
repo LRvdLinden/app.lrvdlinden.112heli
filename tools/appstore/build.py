@@ -13,7 +13,7 @@ from PIL import Image
 from playwright.sync_api import sync_playwright
 
 D = os.path.dirname(os.path.abspath(__file__))
-OUT = os.path.join(D, "..", "..", "AppStore")
+OUT = os.environ.get("OUT") or os.path.join(D, "..", "..", "AppStore")
 
 PHONE = [  # (screen, title, sub)
     ("kaart", "Alles wat vliegt voor de <b>hulpdiensten</b>", "Live op de kaart"),

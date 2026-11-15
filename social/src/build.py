@@ -1,7 +1,7 @@
 """Renders the 112Heli social banners (NL) into social/112heli-<date>/nl/. Run: python3 social/src/build.py"""
 import json, os, urllib.parse
 from playwright.sync_api import sync_playwright
-D = os.path.dirname(os.path.abspath(__file__)); OUT = os.path.join(D, "..", "112heli-2026-11-14", "nl"); os.makedirs(OUT, exist_ok=True)
+D = os.path.dirname(os.path.abspath(__file__)); OUT = os.environ.get("OUT") or os.path.join(D, "..", "112heli-2026-11-15", "nl"); os.makedirs(OUT, exist_ok=True)
 B = {
  "instagram-1080x1080": (1080, 1080, dict(m="72px", ty="70px", f="54px", tw="560px", rx="850px", ry="540px", rs="600px", cb="70px"),
      [["heli_lifeliner_ec135", 670, 340, 360, 0], ["heli_politie_ec135", 670, 570, 360, 1]]),
@@ -9,6 +9,10 @@ B = {
      [["heli_lifeliner_ec135", 130, 800, 440, 0], ["heli_politie_ec135", 520, 960, 420, 1], ["lucht_kustwacht_aw189", 300, 1100, 280, 0]]),
  "story-1080x1920": (1080, 1920, dict(m="80px", ty="270px", f="62px", tw="900px", rx="540px", ry="1300px", rs="820px", cb="300px"),
      [["heli_lifeliner_ec135", 80, 1100, 460, 0], ["heli_politie_ec135", 520, 1260, 440, 1]]),
+ "facebook-cover-1640x624": (1640, 624, dict(m="220px", ty="80px", f="46px", tw="680px", rx="1240px", ry="312px", rs="560px", cb="80px", pd="none"),
+     [["heli_lifeliner_ec135", 980, 120, 400, 0], ["heli_politie_ec135", 1040, 330, 370, 1]]),
+ "linkedin-cover-1584x396": (1584, 396, dict(m="430px", ty="44px", f="34px", tw="700px", rx="1280px", ry="198px", rs="380px", cb="40px", pd="none", pp="none"),
+     [["heli_lifeliner_ec135", 1090, 60, 290, 0], ["heli_politie_ec135", 1240, 190, 270, 1]]),
  "linkedin-1200x627": (1200, 627, dict(m="68px", ty="54px", f="46px", tw="640px", rx="930px", ry="320px", rs="560px", cb="54px", pd="none"),
      [["heli_lifeliner_ec135", 720, 110, 400, 0], ["heli_politie_ec135", 740, 330, 380, 1]]),
 }
