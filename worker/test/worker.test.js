@@ -375,3 +375,16 @@ test("F1: last and next Grand Prix via Jolpica, cached", async () => {
     globalThis.fetch = realFetch;
   }
 });
+
+test("live viewers per site", async () => {
+  const env = { DB: d1() };
+  const post = (id, site = "mv3") => worker.fetch(new Request("https://x/v1/kijkers", { method: "POST", body: JSON.stringify({ site, id }) }), env).then((r) => r.json());
+  assert.equal((await post("aaaaaaaa-1111")).nu, 1);
+  assert.equal((await post("bbbbbbbb-2222")).nu, 2);
+  assert.equal((await post("aaaaaaaa-1111")).nu, 2);          // same tab counts once
+  assert.equal((await post("x")).nu, 2);                      // invalid id is not stored
+  assert.equal((await post("cccccccc-3333", "elders")).nu, 0); // unknown site
+  const t = Math.floor(Date.now() / 1000);
+  env.DB.raw.exec(`UPDATE kijkers SET at = ${t - 200} WHERE id = 'bbbbbbbb-2222'`);
+  assert.equal((await (await worker.fetch(new Request("https://x/v1/kijkers?site=mv3"), env)).json()).nu, 1);
+});

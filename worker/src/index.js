@@ -8,6 +8,8 @@
 //  GET  /v1/aircraft/:hex/vluchten      last flights (A-Alerts format)
 //  GET  /v1/flights?days=30[&hex=]      flights (newest first)
 //  GET  /v1/flights/:id/track
+//  POST /v1/kijkers                   { site, id } → how many people have that site open now (anonymous id per tab)
+//  GET  /v1/kijkers?site=mv3           the same count without checking in
 //  GET  /v1/f1                          last Grand Prix (top 3 and Max), the next one and this season's calendar with circuit positions, from Jolpica-F1 (cached 1 hour)
 //  GET  /v1/incidents?days=30
 //  POST /v1/devices                     register a device for pushmeldingen (+ choices)
@@ -194,6 +196,11 @@ async function route(request, env) {
     const rows = await env.DB.prepare("SELECT * FROM positions WHERE flight_id = ? ORDER BY ts").bind(Number(r[1])).all();
     return json({ id: Number(r[1]), points: (rows.results || []).map(pointJSON) }, 200, 30);
   }
+  if (p === "/v1/kijkers" && m === "POST") {
+    let body; try { body = await request.json(); } catch { return bad("ongeldige JSON"); }
+    return json(await kijkers(env, body.site, body.id));
+  }
+  if (p === "/v1/kijkers" && m === "GET") return json(await kijkers(env, url.searchParams.get("site"), null));
   if (p === "/v1/f1" && m === "GET") return json(await f1(env), 200, 600);
   if (p === "/v1/incidents" && m === "GET") {
     const days = clampInt(url.searchParams.get("days"), 1, 30, 30);
@@ -257,6 +264,19 @@ function vluchtJSON(f, pts, t) {
     duur_min: Math.max(0, Math.round(((einde ?? t) - f.start_ts) / 60)),
     afstand_km: Math.round(routeKm(pts) * 10) / 10, max_hoogte_ft: f.max_alt ?? 0,
   };
+}
+
+const KIJKER_SITES = new Set(["mv3", "112heli"]);
+/** Live viewer count: a tab checks in every 30 s with a random id; it counts for 75 s. */
+async function kijkers(env, site, id) {
+  if (!KIJKER_SITES.has(site)) return { nu: 0 };
+  const t = now();
+  if (typeof id === "string" && /^[a-z0-9-]{8,40}$/i.test(id)) {
+    await env.DB.prepare("INSERT OR REPLACE INTO kijkers (site, id, at) VALUES (?, ?, ?)").bind(site, id.toLowerCase(), t).run();
+  }
+  if (Math.random() < 0.1) await env.DB.prepare("DELETE FROM kijkers WHERE at < ?").bind(t - 300).run();
+  const r = await env.DB.prepare("SELECT COUNT(*) AS n FROM kijkers WHERE site = ? AND at > ?").bind(site, t - 75).first();
+  return { site, nu: r?.n || 0 };
 }
 
 /** Last and next Grand Prix from Jolpica-F1 (the Ergast successor), for the page of Max. Kept for 1 hour in kv. */
