@@ -8,6 +8,7 @@
 //  GET  /v1/aircraft/:hex/vluchten      last flights (A-Alerts format)
 //  GET  /v1/flights?days=30[&hex=]      flights (newest first)
 //  GET  /v1/flights/:id/track
+//  GET  /v1/f1                          last Grand Prix (top 3 and Max), the next one and this season's calendar with circuit positions, from Jolpica-F1 (cached 1 hour)
 //  GET  /v1/incidents?days=30
 //  POST /v1/devices                     register a device for pushmeldingen (+ choices)
 //  DELETE /v1/devices/:token
@@ -193,6 +194,7 @@ async function route(request, env) {
     const rows = await env.DB.prepare("SELECT * FROM positions WHERE flight_id = ? ORDER BY ts").bind(Number(r[1])).all();
     return json({ id: Number(r[1]), points: (rows.results || []).map(pointJSON) }, 200, 30);
   }
+  if (p === "/v1/f1" && m === "GET") return json(await f1(env), 200, 600);
   if (p === "/v1/incidents" && m === "GET") {
     const days = clampInt(url.searchParams.get("days"), 1, 30, 30);
     const rows = await env.DB.prepare("SELECT * FROM incidents WHERE start_ts > ? ORDER BY start_ts DESC LIMIT 200").bind(now() - days * 86400).all();
@@ -255,6 +257,37 @@ function vluchtJSON(f, pts, t) {
     duur_min: Math.max(0, Math.round(((einde ?? t) - f.start_ts) / 60)),
     afstand_km: Math.round(routeKm(pts) * 10) / 10, max_hoogte_ft: f.max_alt ?? 0,
   };
+}
+
+/** Last and next Grand Prix from Jolpica-F1 (the Ergast successor), for the page of Max. Kept for 1 hour in kv. */
+async function f1(env) {
+  const t = now();
+  const row = await env.DB.prepare("SELECT value, at FROM kv WHERE key = 'f1'").first();
+  if (row && t - row.at < 3600) { try { return JSON.parse(row.value); } catch {} }
+  const get = async (path) => {
+    const res = await fetch(`https://api.jolpi.ca/ergast/f1/${path}`, { headers: { "user-agent": "112Heli (112heli.lrvdlinden.app)" }, signal: AbortSignal.timeout(8000) });
+    if (!res.ok) throw new Error(`Jolpica ${res.status}`);
+    return (await res.json()).MRData?.RaceTable?.Races?.[0] || null;
+  };
+  try {
+    const [last, next, season] = await Promise.all([get("current/last/results.json"), get("current/next.json").catch(() => null),
+      fetch("https://api.jolpi.ca/ergast/f1/current.json", { headers: { "user-agent": "112Heli (112heli.lrvdlinden.app)" }, signal: AbortSignal.timeout(8000) })
+        .then((r) => (r.ok ? r.json() : null)).then((j) => j?.MRData?.RaceTable?.Races || []).catch(() => [])]);
+    const race = (r) => r && { naam: r.raceName, circuit: r.Circuit?.circuitName, plaats: [r.Circuit?.Location?.locality, r.Circuit?.Location?.country].filter(Boolean).join(", "),
+      datum: r.date, tijd: r.time || null, ronde: Number(r.round) || null };
+    const driver = (x) => ({ positie: Number(x.position) || null, status: x.status, naam: `${x.Driver?.givenName || ""} ${x.Driver?.familyName || ""}`.trim(),
+      code: x.Driver?.code || null, team: x.Constructor?.name || null, punten: Number(x.points) || 0 });
+    const results = last?.Results || [];
+    const max = results.find((x) => x.Driver?.driverId === "max_verstappen");
+    const kalender = season.map((r) => ({ ...race(r), lat: Number(r.Circuit?.Location?.lat), lon: Number(r.Circuit?.Location?.long) }))
+      .filter((r) => Number.isFinite(r.lat) && Number.isFinite(r.lon));
+    const out = { laatste: last ? { ...race(last), top3: results.slice(0, 3).map(driver), max: max ? driver(max) : null } : null, volgende: race(next), kalender };
+    await env.DB.prepare("INSERT OR REPLACE INTO kv (key, value, at) VALUES ('f1', ?, ?)").bind(JSON.stringify(out), t).run();
+    return out;
+  } catch (e) {
+    if (row) { try { return JSON.parse(row.value); } catch {} }
+    return { laatste: null, volgende: null, fout: String(e.message || e) };
+  }
 }
 
 /** Trail of one aircraft: the current (or last) flight, the last 30 minutes or the last 2 hours. */
