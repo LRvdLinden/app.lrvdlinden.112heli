@@ -1,6 +1,6 @@
 # MV3 – live tracker van PH-UTL
 
-Website voor **mv3.lrvdlinden.app**: de Dassault Falcon 8X PH-UTL (ICAO 4867E6) van Max Verstappen live op Apple Kaarten.
+Website voor **mv3.lrvdlinden.app**, gemaakt door [PixelForges](https://pixelforges.nl): de Dassault Falcon 8X PH-UTL (ICAO 4867E6) van Max Verstappen live op Apple Kaarten.
 
 - **Live**: positie die tussen twee metingen vloeiend doorschuift, hoogte, snelheid, koers, stijgen/dalen, tijd in de lucht, gevlogen afstand en een hoogteprofiel van de vlucht die nu loopt. Plaatsnamen en vlaggen via Apple.
 - **Vluchten (30 dagen)**: kaartjes met de route; elke vlucht is af te spelen (60×, 240× of 900×) met een tijdlijn, vluchtprofiel (hoogte en snelheid) en vluchtgegevens, en te delen via een link (`/#vlucht=<id>`), WhatsApp of X.

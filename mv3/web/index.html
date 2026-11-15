@@ -8,6 +8,7 @@
 <link rel="canonical" href="https://mv3.lrvdlinden.app/">
 <meta name="theme-color" content="#07080b" id="themeColor">
 <meta name="color-scheme" content="dark light">
+<meta name="author" content="PixelForges">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="MV3">
 <meta property="og:title" content="MV3 – Volg de jet van Max Verstappen live">
@@ -39,8 +40,8 @@
 <link rel="preload" href="/assets/fonts/Inter-Medium.woff2" as="font" type="font/woff2" crossorigin>
 <script>(function(){var t="auto";try{t=(JSON.parse(localStorage.getItem("mv3.settings"))||{}).theme||"auto"}catch(e){}
 var d=t==="auto"?(matchMedia("(prefers-color-scheme: light)").matches?"light":"dark"):t;document.documentElement.dataset.theme=d;})();</script>
-<link rel="stylesheet" href="/assets/css/mv3.css?v=2">
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebSite","name":"MV3","url":"https://mv3.lrvdlinden.app/","inLanguage":["nl","en"],"description":"Live tracker van de Dassault Falcon 8X PH-UTL van Max Verstappen.","publisher":{"@type":"Person","name":"LRvdLinden","url":"https://lrvdlinden.app"}}</script>
+<link rel="stylesheet" href="/assets/css/mv3.css?v=3">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebSite","name":"MV3","url":"https://mv3.lrvdlinden.app/","inLanguage":["nl","en"],"description":"Live tracker van de Dassault Falcon 8X PH-UTL van Max Verstappen.","publisher":{"@type":"Organization","name":"PixelForges","url":"https://pixelforges.nl"},"creator":{"@type":"Organization","name":"PixelForges","url":"https://pixelforges.nl"}}</script>
 <script src="/assets/js/config.js?v=1"></script>
 </head>
 <body>
@@ -235,7 +236,8 @@ var d=t==="auto"?(matchMedia("(prefers-color-scheme: light)").matches?"light":"d
   <div class="wrap foot-in">
     <div>
       <a class="brand" href="/"><span class="mark">MV<b>3</b></span></a>
-      <p class="note" data-i18n="foot.made">Gemaakt door LRvdLinden. Een fanproject, niet verbonden aan Max Verstappen, Red Bull Racing of de Formule 1.</p>
+      <p class="note"><span data-i18n="foot.by">Website gemaakt door</span> <a href="https://pixelforges.nl" target="_blank" rel="noopener" class="by">PixelForges</a>.</p>
+      <p class="note" data-i18n="foot.made">Een fanproject, niet verbonden aan Max Verstappen, Red Bull Racing of de Formule 1.</p>
     </div>
     <div class="promos">
       <a class="promo" href="https://112heli.lrvdlinden.app/" target="_blank" rel="noopener">
@@ -249,10 +251,10 @@ var d=t==="auto"?(matchMedia("(prefers-color-scheme: light)").matches?"light":"d
       </a>
     </div>
   </div>
-  <p class="credits wrap"><span data-i18n="foot.credits">Posities: adsb.lol (ODbL) · Kaart: Apple Kaarten · F1-gegevens: Jolpica-F1 · Plaatsnamen: Apple</span> · <a href="https://lrvdlinden.app" target="_blank" rel="noopener">lrvdlinden.app</a></p>
+  <p class="credits wrap"><span data-i18n="foot.credits">Posities: adsb.lol (ODbL) · Kaart: Apple Kaarten · F1-gegevens: Jolpica-F1 · Plaatsnamen: Apple</span> · <a href="https://pixelforges.nl" target="_blank" rel="noopener">pixelforges.nl</a></p>
 </footer>
 
 <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
-<script type="module" src="/assets/js/app.js?v=2"></script>
+<script type="module" src="/assets/js/app.js?v=3"></script>
 </body>
 </html>

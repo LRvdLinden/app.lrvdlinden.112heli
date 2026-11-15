@@ -271,3 +271,4 @@ html[data-theme="light"] .jetcard img, html[data-theme="light"] .jet-pin svg { f
 html { color-scheme: dark; }
 body, .sec.alt, .theater, .panel, .fcard, .big, .fact, .next, .last { transition: background-color .4s, color .4s, border-color .4s; }
 #themeBtn .i-sun { display: none; } html[data-theme="dark"] #themeBtn .i-sun { display: block; } html[data-theme="dark"] #themeBtn .i-moon { display: none; }
+.note a.by { color: var(--or); font-weight: 600; text-decoration: none; } .note a.by:hover { text-decoration: underline; }
