@@ -343,3 +343,35 @@ test("testmelding, push log in beheer and starts per straal", async () => {
   const p = await (await call("/v1/starts/bereik", { method: "POST", body: JSON.stringify({ lat: 52.23, lon: 5.99, soorten: ["politie"] }) })).json();
   assert.equal(p.perStraal[200], 0);
 });
+
+test("F1: last and next Grand Prix via Jolpica, cached", async () => {
+  const env = { DB: d1() };
+  const realFetch = globalThis.fetch;
+  let calls = 0;
+  globalThis.fetch = async (url) => {
+    calls++;
+    if (String(url).endsWith("/current.json")) return new Response(JSON.stringify({ MRData: { RaceTable: { Races: [
+      { raceName: "Dutch Grand Prix", round: "15", date: "2026-08-23", Circuit: { circuitName: "Circuit Park Zandvoort", Location: { lat: "52.3888", long: "4.54092", locality: "Zandvoort", country: "Netherlands" } } }] } } }));
+    const race = String(url).includes("next")
+      ? { raceName: "Abu Dhabi Grand Prix", round: "24", date: "2026-12-06", Circuit: { circuitName: "Yas Marina Circuit", Location: { locality: "Abu Dhabi", country: "UAE" } } }
+      : { raceName: "Las Vegas Grand Prix", round: "23", date: "2026-11-21", Circuit: { circuitName: "Las Vegas Strip Street Circuit", Location: { locality: "Las Vegas", country: "USA" } },
+          Results: [
+            { position: "1", status: "Finished", points: "25", Driver: { driverId: "max_verstappen", givenName: "Max", familyName: "Verstappen", code: "VER" }, Constructor: { name: "Red Bull" } },
+            { position: "2", status: "Finished", points: "18", Driver: { driverId: "norris", givenName: "Lando", familyName: "Norris", code: "NOR" }, Constructor: { name: "McLaren" } },
+            { position: "3", status: "Finished", points: "15", Driver: { driverId: "piastri", givenName: "Oscar", familyName: "Piastri", code: "PIA" }, Constructor: { name: "McLaren" } },
+          ] };
+    return new Response(JSON.stringify({ MRData: { RaceTable: { Races: [race] } } }), { status: 200 });
+  };
+  try {
+    const r = await (await worker.fetch(new Request("https://x/v1/f1"), env)).json();
+    assert.equal(r.laatste.naam, "Las Vegas Grand Prix");
+    assert.equal(r.laatste.max.positie, 1);
+    assert.equal(r.laatste.top3.length, 3);
+    assert.equal(r.volgende.circuit, "Yas Marina Circuit");
+    await worker.fetch(new Request("https://x/v1/f1"), env);
+    assert.equal(r.kalender[0].lat, 52.3888);
+    assert.equal(calls, 3); // second answer from cache
+  } finally {
+    globalThis.fetch = realFetch;
+  }
+});
