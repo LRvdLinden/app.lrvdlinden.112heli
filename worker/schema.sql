@@ -166,3 +166,12 @@ CREATE TABLE IF NOT EXISTS push_log (
   reason TEXT                      -- Apple's reason when refused
 );
 CREATE INDEX IF NOT EXISTS push_log_at ON push_log (at);
+
+-- Live viewers of a website (MV3): an anonymous random id per open tab, seen in the last 75 seconds. No IP, no cookies.
+CREATE TABLE IF NOT EXISTS kijkers (
+  site TEXT NOT NULL,
+  id TEXT NOT NULL,
+  at INTEGER NOT NULL,
+  PRIMARY KEY (site, id)
+);
+CREATE INDEX IF NOT EXISTS kijkers_at ON kijkers (site, at);
