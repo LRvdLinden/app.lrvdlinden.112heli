@@ -1,0 +1,3 @@
+Inter en Inter Display (c) The Inter Project Authors (https://github.com/rsms/inter).
+Licentie: SIL Open Font License 1.1, https://openfontlicense.org
+Deze bestanden zijn een subset (Latijns schrift) als woff2.

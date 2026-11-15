@@ -1,0 +1,14 @@
+{
+  "name": "MV3 – Max Verstappen jet tracker",
+  "short_name": "MV3",
+  "description": "De Falcon 8X PH-UTL van Max Verstappen live op de kaart.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#07080b",
+  "theme_color": "#07080b",
+  "lang": "nl",
+  "icons": [
+    { "src": "/assets/img/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "/assets/img/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ]
+}
