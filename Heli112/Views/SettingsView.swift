@@ -189,6 +189,7 @@ struct WhatsNewView: View {
                 Label("Status per toestel en de leeftijd van elke positie", systemImage: "clock")
                 Label("Melding als een favoriet van roepnaam wisselt", systemImage: "arrow.triangle.2.circlepath")
                 Label("Testmelding en het aantal starts in je gebied bij de instellingen", systemImage: "checkmark.bubble")
+                Label("Nieuw app-icoon en een vettere opstartanimatie", systemImage: "sparkles")
                 Label("Weer dat vliegen beperkt (KNMI)", systemImage: "cloud.fog")
                 Label("Een eigen helikoptergeluid bij meldingen", systemImage: "speaker.wave.2")
                 Label("Meld een toestel dat ontbreekt of niet klopt", systemImage: "exclamationmark.bubble")
