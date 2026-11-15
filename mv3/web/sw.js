@@ -1,9 +1,9 @@
 // MV3 service worker: de site werkt als app en opent ook zonder verbinding (dan met de laatst bekende gegevens).
-const VERSION = "mv3-v5";
+const VERSION = "mv3-v6";
 const SHELL = [
   "/", "/index.html", "/404.html", "/offline.html", "/site.webmanifest", "/favicon.svg", "/favicon.png",
-  "/assets/css/mv3.css?v=5", "/assets/js/config.js?v=1", "/assets/js/app.js?v=5", "/assets/js/i18n.js?v=5", "/assets/js/airports.js?v=5",
-  "/assets/img/jet-side.webp", "/assets/img/112heli.png", "/assets/img/icon-192.png",
+  "/assets/css/mv3.css?v=6", "/assets/js/config.js?v=1", "/assets/js/app.js?v=6", "/assets/js/i18n.js?v=6", "/assets/js/airports.js?v=6",
+  "/assets/img/jet-photo.webp", "/assets/img/112heli.png", "/assets/img/icon-192.png",
   "/assets/fonts/Inter-Regular.woff2", "/assets/fonts/Inter-Medium.woff2", "/assets/fonts/Inter-SemiBold.woff2",
   "/assets/fonts/InterDisplay-Bold.woff2", "/assets/fonts/InterDisplay-Black.woff2",
 ];

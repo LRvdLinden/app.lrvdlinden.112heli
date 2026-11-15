@@ -1,3 +1,4 @@
+[hidden] { display: none !important; }
 /* MV3 – live tracker van PH-UTL. Eén kaart met een zijpaneel (op de telefoon een uitschuifpaneel). Grafiet en oranje, Inter. */
 @font-face { font-family: "Inter"; src: url(../fonts/Inter-Regular.woff2) format("woff2"); font-weight: 400; font-display: swap; }
 @font-face { font-family: "Inter"; src: url(../fonts/Inter-Medium.woff2) format("woff2"); font-weight: 500; font-display: swap; }
@@ -123,7 +124,9 @@ h1, h2, h3, h4 { margin: 0; letter-spacing: -.02em; line-height: 1.1; }
 .gp-strip small { color: var(--muted); font-size: .76rem; }
 .gp-strip .cd { margin-left: auto; font: 700 1rem var(--disp); white-space: nowrap; }
 .aircraft { margin-top: 18px; padding: 14px; border-radius: 16px; border: 1px solid var(--line); background: linear-gradient(160deg, var(--or-soft), transparent 70%); }
-.aircraft img { width: 82%; margin: -4px auto 6px; filter: drop-shadow(0 12px 16px rgba(0,0,0,.35)); }
+.aircraft { padding: 0; overflow: hidden; }
+.aircraft img { display: block; width: 100%; height: auto; aspect-ratio: 2 / 1; object-fit: cover; }
+.aircraft dl { padding: 14px; }
 .aircraft dl { display: grid; grid-template-columns: 1fr 1fr; gap: 8px 14px; margin: 0; }
 .aircraft dt { font: 600 .6rem var(--font); letter-spacing: .12em; text-transform: uppercase; color: var(--muted); }
 .aircraft dd { margin: 2px 0 0; font-weight: 600; }

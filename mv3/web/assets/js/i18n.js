@@ -14,7 +14,8 @@ const NL = {
   "set.title": "Instellingen", "set.units": "Eenheden", "set.metric": "Metrisch (m, km/u, km)", "set.aviation": "Luchtvaart (ft, kt, nm)",
   "set.imperial": "Imperiaal (ft, mph, mi)", "set.time": "Tijd", "set.local": "Mijn tijd", "set.follow": "Kaart volgt de jet", "set.circuits": "Circuits op de kaart",
   "set.theme": "Weergave", "set.auto": "Automatisch (zoals je apparaat)", "set.light": "Licht", "set.dark": "Donker",
-  "state.loading": "Laden…", "state.air": "In de lucht", "state.ground": "Aan de grond", "state.away": "Uit beeld",
+  "state.loading": "Laden…", "state.air": "In de lucht", "state.ground": "Aan de grond", "state.away": "Uit beeld", "state.oor": "Buiten bereik",
+  "oor.note": "geen ontvangst boven zee sinds {t}, positie geschat", "ac.alt": "De Falcon 8X PH-UTL in zwart en oranje bij zonsondergang",
   "hero.sub": "De Falcon 8X van Max Verstappen, live.",
   "t.alt": "Hoogte", "t.gs": "Snelheid", "t.hdg": "Koers", "t.vs": "Stijgen / dalen", "t.since": "In de lucht", "t.since.ground": "Aan de grond",
   "t.dist": "Gevlogen", "t.lastseen": "Laatst gezien",
@@ -65,7 +66,8 @@ const EN = {
   "set.title": "Settings", "set.units": "Units", "set.metric": "Metric (m, km/h, km)", "set.aviation": "Aviation (ft, kt, nm)",
   "set.imperial": "Imperial (ft, mph, mi)", "set.time": "Time", "set.local": "My time", "set.follow": "Map follows the jet", "set.circuits": "Circuits on the map",
   "set.theme": "Appearance", "set.auto": "Automatic (like your device)", "set.light": "Light", "set.dark": "Dark",
-  "state.loading": "Loading…", "state.air": "Airborne", "state.ground": "On the ground", "state.away": "Out of range",
+  "state.loading": "Loading…", "state.air": "Airborne", "state.ground": "On the ground", "state.away": "Out of range", "state.oor": "Out of coverage",
+  "oor.note": "no reception over the ocean since {t}, estimated position", "ac.alt": "The Falcon 8X PH-UTL in black and orange at sunset",
   "hero.sub": "Max Verstappen's Falcon 8X, live.",
   "t.alt": "Altitude", "t.gs": "Speed", "t.hdg": "Heading", "t.vs": "Climb / descent", "t.since": "Airborne", "t.since.ground": "On the ground",
   "t.dist": "Flown", "t.lastseen": "Last seen",
@@ -114,6 +116,7 @@ export function t(key, vars = {}) {
 export function applyStatic() {
   document.documentElement.lang = lang;
   document.querySelectorAll("[data-i18n]").forEach((el) => { el.textContent = t(el.dataset.i18n); });
+  document.querySelectorAll("[data-i18n-alt]").forEach((el) => { el.alt = t(el.dataset.i18nAlt); });
   const lb = document.getElementById("langLabel");
   if (lb) lb.textContent = lang === "nl" ? "EN" : "NL";
 }

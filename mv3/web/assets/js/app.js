@@ -1,7 +1,7 @@
 // MV3 – live tracker van de Falcon 8X PH-UTL. Eén kaart met een paneel: Live, Vlucht, Logboek, Cijfers, Seizoen, Info.
 // Gegevens van de 112Heli-server; kaart en plaatsnamen van Apple.
-import { t, lang, locale, applyStatic, setLang } from "./i18n.js?v=5";
-import { AIRPORTS } from "./airports.js?v=5";
+import { t, lang, locale, applyStatic, setLang } from "./i18n.js?v=6";
+import { AIRPORTS } from "./airports.js?v=6";
 
 const CFG = window.MV3_CONFIG;
 const API = CFG.api.replace(/\/+$/, "");
@@ -203,7 +203,7 @@ function jetNow() {
   const a = S.jet;
   if (!a || a.lat == null) return null;
   if (!a.airborne || !a.gs) return { lat: a.lat, lon: a.lon };
-  const dt = Math.min(120, Math.max(0, now() - (a.seen || S.fixAt)));
+  const dt = Math.min(a.oor ? 1800 : 120, Math.max(0, now() - (a.seen || S.fixAt)));
   const [lat, lon] = move(a.lat, a.lon, a.track || 0, (a.gs * 1.852 * dt) / 3600);
   return { lat, lon };
 }
@@ -318,11 +318,11 @@ async function live() {
   }
   const air = !!a.airborne;
   st.className = `state ${air ? "air" : "ground"}`;
-  st.innerHTML = `<i></i>${esc(t(air ? "state.air" : "state.ground"))}`;
+  st.innerHTML = `<i></i>${esc(t(a.oor ? "state.oor" : air ? "state.air" : "state.ground"))}`;
   setTele("tAlt", air ? U.alt(a.alt) : "–");
   setTele("tGs", air ? U.speed(a.gs) : "–");
   setTele("tHdg", air ? compass(a.track) : "–");
-  setTele("tVs", air ? U.vs(vertical()) : "–");
+  setTele("tVs", air && !a.oor ? U.vs(vertical()) : "–");
   $("tSinceL").textContent = t(air ? "t.since" : "t.since.ground");
   setTele("tDist", air && S.track.length > 1 ? U.dist(routeKm(S.track)) : "–");
   const p = jetNow(), key = `${p.lat.toFixed(1)},${p.lon.toFixed(1)}`;
@@ -332,7 +332,9 @@ async function live() {
   const cur = currentFlight();
   if (air && cur) {
     const from = cur.startLat != null ? cityName(await place(cur.startLat, cur.startLon), cur.startPlace) : cur.startPlace || t("unknown");
-    $("placeSub").textContent = `${lang === "nl" ? "Vertrokken uit" : "Departed"} ${from} · ${fmtTime(cur.start)}`;
+    $("placeSub").textContent = `${lang === "nl" ? "Vertrokken uit" : "Departed"} ${from} · ${fmtTime(cur.start)}` + (a.oor ? ` · ${t("oor.note", { t: fmtTime(a.seen) })}` : "");
+  } else if (air && a.oor) {
+    $("placeSub").textContent = t("oor.note", { t: fmtTime(a.seen) });
   } else if (!air) {
     const last = S.flights?.find((f) => f.end);
     $("placeSub").textContent = last ? `${lang === "nl" ? "Geland" : "Landed"} ${fmtDate(last.end)} · ${fmtTime(last.end)}` : t("hero.sub");
@@ -724,6 +726,9 @@ async function poll(first = false) {
   if (lv) {
     const a = (lv.aircraft || []).find((x) => x.hex === HEX) || null;
     if (a && (!S.jet || a.seen !== S.jet.seen)) S.fixAt = now();
+    // Above the ocean there are no ADS-B receivers: the server then calls the jet "not airborne" because it is no
+    // longer seen. A last known speed above 80 kt means it is still flying, just out of coverage.
+    if (a && !a.airborne && a.stale && a.gs > 80 && a.seen && now() - a.seen < 13 * 3600) { a.airborne = true; a.oor = true; }
     S.jet = a;
   }
   const prev = `${S.flights?.length}|${S.flights?.[0]?.end}`;
