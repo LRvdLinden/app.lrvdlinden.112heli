@@ -1,7 +1,7 @@
 // MV3 – live tracker van de Falcon 8X PH-UTL. Eén kaart met een paneel: Live, Vlucht, Logboek, Cijfers, Seizoen, Info.
 // Gegevens van de 112Heli-server; kaart en plaatsnamen van Apple.
-import { t, lang, locale, applyStatic, setLang } from "./i18n.js?v=6";
-import { AIRPORTS } from "./airports.js?v=6";
+import { t, lang, locale, applyStatic, setLang } from "./i18n.js?v=7";
+import { AIRPORTS } from "./airports.js?v=7";
 
 const CFG = window.MV3_CONFIG;
 const API = CFG.api.replace(/\/+$/, "");
@@ -168,11 +168,11 @@ const cityName = (p, fallback) => (p?.city ? p.city : p?.sea ? t("over.sea") : (
 const JET_SVG = `<svg viewBox="0 0 64 64" aria-hidden="true"><path fill="#ff6a13" stroke="#111" stroke-width="1.6" stroke-linejoin="round"
   d="M32 3c2.3 0 3.6 3.2 3.8 8.6l.3 11.2 19.6 12.6c.9.6 1.4 1.5 1.4 2.5v2.3l-21-6.6.4 13.4 6.6 5.1v3.6l-8.6-2.2c-.6 1.6-1.4 2.4-2.5 2.4s-1.9-.8-2.5-2.4l-8.6 2.2v-3.6l6.6-5.1.4-13.4-21 6.6v-2.3c0-1 .5-1.9 1.4-2.5l19.6-12.6.3-11.2C28.4 6.2 29.7 3 32 3z"/>
   <path fill="#2b2f38" d="M30.2 9.5h3.6l-.4 3h-2.8z"/></svg>`;
-function jetElement() { const d = document.createElement("div"); d.className = "jet-pin"; d.innerHTML = JET_SVG; return d; }
+function jetElement() { const d = document.createElement("div"); d.className = "jet-pin"; d.innerHTML = JET_SVG + `<span class="lbl"></span>`; return d; }
 
 // ------------------------------------------------------------------ map
 
-let jetAnn = null, trail = null, destAnn = null, circuitAnns = [], styleIdx = 0, fitted = false;
+let jetAnn = null, trail = null, estLine = null, destAnn = null, circuitAnns = [], styleIdx = 0, fitted = false;
 let flightLayer = { overlays: [], anns: [], jet: null };
 let tab = "live", openId = null;
 const mobile = () => matchMedia("(max-width: 760px)").matches;
@@ -199,11 +199,42 @@ function setFollow(on) {
   $("setFollow").checked = on;
   if (on) centerJet(true);
 }
+/**
+ * Out of coverage (over the ocean): the position is estimated along the great circle from the last fix, at the last
+ * known speed. When the circuit airport of the coming GP lies in that direction, the route bends towards it and the
+ * estimate stops there. At most 8 hours ahead. Everything shown from this is labelled "geschat".
+ */
+let oorPlan = null;
+function oorEstimate() {
+  const a = S.jet;
+  if (!oorPlan || oorPlan.seen !== a.seen) {
+    let dest = null;
+    const gp = (S.f1?.kalender || []).find((r) => raceTime(r) - now() < 8 * 86400 && raceTime(r) > now() - 86400);
+    if (gp && a.track != null) {
+      for (const [code, name, la, lo] of AIRPORTS) {
+        if (km(la, lo, gp.lat, gp.lon) > 90) continue;
+        const d = km(a.lat, a.lon, la, lo), off = angle(bearing(a.lat, a.lon, la, lo), a.track);
+        if (d > 300 && off <= 15 && (!dest || d < dest.total)) dest = { code, name, lat: la, lon: lo, total: d, gp };
+      }
+    }
+    oorPlan = { seen: a.seen, dest, brg: dest ? bearing(a.lat, a.lon, dest.lat, dest.lon) : a.track || 0 };
+  }
+  const gsKm = (a.gs || 0) * 1.852, run = Math.max(0, Math.min(8 * 3600, now() - a.seen)) * gsKm / 3600;
+  const dist = oorPlan.dest ? Math.min(run, oorPlan.dest.total) : run;
+  const [lat, lon] = move(a.lat, a.lon, oorPlan.brg, dist), [la2, lo2] = move(a.lat, a.lon, oorPlan.brg, dist + 20);
+  return { lat, lon, hdg: bearing(lat, lon, la2, lo2), est: true, dist, arrived: oorPlan.dest && run >= oorPlan.dest.total };
+}
+/** Points along the estimated part (last fix → estimate), for the dashed line on the map. */
+function oorPath() {
+  const a = S.jet, e = oorEstimate(), n = Math.max(2, Math.ceil(e.dist / 150));
+  return Array.from({ length: n + 1 }, (_, i) => move(a.lat, a.lon, oorPlan.brg, (e.dist * i) / n));
+}
 function jetNow() {
   const a = S.jet;
   if (!a || a.lat == null) return null;
+  if (a.oor) return oorEstimate();
   if (!a.airborne || !a.gs) return { lat: a.lat, lon: a.lon };
-  const dt = Math.min(a.oor ? 1800 : 120, Math.max(0, now() - (a.seen || S.fixAt)));
+  const dt = Math.min(120, Math.max(0, now() - (a.seen || S.fixAt)));
   const [lat, lon] = move(a.lat, a.lon, a.track || 0, (a.gs * 1.852 * dt) / 3600);
   return { lat, lon };
 }
@@ -213,12 +244,22 @@ function liveDraw() {
   if (!jetAnn) { jetAnn = new mk.Annotation(c, jetElement, { calloutEnabled: false, displayPriority: 1000 }); map.addAnnotation(jetAnn); }
   else jetAnn.coordinate = c;
   const el = jetAnn.element;
-  if (el) { el.classList.toggle("air", !!S.jet.airborne); const svg = el.querySelector("svg"); if (svg) svg.style.transform = `rotate(${S.jet.track || 0}deg)`; }
+  if (el) {
+    el.classList.toggle("air", !!S.jet.airborne); el.classList.toggle("est", !!p.est);
+    const lbl = el.querySelector(".lbl"); if (lbl) lbl.textContent = p.est ? t("est") : "";
+    const svg = el.querySelector("svg"); if (svg) svg.style.transform = `rotate(${p.hdg ?? S.jet.track ?? 0}deg)`;
+  }
   if (tab === "vlucht") return; // the flight tab shows its own route
   const coords = S.track.map((q) => new mk.Coordinate(q.lat, q.lon));
-  if (S.jet.airborne) coords.push(c);
+  if (S.jet.airborne && !p.est) coords.push(c);
+  else if (p.est) coords.push(new mk.Coordinate(S.jet.lat, S.jet.lon));
   if (trail) map.removeOverlay(trail);
-  trail = null;
+  if (estLine) map.removeOverlay(estLine);
+  trail = null; estLine = null;
+  if (p.est) {
+    estLine = new mk.PolylineOverlay(oorPath().map(([la, lo]) => new mk.Coordinate(la, lo)), { style: new mk.Style({ strokeColor: "#ff6a13", strokeOpacity: 0.75, lineWidth: 3, lineDash: [2, 8], lineCap: "round" }) });
+    map.addOverlay(estLine);
+  }
   if (coords.length > 1) {
     trail = new mk.PolylineOverlay(coords, { style: new mk.Style({ strokeColor: "#ff6a13", lineWidth: 3.5, lineCap: "round", lineJoin: "round" }) });
     map.addOverlay(trail);
@@ -258,6 +299,12 @@ function vertical() {
 /** The airport straight ahead that fits the descent best; a race-week circuit airport and Nice weigh in. Null when there is no good guess. */
 function estimateDest() {
   const a = S.jet;
+  if (a?.oor) {
+    const e = oorEstimate(), d = oorPlan.dest;
+    if (!d) return null;
+    const left = Math.max(0, d.total - e.dist);
+    return { ...d, d: left, eta: a.seen + (d.total / ((a.gs || 1) * 1.852)) * 3600 + 12 * 60 };
+  }
   if (!a?.airborne || a.lat == null || !a.gs || a.track == null) return null;
   const p = jetNow(), vs = vertical(), gsKmh = a.gs * 1.852;
   const touch = vs != null && vs < -400 && a.alt ? (a.alt / -vs) * (gsKmh / 60) : null; // km to touchdown at this descent
@@ -326,7 +373,7 @@ async function live() {
   $("tSinceL").textContent = t(air ? "t.since" : "t.since.ground");
   setTele("tDist", air && S.track.length > 1 ? U.dist(routeKm(S.track)) : "–");
   const p = jetNow(), key = `${p.lat.toFixed(1)},${p.lon.toFixed(1)}`;
-  $("tPos").textContent = latlon(p.lat, p.lon);
+  $("tPos").textContent = latlon(p.lat, p.lon) + (p.est ? ` · ${t("est")}` : "");
   drawDest();
   miniProfile();
   const cur = currentFlight();
@@ -746,7 +793,7 @@ function tick() {
   const a = S.jet;
   $("ago").textContent = a?.seen ? ago(a.seen) : "";
   $("tSince").innerHTML = a?.since ? clock(now() - a.since) : "–";
-  if (a?.airborne) { liveDraw(); const p = jetNow(); if (p) $("tPos").textContent = latlon(p.lat, p.lon); }
+  if (a?.airborne) { liveDraw(); const p = jetNow(); if (p) $("tPos").textContent = latlon(p.lat, p.lon) + (p.est ? ` · ${t("est")}` : ""); }
   countdown();
 }
 

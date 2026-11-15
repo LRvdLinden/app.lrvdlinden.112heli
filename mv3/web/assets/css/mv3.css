@@ -240,6 +240,10 @@ details p { color: var(--soft); margin: 8px 0 0; font-size: .9rem; }
 .jet-pin { width: 44px; height: 44px; position: relative; }
 .jet-pin svg { width: 44px; height: 44px; filter: drop-shadow(0 6px 10px rgba(0,0,0,.5)); }
 .jet-pin::before { content: ""; position: absolute; inset: -14px; border-radius: 50%; background: radial-gradient(circle, rgba(255,106,19,.35), rgba(255,106,19,0) 65%); }
+.jet-pin.est svg { opacity: .7; }
+.jet-pin.est::after { animation: none !important; border-style: dashed !important; }
+.jet-pin .lbl { display: none; position: absolute; top: 46px; left: 50%; transform: translateX(-50%); padding: 2px 8px; border-radius: 999px; background: rgba(17,17,17,.75); color: #fff; font: 700 .62rem var(--font); letter-spacing: .1em; text-transform: uppercase; white-space: nowrap; }
+.jet-pin.est .lbl { display: block; }
 .jet-pin.air::after { content: ""; position: absolute; inset: 6px; border-radius: 50%; border: 2px solid rgba(255,106,19,.6); animation: ring 2.4s infinite; }
 @keyframes ring { 0% { transform: scale(.6); opacity: 1; } 100% { transform: scale(2.4); opacity: 0; } }
 .f1-pin { font-size: 13px; width: 24px; height: 24px; display: grid; place-items: center; border-radius: 50%; background: var(--pop); border: 1px solid var(--line2); }
