@@ -250,6 +250,11 @@ details p { color: var(--soft); margin: 12px 0 0; }
 .foot-in > div { max-width: 520px; }
 .promo { display: flex; align-items: center; gap: 14px; padding: 12px 18px 12px 12px; border-radius: 18px; background: var(--bg3); border: 1px solid var(--line); text-decoration: none; }
 .promo img { border-radius: 11px; }
+.promos { display: grid; gap: 10px; min-width: min(380px, 100%); }
+.promo .lr { border-radius: 11px; flex: none; }
+.promo.more b { color: var(--or); }
+.promo .go { margin-left: auto; padding: 6px 14px; border-radius: 999px; background: var(--or); color: #111; font-weight: 700; font-size: .85rem; }
+.promo { transition: transform .2s, border-color .2s; } .promo:hover { transform: translateY(-2px); border-color: rgba(255,106,19,.45); }
 .promo b { display: block; } .promo small { color: var(--muted); }
 .credits { color: var(--dim); font-size: .78rem; margin-top: 30px; }
 .toast { position: fixed; left: 50%; bottom: 26px; transform: translateX(-50%); z-index: 90; padding: 12px 18px; border-radius: 14px; background: var(--toast-bg); color: var(--toast-fg); font-weight: 600; box-shadow: 0 20px 40px rgba(0,0,0,.4); }

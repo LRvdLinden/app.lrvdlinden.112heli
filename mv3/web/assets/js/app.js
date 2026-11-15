@@ -1,5 +1,5 @@
 // MV3 – live tracker van de Falcon 8X PH-UTL. Gegevens van de 112Heli-server, kaart en plaatsnamen van Apple.
-import { t, lang, locale, applyStatic, setLang } from "./i18n.js";
+import { t, lang, locale, applyStatic, setLang } from "./i18n.js?v=2";
 
 const CFG = window.MV3_CONFIG;
 const API = CFG.api.replace(/\/+$/, "");

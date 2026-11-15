@@ -39,7 +39,7 @@
 <link rel="preload" href="/assets/fonts/Inter-Medium.woff2" as="font" type="font/woff2" crossorigin>
 <script>(function(){var t="auto";try{t=(JSON.parse(localStorage.getItem("mv3.settings"))||{}).theme||"auto"}catch(e){}
 var d=t==="auto"?(matchMedia("(prefers-color-scheme: light)").matches?"light":"dark"):t;document.documentElement.dataset.theme=d;})();</script>
-<link rel="stylesheet" href="/assets/css/mv3.css?v=1">
+<link rel="stylesheet" href="/assets/css/mv3.css?v=2">
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"WebSite","name":"MV3","url":"https://mv3.lrvdlinden.app/","inLanguage":["nl","en"],"description":"Live tracker van de Dassault Falcon 8X PH-UTL van Max Verstappen.","publisher":{"@type":"Person","name":"LRvdLinden","url":"https://lrvdlinden.app"}}</script>
 <script src="/assets/js/config.js?v=1"></script>
 </head>
@@ -237,15 +237,22 @@ var d=t==="auto"?(matchMedia("(prefers-color-scheme: light)").matches?"light":"d
       <a class="brand" href="/"><span class="mark">MV<b>3</b></span></a>
       <p class="note" data-i18n="foot.made">Gemaakt door LRvdLinden. Een fanproject, niet verbonden aan Max Verstappen, Red Bull Racing of de Formule 1.</p>
     </div>
-    <a class="promo" href="https://112heli.lrvdlinden.app/" target="_blank" rel="noopener">
-      <img src="/assets/img/112heli.png" alt="" width="44" height="44">
-      <span><b>112Heli</b><small data-i18n="foot.promo">Lifeliners, politie en Kustwacht live</small></span>
-    </a>
+    <div class="promos">
+      <a class="promo" href="https://112heli.lrvdlinden.app/" target="_blank" rel="noopener">
+        <img src="/assets/img/112heli.png" alt="" width="44" height="44">
+        <span><b>112Heli</b><small data-i18n="foot.promo">Lifeliners, politie en Kustwacht live</small></span>
+      </a>
+      <a class="promo more" href="https://lrvdlinden.app" target="_blank" rel="noopener">
+        <svg class="lr" viewBox="0 0 512 512" width="44" height="44" aria-hidden="true"><rect width="512" height="512" rx="116" fill="#121726"/><path d="M132 146v224h100M292 370V146h48a62 62 0 0 1 0 124h-48M338 270l52 100" fill="none" stroke="#fff" stroke-width="46" stroke-linecap="round" stroke-linejoin="round"/><circle cx="404" cy="126" r="34" fill="#ff6a13" stroke="#121726" stroke-width="14"/></svg>
+        <span><b data-i18n="foot.more">Meer apps van de ontwikkelaar</b><small data-i18n="foot.moreSub">Apps voor iPhone, iPad, Apple TV en Homey</small></span>
+        <span class="go" data-i18n="foot.go">Bekijk</span>
+      </a>
+    </div>
   </div>
   <p class="credits wrap"><span data-i18n="foot.credits">Posities: adsb.lol (ODbL) · Kaart: Apple Kaarten · F1-gegevens: Jolpica-F1 · Plaatsnamen: Apple</span> · <a href="https://lrvdlinden.app" target="_blank" rel="noopener">lrvdlinden.app</a></p>
 </footer>
 
 <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
-<script type="module" src="/assets/js/app.js?v=1"></script>
+<script type="module" src="/assets/js/app.js?v=2"></script>
 </body>
 </html>

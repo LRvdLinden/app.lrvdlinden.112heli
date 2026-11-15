@@ -37,6 +37,7 @@ const NL = {
   "ov.q5": "Meer hulpdiensten en toestellen?", "ov.a5": "MV3 draait op dezelfde server als 112Heli, de app voor alles wat vliegt voor de Nederlandse hulpdiensten.",
   "foot.made": "Gemaakt door LRvdLinden. Een fanproject, niet verbonden aan Max Verstappen, Red Bull Racing of de Formule 1.",
   "foot.promo": "Lifeliners, politie en Kustwacht live",
+  "foot.more": "Meer apps van de ontwikkelaar", "foot.moreSub": "Apps voor iPhone, iPad, Apple TV en Homey", "foot.go": "Bekijk",
   "foot.credits": "Posities: adsb.lol (ODbL) · Kaart: Apple Kaarten · F1-gegevens: Jolpica-F1 · Plaatsnamen: Apple",
 };
 
@@ -78,6 +79,7 @@ const EN = {
   "ov.q5": "More emergency aircraft?", "ov.a5": "MV3 runs on the same server as 112Heli, the app for everything that flies for the Dutch emergency services.",
   "foot.made": "Made by LRvdLinden. A fan project, not affiliated with Max Verstappen, Red Bull Racing or Formula 1.",
   "foot.promo": "Dutch air ambulances, police and Coastguard live",
+  "foot.more": "More apps by the developer", "foot.moreSub": "Apps for iPhone, iPad, Apple TV and Homey", "foot.go": "View",
   "foot.credits": "Positions: adsb.lol (ODbL) · Map: Apple Maps · F1 data: Jolpica-F1 · Place names: Apple",
 };
 
