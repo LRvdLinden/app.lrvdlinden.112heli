@@ -11,8 +11,21 @@ const now = () => Date.now() / 1000;
 // ------------------------------------------------------------------ settings
 
 const SET_KEY = "mv3.settings";
-const settings = Object.assign({ units: "metric", time: "local", follow: true, circuits: true }, (() => { try { return JSON.parse(localStorage.getItem(SET_KEY)) || {}; } catch { return {}; } })());
+const settings = Object.assign({ units: "metric", time: "local", follow: true, circuits: true, theme: "auto" }, (() => { try { return JSON.parse(localStorage.getItem(SET_KEY)) || {}; } catch { return {}; } })());
 const saveSettings = () => { try { localStorage.setItem(SET_KEY, JSON.stringify(settings)); } catch {} };
+
+// ------------------------------------------------------------------ theme (auto follows the device)
+
+const darkMQ = matchMedia("(prefers-color-scheme: dark)");
+const themeNow = () => (settings.theme === "auto" ? (darkMQ.matches ? "dark" : "light") : settings.theme);
+function applyTheme() {
+  const th = themeNow();
+  document.documentElement.dataset.theme = th;
+  document.getElementById("themeColor")?.setAttribute("content", th === "dark" ? "#07080b" : "#f4f4f1");
+  const scheme = () => (th === "dark" ? mk.Map.ColorSchemes.Dark : mk.Map.ColorSchemes.Light);
+  if (typeof mk !== "undefined" && mk) { if (map) map.colorScheme = scheme(); if (thMap) thMap.colorScheme = scheme(); }
+}
+darkMQ.addEventListener?.("change", () => { if (settings.theme === "auto") applyTheme(); });
 
 // ------------------------------------------------------------------ formatting
 
@@ -169,7 +182,7 @@ async function initMap() {
   const el = $("map");
   if (!mk) { el.innerHTML = `<div class="map-fallback">${esc(t("map.error"))}</div>`; return; }
   map = new mk.Map(el, {
-    colorScheme: mk.Map.ColorSchemes.Dark, mapType: mk.Map.MapTypes.MutedStandard, showsPointsOfInterest: false,
+    colorScheme: themeNow() === "dark" ? mk.Map.ColorSchemes.Dark : mk.Map.ColorSchemes.Light, mapType: mk.Map.MapTypes.MutedStandard, showsPointsOfInterest: false,
     showsMapTypeControl: false, showsZoomControl: false, showsUserLocationControl: false, showsCompass: mk.FeatureVisibility.Hidden,
     showsScale: mk.FeatureVisibility.Hidden, padding: new mk.Padding(80, 40, 120, innerWidth > 900 ? 480 : 20),
     region: new mk.CoordinateRegion(new mk.Coordinate(46, 6), new mk.CoordinateSpan(28, 40)),
@@ -356,12 +369,12 @@ function routeArt(f) {
   const P = xs.map((x, i) => [x * s + ox, ys[i] * s + oy]);
   const d = P.map((p, i) => `${i ? "L" : "M"}${p[0].toFixed(1)},${p[1].toFixed(1)}`).join(" ");
   const [s0, e0] = [P[0], P[P.length - 1]];
-  const grid = Array.from({ length: 7 }, (_, i) => `<line x1="${i * 50}" y1="0" x2="${i * 50}" y2="130" stroke="rgba(255,255,255,.04)"/>`).join("")
-    + Array.from({ length: 3 }, (_, i) => `<line x1="0" y1="${i * 50 + 15}" x2="300" y2="${i * 50 + 15}" stroke="rgba(255,255,255,.04)"/>`).join("");
+  const grid = Array.from({ length: 7 }, (_, i) => `<line x1="${i * 50}" y1="0" x2="${i * 50}" y2="130" style="stroke:rgba(var(--ink),.05)"/>`).join("")
+    + Array.from({ length: 3 }, (_, i) => `<line x1="0" y1="${i * 50 + 15}" x2="300" y2="${i * 50 + 15}" style="stroke:rgba(var(--ink),.05)"/>`).join("");
   return `<svg viewBox="0 0 300 130" aria-hidden="true">${grid}
     <path d="${d}" fill="none" stroke="rgba(255,106,19,.25)" stroke-width="8" stroke-linecap="round"/>
     <path d="${d}" fill="none" stroke="#ff6a13" stroke-width="2.4" stroke-linecap="round" ${f.end ? "" : 'stroke-dasharray="6 6"'}/>
-    <circle cx="${s0[0]}" cy="${s0[1]}" r="4.5" fill="#0e1016" stroke="#fff" stroke-width="2"/>
+    <circle cx="${s0[0]}" cy="${s0[1]}" r="4.5" style="fill:var(--art)" stroke="#fff" stroke-width="2"/>
     <circle cx="${e0[0]}" cy="${e0[1]}" r="5" fill="#ff6a13" stroke="#fff" stroke-width="2"/></svg>`;
 }
 
@@ -461,7 +474,7 @@ async function theaterMap(f, pts) {
   mk ||= await loadMapKit();
   if (!mk) { el.innerHTML = `<div class="map-fallback">${esc(t("map.error"))}</div>`; return; }
   if (!thMap) {
-    thMap = new mk.Map(el, { colorScheme: mk.Map.ColorSchemes.Dark, mapType: mk.Map.MapTypes.MutedStandard, showsPointsOfInterest: false,
+    thMap = new mk.Map(el, { colorScheme: themeNow() === "dark" ? mk.Map.ColorSchemes.Dark : mk.Map.ColorSchemes.Light, mapType: mk.Map.MapTypes.MutedStandard, showsPointsOfInterest: false,
       showsMapTypeControl: false, showsCompass: mk.FeatureVisibility.Hidden, showsScale: mk.FeatureVisibility.Hidden });
   }
   if (thRoute) thMap.removeOverlays(thRoute);
@@ -679,6 +692,9 @@ function chrome() {
   ["live", "vluchten", "cijfers", "seizoen", "over"].forEach((id) => spy.observe($(id)));
   $("setBtn").addEventListener("click", () => { const s = $("settings"); s.hidden = !s.hidden; $("setBtn").setAttribute("aria-expanded", String(!s.hidden)); });
   document.addEventListener("click", (e) => { if (!e.target.closest("#settings, #setBtn")) { $("settings").hidden = true; $("setBtn").setAttribute("aria-expanded", "false"); } });
+  $("setTheme").value = settings.theme;
+  $("setTheme").addEventListener("change", (e) => { settings.theme = e.target.value; saveSettings(); applyTheme(); });
+  $("themeBtn").addEventListener("click", () => { settings.theme = themeNow() === "dark" ? "light" : "dark"; saveSettings(); $("setTheme").value = settings.theme; applyTheme(); });
   $("setUnits").value = settings.units; $("setTime").value = settings.time; $("setFollow").checked = settings.follow; $("setCircuits").checked = settings.circuits;
   $("setUnits").addEventListener("change", (e) => { settings.units = e.target.value; saveSettings(); rerender(); });
   $("setTime").addEventListener("change", (e) => { settings.time = e.target.value; saveSettings(); rerender(); });
@@ -726,6 +742,7 @@ async function poll(first = false) {
 
 async function start() {
   applyStatic();
+  applyTheme();
   chrome();
   initMap();
   S.f1 = await get("/v1/f1").catch(() => null);
