@@ -388,3 +388,19 @@ test("live viewers per site", async () => {
   env.DB.raw.exec(`UPDATE kijkers SET at = ${t - 200} WHERE id = 'bbbbbbbb-2222'`);
   assert.equal((await (await worker.fetch(new Request("https://x/v1/kijkers?site=mv3"), env)).json()).nu, 1);
 });
+
+test("MV3-jet: airplanes.live alleen als adsb.lol geen verse positie heeft, de versere wint", async () => {
+  const { freshestOf } = await import("../src/engine.js");
+  const realFetch = globalThis.fetch, asked = [];
+  const answer = { lol: { ac: [{ hex: "4867e6", lat: 50, lon: -15, seen_pos: 400 }] }, live: { ac: [{ hex: "4867e6", lat: 51, lon: -20, seen_pos: 12 }] } };
+  globalThis.fetch = async (url) => { asked.push(String(url)); return new Response(JSON.stringify(String(url).includes("airplanes.live") ? answer.live : answer.lol)); };
+  try {
+    const a = await freshestOf(["https://api.adsb.lol/v2/hex/4867e6", "https://api.airplanes.live/v2/hex/4867e6"]);
+    assert.equal(a.lon, -20);
+    assert.equal(asked.length, 2);
+    answer.lol.ac[0].seen_pos = 5; asked.length = 0;
+    const b = await freshestOf(["https://api.adsb.lol/v2/hex/4867e6", "https://api.airplanes.live/v2/hex/4867e6"]);
+    assert.equal(b.lon, -15);
+    assert.equal(asked.length, 1);
+  } finally { globalThis.fetch = realFetch; }
+});
