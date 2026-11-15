@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>MV3 – Volg de jet van Max Verstappen live | PH-UTL tracker</title>
 <meta name="description" content="Volg de Dassault Falcon 8X PH-UTL van Max Verstappen live op de kaart: hoogte, snelheid, route, vluchtprofiel, vluchten afspelen en de Formule 1-kalender.">
-<link rel="canonical" href="https://mv3.lrvdlinden.app/">
+<link rel="canonical" href="https://mv3jet.nl/">
 <meta name="theme-color" content="#07080b" id="themeColor">
 <meta name="color-scheme" content="dark light">
 <meta name="author" content="PixelForges">
@@ -13,10 +13,10 @@
 <meta property="og:site_name" content="MV3">
 <meta property="og:title" content="MV3 – Volg de jet van Max Verstappen live">
 <meta property="og:description" content="PH-UTL live op de kaart, met elke vlucht terug te kijken en de Formule 1-kalender erbij.">
-<meta property="og:url" content="https://mv3.lrvdlinden.app/">
+<meta property="og:url" content="https://mv3jet.nl/">
 <meta property="og:locale" content="nl_NL">
 <meta property="og:locale:alternate" content="en_US">
-<meta property="og:image" content="https://mv3.lrvdlinden.app/og.png">
+<meta property="og:image" content="https://mv3jet.nl/og.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta property="og:image:type" content="image/png">
@@ -24,7 +24,7 @@
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="MV3 – Volg de jet van Max Verstappen live">
 <meta name="twitter:description" content="PH-UTL live op de kaart, met elke vlucht terug te kijken en de Formule 1-kalender erbij.">
-<meta name="twitter:image" content="https://mv3.lrvdlinden.app/og.png">
+<meta name="twitter:image" content="https://mv3jet.nl/og.png">
 <meta name="twitter:image:alt" content="MV3: tekening van de grijs-oranje Falcon 8X PH-UTL op een gestippelde route, met de tekst “De jet van Max Verstappen, live.”">
 <link rel="icon" href="/favicon.ico" sizes="48x48">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
@@ -40,9 +40,9 @@
 <link rel="preload" href="/assets/fonts/Inter-Medium.woff2" as="font" type="font/woff2" crossorigin>
 <script>(function(){var t="auto";try{t=(JSON.parse(localStorage.getItem("mv3.settings"))||{}).theme||"auto"}catch(e){}
 var d=t==="auto"?(matchMedia("(prefers-color-scheme: light)").matches?"light":"dark"):t;document.documentElement.dataset.theme=d;})();</script>
-<link rel="stylesheet" href="/assets/css/mv3.css?v=3">
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebSite","@id":"https://mv3.lrvdlinden.app/#site","name":"MV3","url":"https://mv3.lrvdlinden.app/","inLanguage":["nl","en"],"description":"Live tracker van de Dassault Falcon 8X PH-UTL van Max Verstappen.","publisher":{"@type":"Organization","@id":"https://pixelforges.nl/#org","name":"PixelForges","url":"https://pixelforges.nl"},"creator":{"@type":"Organization","@id":"https://pixelforges.nl/#org","name":"PixelForges","url":"https://pixelforges.nl"}}</script>
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebApplication","name":"MV3 – Max Verstappen jet tracker","url":"https://mv3.lrvdlinden.app/","applicationCategory":"TravelApplication","operatingSystem":"Web","browserRequirements":"Requires JavaScript","isAccessibleForFree":true,"offers":{"@type":"Offer","price":"0","priceCurrency":"EUR"},"inLanguage":["nl","en"],"image":"https://mv3.lrvdlinden.app/og.png","creator":{"@type":"Organization","@id":"https://pixelforges.nl/#org","name":"PixelForges","url":"https://pixelforges.nl"}}</script>
+<link rel="stylesheet" href="/assets/css/mv3.css?v=4">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebSite","@id":"https://mv3jet.nl/#site","name":"MV3","url":"https://mv3jet.nl/","inLanguage":["nl","en"],"description":"Live tracker van de Dassault Falcon 8X PH-UTL van Max Verstappen.","publisher":{"@type":"Organization","@id":"https://pixelforges.nl/#org","name":"PixelForges","url":"https://pixelforges.nl"},"creator":{"@type":"Organization","@id":"https://pixelforges.nl/#org","name":"PixelForges","url":"https://pixelforges.nl"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebApplication","name":"MV3 – Max Verstappen jet tracker","url":"https://mv3jet.nl/","applicationCategory":"TravelApplication","operatingSystem":"Web","browserRequirements":"Requires JavaScript","isAccessibleForFree":true,"offers":{"@type":"Offer","price":"0","priceCurrency":"EUR"},"inLanguage":["nl","en"],"image":"https://mv3jet.nl/og.png","creator":{"@type":"Organization","@id":"https://pixelforges.nl/#org","name":"PixelForges","url":"https://pixelforges.nl"}}</script>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Waar komen de gegevens vandaan?","acceptedAnswer":{"@type":"Answer","text":"Elk vliegtuig zendt zijn positie, hoogte en snelheid uit via ADS-B. Vrijwilligers over de hele wereld vangen die signalen op en delen ze via adsb.lol. MV3 haalt de positie van PH-UTL elke minuut op."}},{"@type":"Question","name":"Hoe actueel is het?","acceptedAnswer":{"@type":"Answer","text":"Meestal loopt de positie minder dan een minuut achter. Tussen twee metingen schuift de jet op de kaart vloeiend verder op basis van koers en snelheid."}},{"@type":"Question","name":"Waarom zie ik soms een landing midden in zee?","acceptedAnswer":{"@type":"Answer","text":"Boven zee en dun bevolkte gebieden zijn er weinig ontvangers. Valt het signaal lang weg, dan kan een vlucht in twee delen worden geknipt. Een start die hoog in de lucht begint, telt MV3 niet als echte start."}},{"@type":"Question","name":"Is dit officieel?","acceptedAnswer":{"@type":"Answer","text":"Nee. MV3 is een fanproject en is niet verbonden aan Max Verstappen, Red Bull Racing of de Formule 1. Er staan alleen openbare ADS-B-gegevens op, en we tonen plaatsen op het niveau van een stad of vliegveld."}},{"@type":"Question","name":"Meer hulpdiensten en toestellen?","acceptedAnswer":{"@type":"Answer","text":"MV3 draait op dezelfde server als 112Heli, de app voor alles wat vliegt voor de Nederlandse hulpdiensten."}}]}</script>
 <script src="/assets/js/config.js?v=1"></script>
 </head>
@@ -257,6 +257,6 @@ var d=t==="auto"?(matchMedia("(prefers-color-scheme: light)").matches?"light":"d
 </footer>
 
 <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
-<script type="module" src="/assets/js/app.js?v=3"></script>
+<script type="module" src="/assets/js/app.js?v=4"></script>
 </body>
 </html>

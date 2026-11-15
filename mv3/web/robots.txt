@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://mv3.lrvdlinden.app/sitemap.xml
+Sitemap: https://mv3jet.nl/sitemap.xml

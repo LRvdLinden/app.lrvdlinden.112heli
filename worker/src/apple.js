@@ -100,7 +100,7 @@ export const isDeadToken = (r) => r.status === 410 || ["BadDeviceToken", "Unregi
 
 export const mapkitConfigured = (env) => hasKey(env.WEB_MAPKIT_JS_KEY_ID, env.WEB_MAPKIT_JS_TEAM_ID || env.APN_TEAM_ID, env.WEB_MAPKIT_JS_P8);
 
-const DEFAULT_ORIGINS = "https://112heli.lrvdlinden.app,https://www.112heli.lrvdlinden.app,https://mv3.lrvdlinden.app";
+const DEFAULT_ORIGINS = "https://112heli.lrvdlinden.app,https://www.112heli.lrvdlinden.app,https://mv3.lrvdlinden.app,https://mv3jet.nl,https://www.mv3jet.nl";
 
 /** Short-lived MapKit JS token, only for our own website (origin-bound). Null when not configured or a foreign origin. */
 export async function mapkitToken(env, origin) {
