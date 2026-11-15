@@ -1,0 +1,30 @@
+<!doctype html><html><head><meta charset="utf-8"><style>
+@font-face{font-family:D;src:url(../../web/assets/fonts/InterDisplay-Black.woff2);font-weight:900}
+@font-face{font-family:I;src:url(../../web/assets/fonts/Inter-Medium.woff2);font-weight:500}
+@font-face{font-family:I;src:url(../../web/assets/fonts/Inter-SemiBold.woff2);font-weight:600}
+html,body{margin:0;width:var(--w);height:var(--h);overflow:hidden;background:#07080b;color:#f3f4f7}
+.bg{position:absolute;inset:0;background:radial-gradient(circle at var(--gx) var(--gy),rgba(255,106,19,.42),transparent 48%),radial-gradient(circle at 0% 100%,rgba(111,136,255,.16),transparent 45%),linear-gradient(165deg,#0f1117,#07080b)}
+.grid{position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.035) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.035) 1px,transparent 1px);background-size:72px 72px;mask-image:radial-gradient(circle at var(--gx) var(--gy),#000,transparent 75%)}
+svg.route{position:absolute;left:0;top:0;width:100%;height:100%}
+.jet{position:absolute;left:var(--jx);top:var(--jy);width:var(--jw);transform:rotate(var(--jr));filter:drop-shadow(0 40px 50px rgba(0,0,0,.65))}
+.c{position:absolute;left:var(--m);right:var(--m);top:var(--ty)}
+.mark{font:900 calc(var(--f)*1.25)/1 D;letter-spacing:-.06em}.mark b{color:#ff6a13}
+.pill{display:inline-flex;align-items:center;gap:12px;margin-top:calc(var(--f)*.9);padding:10px 20px;border-radius:999px;background:rgba(255,106,19,.16);border:1.5px solid rgba(255,106,19,.5);font:600 calc(var(--f)*.4) I;letter-spacing:.16em;color:#ffd2b8}
+.pill i{width:14px;height:14px;border-radius:50%;background:#ff6a13;box-shadow:0 0 0 7px rgba(255,106,19,.25)}
+h1{font:900 calc(var(--f)*1.75)/.95 D;letter-spacing:-.045em;margin:calc(var(--f)*.55) 0 calc(var(--f)*.45);max-width:var(--tw)}
+h1 b{color:#ff6a13;font-weight:900}
+p{font:500 calc(var(--f)*.6)/1.4 I;color:#c9ccd6;margin:0;max-width:var(--tw)}
+.chips{display:flex;flex-wrap:wrap;gap:12px;margin-top:calc(var(--f)*.75);max-width:var(--tw)}
+.chips span{padding:11px 20px;border-radius:999px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);font:600 calc(var(--f)*.4) I}
+.cta{position:absolute;left:var(--m);right:var(--m);bottom:var(--cb);display:flex;align-items:center;justify-content:space-between;gap:20px}
+.url{padding:18px 30px;border-radius:999px;background:#ff6a13;color:#111;font:600 calc(var(--f)*.5) I;box-shadow:0 16px 40px rgba(255,106,19,.35)}
+.by{font:500 calc(var(--f)*.36) I;color:#9298a6;text-align:right}
+.by b{color:#f3f4f7;font-weight:600}
+</style></head><body><div class="bg"></div><div class="grid"></div>
+<svg class="route" viewBox="0 0 1000 1000" preserveAspectRatio="none"><path d="ROUTE" fill="none" stroke="rgba(255,106,19,.22)" stroke-width="16" stroke-linecap="round" vector-effect="non-scaling-stroke"/><path d="ROUTE" fill="none" stroke="#ff6a13" stroke-width="4" stroke-dasharray="12 11" stroke-linecap="round" vector-effect="non-scaling-stroke"/></svg>
+<img class="jet" src="../../web/assets/img/jet-side.webp">
+<div class="c"><div class="mark">MV<b>3</b></div><div class="pill"><i></i>LIVE · PH-UTL</div>
+<h1>De jet van Max, <b>live.</b></h1><p>Volg de Falcon 8X van Max Verstappen op de kaart en speel elke vlucht terug af.</p>
+<div class="chips"><span>Live op de kaart</span><span>Vluchten afspelen</span><span>F1-kalender</span></div></div>
+<div class="cta"><span class="url">mv3.lrvdlinden.app</span><span class="by">Website door<br><b>PixelForges</b></span></div>
+</body></html>
