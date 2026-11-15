@@ -16,6 +16,8 @@ Het MapKit-token is gebonden aan het domein. De server moet `https://mv3.lrvdlin
 
 ## Bouwen en uploaden
 
+De site is ook een PWA (installeerbaar als app, met `sw.js` voor offline gebruik). Bij een nieuwe versie: verhoog `VERSION` in `web/sw.js` en de `?v=` in `index.html`.
+
 Er is geen build-stap: upload de inhoud van `web/` naar de hosting van mv3.lrvdlinden.app. De og-afbeelding maak je opnieuw met `python3 tools/og.py`.
 
 Lettertype: Inter (SIL Open Font License), zie `web/assets/fonts/Inter-OFL.txt`.

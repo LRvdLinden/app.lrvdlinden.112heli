@@ -757,3 +757,8 @@ async function start() {
   setInterval(async () => { S.f1 = await get("/v1/f1").catch(() => S.f1); renderSeason(); drawCircuits(); }, 30 * 60 * 1000);
 }
 start();
+
+// PWA: install as an app; works offline with the last known data.
+if ("serviceWorker" in navigator && location.protocol === "https:") {
+  addEventListener("load", () => navigator.serviceWorker.register("/sw.js").catch(() => {}));
+}
