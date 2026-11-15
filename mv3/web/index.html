@@ -40,223 +40,141 @@
 <link rel="preload" href="/assets/fonts/Inter-Medium.woff2" as="font" type="font/woff2" crossorigin>
 <script>(function(){var t="auto";try{t=(JSON.parse(localStorage.getItem("mv3.settings"))||{}).theme||"auto"}catch(e){}
 var d=t==="auto"?(matchMedia("(prefers-color-scheme: light)").matches?"light":"dark"):t;document.documentElement.dataset.theme=d;})();</script>
-<link rel="stylesheet" href="/assets/css/mv3.css?v=4">
+<link rel="stylesheet" href="/assets/css/mv3.css?v=5">
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"WebSite","@id":"https://mv3jet.nl/#site","name":"MV3","url":"https://mv3jet.nl/","inLanguage":["nl","en"],"description":"Live tracker van de Dassault Falcon 8X PH-UTL van Max Verstappen.","publisher":{"@type":"Organization","@id":"https://pixelforges.nl/#org","name":"PixelForges","url":"https://pixelforges.nl"},"creator":{"@type":"Organization","@id":"https://pixelforges.nl/#org","name":"PixelForges","url":"https://pixelforges.nl"}}</script>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"WebApplication","name":"MV3 – Max Verstappen jet tracker","url":"https://mv3jet.nl/","applicationCategory":"TravelApplication","operatingSystem":"Web","browserRequirements":"Requires JavaScript","isAccessibleForFree":true,"offers":{"@type":"Offer","price":"0","priceCurrency":"EUR"},"inLanguage":["nl","en"],"image":"https://mv3jet.nl/og.png","creator":{"@type":"Organization","@id":"https://pixelforges.nl/#org","name":"PixelForges","url":"https://pixelforges.nl"}}</script>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Waar komen de gegevens vandaan?","acceptedAnswer":{"@type":"Answer","text":"Elk vliegtuig zendt zijn positie, hoogte en snelheid uit via ADS-B. Vrijwilligers over de hele wereld vangen die signalen op en delen ze via adsb.lol. MV3 haalt de positie van PH-UTL elke minuut op."}},{"@type":"Question","name":"Hoe actueel is het?","acceptedAnswer":{"@type":"Answer","text":"Meestal loopt de positie minder dan een minuut achter. Tussen twee metingen schuift de jet op de kaart vloeiend verder op basis van koers en snelheid."}},{"@type":"Question","name":"Waarom zie ik soms een landing midden in zee?","acceptedAnswer":{"@type":"Answer","text":"Boven zee en dun bevolkte gebieden zijn er weinig ontvangers. Valt het signaal lang weg, dan kan een vlucht in twee delen worden geknipt. Een start die hoog in de lucht begint, telt MV3 niet als echte start."}},{"@type":"Question","name":"Is dit officieel?","acceptedAnswer":{"@type":"Answer","text":"Nee. MV3 is een fanproject en is niet verbonden aan Max Verstappen, Red Bull Racing of de Formule 1. Er staan alleen openbare ADS-B-gegevens op, en we tonen plaatsen op het niveau van een stad of vliegveld."}},{"@type":"Question","name":"Meer hulpdiensten en toestellen?","acceptedAnswer":{"@type":"Answer","text":"MV3 draait op dezelfde server als 112Heli, de app voor alles wat vliegt voor de Nederlandse hulpdiensten."}}]}</script>
 <script src="/assets/js/config.js?v=1"></script>
 </head>
 <body>
-<a class="skip" href="#vluchten" data-i18n="skip">Naar de vluchten</a>
-
-<header class="top" id="top">
-  <a class="brand" href="/" aria-label="MV3, naar boven"><span class="mark">MV<b>3</b></span><span class="brand-sub">PH-UTL</span></a>
-  <nav class="nav" aria-label="Hoofdmenu">
-    <a href="#live" data-i18n="nav.live">Live</a>
-    <a href="#vluchten" data-i18n="nav.flights">Vluchten</a>
-    <a href="#cijfers" data-i18n="nav.stats">Cijfers</a>
-    <a href="#seizoen" data-i18n="nav.season">Seizoen</a>
-    <a href="#over" data-i18n="nav.about">Over</a>
-  </nav>
-  <div class="top-actions">
-    <button class="icon-btn" id="themeBtn" aria-label="Licht of donker">
-      <svg class="i-sun" viewBox="0 0 24 24" width="19" height="19" aria-hidden="true"><circle cx="12" cy="12" r="4.5" fill="currentColor"/><path d="M12 2v2.5M12 19.5V22M2 12h2.5M19.5 12H22M4.9 4.9l1.8 1.8M17.3 17.3l1.8 1.8M4.9 19.1l1.8-1.8M17.3 6.7l1.8-1.8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
-      <svg class="i-moon" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path fill="currentColor" d="M20.5 14.6A8.5 8.5 0 0 1 9.4 3.5a8.5 8.5 0 1 0 11.1 11.1z"/></svg>
-    </button>
-    <button class="icon-btn" id="langBtn" aria-label="Taal wijzigen"><span id="langLabel">EN</span></button>
-    <button class="icon-btn" id="setBtn" aria-label="Instellingen" aria-expanded="false" aria-controls="settings">
-      <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path fill="currentColor" d="M19.4 13a7.6 7.6 0 0 0 0-2l2-1.6-2-3.4-2.4 1a7.4 7.4 0 0 0-1.7-1L15 3.5h-4l-.4 2.5a7.4 7.4 0 0 0-1.7 1l-2.4-1-2 3.4L6.6 11a7.6 7.6 0 0 0 0 2l-2 1.6 2 3.4 2.4-1a7.4 7.4 0 0 0 1.7 1l.4 2.5h4l.4-2.5a7.4 7.4 0 0 0 1.7-1l2.4 1 2-3.4zM13 15.5a3.5 3.5 0 1 1 0-7 3.5 3.5 0 0 1 0 7z" transform="translate(-1 0)"/></svg>
-    </button>
-  </div>
-  <div class="settings" id="settings" hidden>
-    <h3 data-i18n="set.title">Instellingen</h3>
-    <label><span data-i18n="set.theme">Weergave</span>
-      <select id="setTheme"><option value="auto" data-i18n="set.auto">Automatisch (zoals je apparaat)</option><option value="light" data-i18n="set.light">Licht</option><option value="dark" data-i18n="set.dark">Donker</option></select></label>
-    <label><span data-i18n="set.units">Eenheden</span>
-      <select id="setUnits"><option value="metric" data-i18n="set.metric">Metrisch (m, km/u, km)</option><option value="aviation" data-i18n="set.aviation">Luchtvaart (ft, kt, nm)</option><option value="imperial" data-i18n="set.imperial">Imperiaal (ft, mph, mi)</option></select></label>
-    <label><span data-i18n="set.time">Tijd</span>
-      <select id="setTime"><option value="local" data-i18n="set.local">Mijn tijd</option><option value="utc">UTC</option></select></label>
-    <label class="check"><input type="checkbox" id="setFollow" checked> <span data-i18n="set.follow">Kaart volgt de jet</span></label>
-    <label class="check"><input type="checkbox" id="setCircuits" checked> <span data-i18n="set.circuits">Circuits op de kaart</span></label>
-  </div>
-</header>
-
-<main>
-  <!-- LIVE -->
-  <section class="live" id="live" aria-labelledby="liveTitle">
-    <div class="map" id="map" role="application" aria-label="Kaart met de positie van PH-UTL"></div>
-    <div class="map-shade" aria-hidden="true"></div>
-
-    <div class="hud" id="hud">
-      <div class="hud-head">
-        <span class="state" id="state"><i></i><span data-i18n="state.loading">Laden…</span></span>
-        <span class="ago" id="ago"></span>
+<div class="app" id="app">
+  <header class="bar">
+    <a class="brand" href="/" aria-label="MV3"><span class="mark">MV<b>3</b></span></a>
+    <span class="state" id="state"><i></i><span data-i18n="state.loading">Laden…</span></span>
+    <span class="viewers" id="viewers" hidden title=""><i></i><b id="vCount">–</b> <span data-i18n="viewers">kijken nu mee</span></span>
+    <div class="bar-actions">
+      <button class="icon-btn" id="shareBtn" aria-label="Delen"><svg viewBox="0 0 24 24" width="19" height="19" aria-hidden="true"><path d="M12 3v12M7 8l5-5 5 5M5 13v6a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+      <button class="icon-btn" id="themeBtn" aria-label="Licht of donker">
+        <svg class="i-sun" viewBox="0 0 24 24" width="19" height="19" aria-hidden="true"><circle cx="12" cy="12" r="4.5" fill="currentColor"/><path d="M12 2v2.5M12 19.5V22M2 12h2.5M19.5 12H22M4.9 4.9l1.8 1.8M17.3 17.3l1.8 1.8M4.9 19.1l1.8-1.8M17.3 6.7l1.8-1.8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        <svg class="i-moon" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path fill="currentColor" d="M20.5 14.6A8.5 8.5 0 0 1 9.4 3.5a8.5 8.5 0 1 0 11.1 11.1z"/></svg>
+      </button>
+      <button class="icon-btn" id="langBtn" aria-label="Taal wijzigen"><span id="langLabel">EN</span></button>
+      <button class="icon-btn" id="setBtn" aria-label="Instellingen" aria-expanded="false" aria-controls="settings">
+        <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path fill="currentColor" d="M19.4 13a7.6 7.6 0 0 0 0-2l2-1.6-2-3.4-2.4 1a7.4 7.4 0 0 0-1.7-1L15 3.5h-4l-.4 2.5a7.4 7.4 0 0 0-1.7 1l-2.4-1-2 3.4L6.6 11a7.6 7.6 0 0 0 0 2l-2 1.6 2 3.4 2.4-1a7.4 7.4 0 0 0 1.7 1l.4 2.5h4l.4-2.5a7.4 7.4 0 0 0 1.7-1l2.4 1 2-3.4zM13 15.5a3.5 3.5 0 1 1 0-7 3.5 3.5 0 0 1 0 7z" transform="translate(-1 0)"/></svg>
+      </button>
+    </div>
+    <div class="settings" id="settings" hidden>
+      <h3 data-i18n="set.title">Instellingen</h3>
+      <label><span data-i18n="set.theme">Weergave</span><select id="setTheme"><option value="auto" data-i18n="set.auto">Automatisch</option><option value="light" data-i18n="set.light">Licht</option><option value="dark" data-i18n="set.dark">Donker</option></select></label>
+      <div class="set-row">
+        <label><span data-i18n="set.dist">Afstand</span><select id="setDist"><option value="km">km</option><option value="nm">nm</option><option value="mi">mi</option></select></label>
+        <label><span data-i18n="set.speed">Snelheid</span><select id="setSpeed"><option value="kmh">km/u</option><option value="kt">kt</option><option value="mph">mph</option></select></label>
+        <label><span data-i18n="set.alt">Hoogte</span><select id="setAlt"><option value="m">m</option><option value="ft">ft</option></select></label>
       </div>
-      <h1 class="place" id="liveTitle"><span id="place">PH-UTL</span></h1>
+      <div class="set-row">
+        <label><span data-i18n="set.time">Tijd</span><select id="setTime"><option value="local" data-i18n="set.local">Mijn tijd</option><option value="utc">UTC</option></select></label>
+        <label><span data-i18n="set.clock">Klok</span><select id="setClock"><option value="24">24 uur</option><option value="12">12 uur</option></select></label>
+      </div>
+      <label class="check"><input type="checkbox" id="setFollow"> <span data-i18n="set.follow">Kaart volgt de jet</span></label>
+      <label class="check"><input type="checkbox" id="setCircuits"> <span data-i18n="set.circuits">Circuits op de kaart</span></label>
+      <button class="link-btn" id="setReset" data-i18n="set.reset">Standaardinstellingen</button>
+    </div>
+  </header>
+
+  <div class="map" id="map" role="application" aria-label="Kaart met de positie van PH-UTL"></div>
+
+  <div class="map-tools" role="toolbar" aria-label="Kaart">
+    <button class="tool" id="btnFollow" aria-pressed="true" title="Volg de jet"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3.2" class="f"/><path d="M12 2v4M12 18v4M2 12h4M18 12h4"/><circle cx="12" cy="12" r="7.5"/></svg></button>
+    <button class="tool" id="btnFit" title="Hele route"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg></button>
+    <button class="tool" id="btnNorth" title="Noord boven"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l4 10h-8z" class="f"/><path d="M12 13v8"/></svg></button>
+    <button class="tool" id="btnStyle" title="Kaarttype"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 2 8l10 5 10-5-10-5zM2 13l10 5 10-5M2 17.5l10 5 10-5"/></svg></button>
+  </div>
+
+  <aside class="panel" id="panel" aria-label="Gegevens">
+    <button class="grip" id="grip" aria-label="Paneel groter of kleiner"><span></span></button>
+    <nav class="tabs" role="tablist">
+      <button role="tab" data-tab="live" data-i18n="tab.live">Live</button>
+      <button role="tab" data-tab="vlucht" data-i18n="tab.flight">Vlucht</button>
+      <button role="tab" data-tab="log" data-i18n="tab.log">Logboek</button>
+      <button role="tab" data-tab="cijfers" data-i18n="tab.stats">Cijfers</button>
+      <button role="tab" data-tab="seizoen" data-i18n="tab.season">Seizoen</button>
+      <button role="tab" data-tab="info" data-i18n="tab.info">Info</button>
+    </nav>
+    <div class="pane" id="pane-live" role="tabpanel">
+      <h1 class="place" id="place">PH-UTL</h1>
       <p class="place-sub" id="placeSub" data-i18n="hero.sub">De Falcon 8X van Max Verstappen, live.</p>
+      <div class="dest" id="dest" hidden></div>
       <div class="tele">
         <div class="t"><span data-i18n="t.alt">Hoogte</span><b id="tAlt">–</b></div>
         <div class="t"><span data-i18n="t.gs">Snelheid</span><b id="tGs">–</b></div>
-        <div class="t t-hdg"><span data-i18n="t.hdg">Koers</span><b id="tHdg">–</b>
-          <svg class="compass" viewBox="0 0 40 40" aria-hidden="true"><circle cx="20" cy="20" r="18"/><path id="needle" d="M20 5 L24 21 L20 18 L16 21 Z"/></svg></div>
         <div class="t"><span data-i18n="t.vs">Stijgen / dalen</span><b id="tVs">–</b></div>
-        <div class="t"><span data-i18n="t.since" id="tSinceL">In de lucht</span><b id="tSince">–</b></div>
+        <div class="t"><span data-i18n="t.hdg">Koers</span><b id="tHdg">–</b></div>
+        <div class="t"><span id="tSinceL" data-i18n="t.since">In de lucht</span><b id="tSince">–</b></div>
         <div class="t"><span data-i18n="t.dist">Gevlogen</span><b id="tDist">–</b></div>
       </div>
-      <div class="hud-profile" id="hudProfile" hidden></div>
-    </div>
-
-    <div class="map-tools" role="toolbar" aria-label="Kaart">
-      <button class="tool" id="btnFollow" aria-pressed="true" title="Volg de jet"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3.2"/><path d="M12 2v4M12 18v4M2 12h4M18 12h4"/><circle cx="12" cy="12" r="7.5" fill="none"/></svg></button>
-      <button class="tool" id="btnFit" title="Hele route"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5" fill="none"/></svg></button>
-      <button class="tool" id="btnStyle" title="Kaarttype"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 2 8l10 5 10-5-10-5zM2 13l10 5 10-5M2 17.5l10 5 10-5" fill="none"/></svg></button>
-    </div>
-
-    <aside class="jetcard" aria-label="Over het toestel">
-      <img src="/assets/img/jet-side.webp" alt="Tekening van de Falcon 8X PH-UTL in grijs en oranje" width="900" height="320">
-      <div>
-        <b>PH-UTL</b>
-        <span>Dassault Falcon 8X · ICAO 4867E6</span>
+      <div class="coords"><span id="tPos">–</span><span id="ago"></span></div>
+      <div class="mini-profile" id="hudProfile" hidden></div>
+      <div class="gp-strip" id="gpStrip" hidden></div>
+      <div class="aircraft">
+        <img src="/assets/img/jet-side.webp" alt="Tekening van de Falcon 8X PH-UTL in grijs en oranje" width="900" height="320">
+        <dl>
+          <div><dt data-i18n="ac.reg">Registratie</dt><dd>PH-UTL</dd></div>
+          <div><dt data-i18n="ac.type">Type</dt><dd>Dassault Falcon 8X</dd></div>
+          <div><dt data-i18n="ac.country">Land</dt><dd>🇳🇱 <span data-i18n="ac.nl">Nederland</span></dd></div>
+          <div><dt>ICAO</dt><dd>4867E6</dd></div>
+        </dl>
       </div>
-    </aside>
-
-    <div class="ticker" id="ticker" hidden>
-      <span class="tk-label" data-i18n="tk.next">Volgende GP</span>
-      <b id="tkName">–</b>
-      <span class="tk-count" id="tkCount">–</span>
-      <span class="tk-dist" id="tkDist"></span>
     </div>
-  </section>
-
-  <!-- VLUCHTEN -->
-  <section class="sec" id="vluchten" aria-labelledby="flTitle">
-    <div class="wrap">
-      <div class="sec-head">
-        <div>
-          <span class="eyebrow" data-i18n="fl.eyebrow">Logboek · 30 dagen</span>
-          <h2 id="flTitle" data-i18n="fl.title">Elke vlucht, terug te kijken</h2>
-        </div>
-        <p class="sec-lead" data-i18n="fl.lead">Kies een vlucht en speel hem af: de jet vliegt de route opnieuw, met hoogte en snelheid in de grafiek.</p>
-      </div>
-      <div class="flights" id="flights"><div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div></div>
+    <div class="pane" id="pane-vlucht" role="tabpanel" hidden>
+      <div id="flight"><p class="muted" data-i18n="fl.pick">Kies een vlucht in het logboek.</p></div>
     </div>
-  </section>
-
-  <!-- THEATER (one flight) -->
-  <section class="theater" id="theater" hidden aria-labelledby="thTitle">
-    <div class="wrap">
-      <div class="th-head">
-        <div>
-          <span class="eyebrow" id="thWhen"></span>
-          <h2 id="thTitle"></h2>
-          <p class="th-tag" id="thTag" hidden></p>
-        </div>
-        <div class="th-actions">
-          <button class="pill-btn" id="thCopy" data-i18n="share.copy">Kopieer link</button>
-          <a class="pill-btn" id="thWa" target="_blank" rel="noopener">WhatsApp</a>
-          <a class="pill-btn" id="thX" target="_blank" rel="noopener">X</a>
-          <button class="pill-btn ghost" id="thClose" data-i18n="th.close">Sluiten</button>
-        </div>
-      </div>
-      <div class="th-map" id="thMap"></div>
-      <div class="player">
-        <button class="play" id="play" aria-label="Afspelen"><svg viewBox="0 0 24 24" aria-hidden="true"><path id="playIcon" d="M7 4.5v15l13-7.5z"/></svg></button>
-        <div class="scrub">
-          <input type="range" id="scrub" min="0" max="1000" value="0" aria-label="Tijdlijn van de vlucht">
-          <div class="scrub-read"><b id="rdTime">–</b><span id="rdAlt">–</span><span id="rdGs">–</span><span id="rdHdg">–</span></div>
-        </div>
-        <div class="speeds" role="group" aria-label="Afspeelsnelheid">
-          <button data-speed="60">60×</button><button data-speed="240" aria-pressed="true">240×</button><button data-speed="900">900×</button>
-        </div>
-      </div>
-      <div class="profile" id="profile"></div>
-      <div class="facts" id="facts"></div>
+    <div class="pane" id="pane-log" role="tabpanel" hidden>
+      <h2 class="pane-title" data-i18n="fl.title">Logboek</h2>
+      <p class="muted" id="logSum"></p>
+      <ol class="log" id="log"></ol>
     </div>
-  </section>
-
-  <!-- CIJFERS -->
-  <section class="sec alt" id="cijfers" aria-labelledby="stTitle">
-    <div class="wrap">
-      <div class="sec-head">
-        <div>
-          <span class="eyebrow" data-i18n="st.eyebrow">De afgelopen 30 dagen</span>
-          <h2 id="stTitle" data-i18n="st.title">In cijfers</h2>
-        </div>
-      </div>
+    <div class="pane" id="pane-cijfers" role="tabpanel" hidden>
+      <h2 class="pane-title" data-i18n="st.title">De afgelopen 30 dagen</h2>
       <div class="bigstats" id="bigstats"></div>
-      <div class="st-grid">
-        <div class="panel">
-          <h3 data-i18n="st.days">Vliegdagen</h3>
-          <div class="heat" id="heat"></div>
-          <p class="note" data-i18n="st.daysNote">Elk vakje is een dag; hoe feller, hoe langer in de lucht.</p>
-        </div>
-        <div class="panel">
-          <h3 data-i18n="st.countries">Landen</h3>
-          <div class="countries" id="countries"></div>
-        </div>
-        <div class="panel">
-          <h3 data-i18n="st.top">Vaakste bestemmingen</h3>
-          <ol class="bars" id="topDest"></ol>
-        </div>
-      </div>
+      <h3 data-i18n="st.days">Vliegdagen</h3>
+      <div class="heat" id="heat"></div>
+      <h3 data-i18n="st.countries">Landen</h3>
+      <div class="countries" id="countries"></div>
+      <h3 data-i18n="st.top">Vaakste bestemmingen</h3>
+      <ol class="bars" id="topDest"></ol>
     </div>
-  </section>
-
-  <!-- SEIZOEN -->
-  <section class="sec" id="seizoen" aria-labelledby="seTitle">
-    <div class="wrap">
-      <div class="sec-head">
-        <div>
-          <span class="eyebrow" data-i18n="se.eyebrow">Formule 1</span>
-          <h2 id="seTitle" data-i18n="se.title">Het seizoen</h2>
-        </div>
-        <p class="sec-lead" data-i18n="se.lead">Waar de jet naartoe gaat, gaat de kalender ook. Bij elke GP zie je of de jet er in de raceweek is geland.</p>
-      </div>
-      <div class="se-grid">
-        <div class="next" id="next"></div>
-        <div class="last" id="last"></div>
-      </div>
+    <div class="pane" id="pane-seizoen" role="tabpanel" hidden>
+      <div class="next" id="next"></div>
+      <div class="last" id="last"></div>
+      <h3 data-i18n="se.calendar">Kalender</h3>
       <ol class="calendar" id="calendar"></ol>
     </div>
-  </section>
-
-  <!-- OVER -->
-  <section class="sec alt" id="over" aria-labelledby="ovTitle">
-    <div class="wrap narrow">
-      <span class="eyebrow" data-i18n="ov.eyebrow">Over MV3</span>
-      <h2 id="ovTitle" data-i18n="ov.title">Hoe het werkt</h2>
+    <div class="pane" id="pane-info" role="tabpanel" hidden>
+      <h2 class="pane-title" data-i18n="ov.title">Hoe het werkt</h2>
       <details open><summary data-i18n="ov.q1">Waar komen de gegevens vandaan?</summary><p data-i18n="ov.a1">Elk vliegtuig zendt zijn positie, hoogte en snelheid uit via ADS-B. Vrijwilligers over de hele wereld vangen die signalen op en delen ze via adsb.lol. MV3 haalt de positie van PH-UTL elke minuut op.</p></details>
+      <details><summary data-i18n="ov.q6">Hoe weet MV3 de bestemming?</summary><p data-i18n="ov.a6">Een vliegtuig zendt zijn bestemming niet uit. MV3 schat die uit de koers, de daling en de snelheid, en noemt dan het vliegveld dat recht vooruit ligt. Het blijft een schatting; na de landing zie je de echte aankomstplaats.</p></details>
       <details><summary data-i18n="ov.q2">Hoe actueel is het?</summary><p data-i18n="ov.a2">Meestal loopt de positie minder dan een minuut achter. Tussen twee metingen schuift de jet op de kaart vloeiend verder op basis van koers en snelheid.</p></details>
       <details><summary data-i18n="ov.q3">Waarom zie ik soms een landing midden in zee?</summary><p data-i18n="ov.a3">Boven zee en dun bevolkte gebieden zijn er weinig ontvangers. Valt het signaal lang weg, dan kan een vlucht in twee delen worden geknipt. Een start die hoog in de lucht begint, telt MV3 niet als echte start.</p></details>
       <details><summary data-i18n="ov.q4">Is dit officieel?</summary><p data-i18n="ov.a4">Nee. MV3 is een fanproject en is niet verbonden aan Max Verstappen, Red Bull Racing of de Formule 1. Er staan alleen openbare ADS-B-gegevens op, en we tonen plaatsen op het niveau van een stad of vliegveld.</p></details>
       <details><summary data-i18n="ov.q5">Meer hulpdiensten en toestellen?</summary><p data-i18n="ov.a5">MV3 draait op dezelfde server als 112Heli, de app voor alles wat vliegt voor de Nederlandse hulpdiensten.</p></details>
-    </div>
-  </section>
-</main>
-
-<footer class="foot">
-  <div class="wrap foot-in">
-    <div>
-      <a class="brand" href="/"><span class="mark">MV<b>3</b></span></a>
+      <div class="promos">
+        <a class="promo" href="https://112heli.lrvdlinden.app/" target="_blank" rel="noopener">
+          <img src="/assets/img/112heli.png" alt="" width="44" height="44" loading="lazy">
+          <span><b>112Heli</b><small data-i18n="foot.promo">Lifeliners, politie en Kustwacht live</small></span>
+        </a>
+        <a class="promo more" href="https://lrvdlinden.app" target="_blank" rel="noopener">
+          <svg class="lr" viewBox="0 0 512 512" width="44" height="44" aria-hidden="true"><rect width="512" height="512" rx="116" fill="#121726"/><path d="M132 146v224h100M292 370V146h48a62 62 0 0 1 0 124h-48M338 270l52 100" fill="none" stroke="#fff" stroke-width="46" stroke-linecap="round" stroke-linejoin="round"/><circle cx="404" cy="126" r="34" fill="#ff6a13" stroke="#121726" stroke-width="14"/></svg>
+          <span><b data-i18n="foot.more">Meer apps van de ontwikkelaar</b><small data-i18n="foot.moreSub">Apps voor iPhone, iPad, Apple TV en Homey</small></span>
+          <span class="go" data-i18n="foot.go">Bekijk</span>
+        </a>
+      </div>
       <p class="note"><span data-i18n="foot.by">Website gemaakt door</span> <a href="https://pixelforges.nl" target="_blank" rel="noopener" class="by">PixelForges</a>.</p>
       <p class="note" data-i18n="foot.made">Een fanproject, niet verbonden aan Max Verstappen, Red Bull Racing of de Formule 1.</p>
+      <p class="note small" data-i18n="foot.credits">Posities: adsb.lol (ODbL) · Kaart: Apple Kaarten · F1-gegevens: Jolpica-F1 · Plaatsnamen: Apple</p>
     </div>
-    <div class="promos">
-      <a class="promo" href="https://112heli.lrvdlinden.app/" target="_blank" rel="noopener">
-        <img src="/assets/img/112heli.png" alt="" width="44" height="44" loading="lazy">
-        <span><b>112Heli</b><small data-i18n="foot.promo">Lifeliners, politie en Kustwacht live</small></span>
-      </a>
-      <a class="promo more" href="https://lrvdlinden.app" target="_blank" rel="noopener">
-        <svg class="lr" viewBox="0 0 512 512" width="44" height="44" aria-hidden="true"><rect width="512" height="512" rx="116" fill="#121726"/><path d="M132 146v224h100M292 370V146h48a62 62 0 0 1 0 124h-48M338 270l52 100" fill="none" stroke="#fff" stroke-width="46" stroke-linecap="round" stroke-linejoin="round"/><circle cx="404" cy="126" r="34" fill="#ff6a13" stroke="#121726" stroke-width="14"/></svg>
-        <span><b data-i18n="foot.more">Meer apps van de ontwikkelaar</b><small data-i18n="foot.moreSub">Apps voor iPhone, iPad, Apple TV en Homey</small></span>
-        <span class="go" data-i18n="foot.go">Bekijk</span>
-      </a>
-    </div>
-  </div>
-  <p class="credits wrap"><span data-i18n="foot.credits">Posities: adsb.lol (ODbL) · Kaart: Apple Kaarten · F1-gegevens: Jolpica-F1 · Plaatsnamen: Apple</span> · <a href="https://pixelforges.nl" target="_blank" rel="noopener">pixelforges.nl</a></p>
-</footer>
-
+  </aside>
+</div>
 <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
-<script type="module" src="/assets/js/app.js?v=4"></script>
+<script type="module" src="/assets/js/app.js?v=5"></script>
 </body>
 </html>
