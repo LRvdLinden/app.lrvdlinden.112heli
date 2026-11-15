@@ -41,17 +41,32 @@ export async function fetchADSB(env) {
   if (!res?.ok) throw new Error(`ADS-B HTTP ${res?.status ?? "geen antwoord"}`);
   const body = await res.json();
   const list = Array.isArray(body.ac) ? body.ac : [];
-  // Followed worldwide (not only above the Netherlands): Max Verstappen's jet.
+  // Followed worldwide (not only above the Netherlands): Max Verstappen's jet (MV3). Only for these aircraft a second
+  // source, airplanes.live, is asked as well: its receivers differ, so at the edge of coverage (Ireland, Azores,
+  // Newfoundland) the jet is seen a little longer. The freshest position wins. 112Heli itself keeps using only adsb.lol.
   for (const hex of WERELDWIJD) {
     if (list.some((a) => String(a.hex).toLowerCase() === hex)) continue;
-    const r = await fetch(`https://api.adsb.lol/v2/hex/${hex}`, {
+    const best = await freshestOf([`https://api.adsb.lol/v2/hex/${hex}`, `https://api.airplanes.live/v2/hex/${hex}`]);
+    if (best) list.push(best);
+  }
+  return list;
+}
+
+const ageOf = (a) => Number(a.seen_pos ?? a.seen ?? 999);
+
+/** Asks each source (one after another, adsb.lol first) and returns the record with the freshest position. */
+export async function freshestOf(urls) {
+  let best = null;
+  for (const url of urls) {
+    if (best && ageOf(best) <= 30) break;
+    const r = await fetch(url, {
       headers: { accept: "application/json", "user-agent": "112Heli/1.0 (+https://lrvdlinden.app)" }, signal: AbortSignal.timeout(6_000),
     }).catch(() => null);
     if (!r?.ok) continue;
     const b = await r.json().catch(() => null);
-    for (const a of b?.ac || []) list.push(a);
+    for (const a of b?.ac || []) if (a.lat != null && (!best || ageOf(a) < ageOf(best))) best = a;
   }
-  return list;
+  return best;
 }
 
 /** Aircraft followed all over the world (hex), not just within the circle around the Netherlands. */
