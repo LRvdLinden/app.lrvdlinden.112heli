@@ -1,0 +1,43 @@
+name: Verify 112Heli live feed
+
+on:
+  push:
+    branches: [main]
+    paths: [".github/workflows/verify-live.yml"]
+  workflow_dispatch:
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check deployed live feed (public read-only endpoints)
+        run: |
+          node --input-type=module <<'JS'
+          const base = "https://112heli-api.112heli.workers.dev";
+          let healthy = false;
+          for (let i = 0; i < 5; i++) {
+            const read = async path => {
+              const r = await fetch(base + path + "?check=" + Date.now(), {
+                signal: AbortSignal.timeout(12000), headers: { accept: "application/json", "cache-control": "no-cache" }
+              });
+              if (!r.ok) throw new Error(path + " HTTP " + r.status);
+              return r.json();
+            };
+            try {
+              const [h, l] = await Promise.all([read("/health"), read("/v1/live")]);
+              const result = (() => { try { return JSON.parse(h.lastResult || "null"); } catch { return null; } })();
+              const now = Date.now() / 1000;
+              const fresh = (l.aircraft || []).filter(a => a.seen && now - a.seen <= 120);
+              console.log(JSON.stringify({
+                at: new Date().toISOString(), apiOk: h.apiOk, feedOk: h.feedOk,
+                source: h.source, lastResult: result, total: l.aircraft?.length || 0,
+                fresh: fresh.length, airborne: fresh.filter(a => a.airborne).length,
+                byType: Object.fromEntries(["trauma","politie","kustwacht","defensie","kmar","regering","bijzonder"]
+                  .map(k => [k, fresh.filter(a => a.soort === k && a.airborne).length]))
+              }));
+              if (h.feedOk && h.source && !result?.error) { healthy = true; break; }
+            } catch (e) { console.warn("Probe attempt", i + 1, e.message); }
+            if (i < 4) await new Promise(resolve => setTimeout(resolve, 12_000));
+          }
+          if (!healthy) { console.error("112Heli feed has not recovered"); process.exitCode = 1; }
+          JS
