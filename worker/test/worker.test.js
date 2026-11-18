@@ -29,6 +29,19 @@ test("classify: A-Alerts recognition", () => {
   const k = classify({ hex: "484000", r: "PH-SAR", lat: 52.9, lon: 4.7 });
   assert.equal(k.soort, "kustwacht");
   assert.equal(k.icoon, "kustwacht_aw189");
+  // PH-SAR is already recognised as Coastguard, including the NCG06 callsign.
+  const ncg = classify({ hex: "484001", flight: "NCG06", t: "A189", lat: 53.2, lon: 4.4 });
+  assert.equal(ncg.soort, "kustwacht");
+  assert.equal(ncg.icoon, "kustwacht_aw189");
+
+  // Belgian SAR RN-01 is a foreign NH90, intentionally exempted from the Dutch-military filter.
+  const sar = classify({ hex: "44F6A0", r: "RN-01", flight: "BAF701", t: "NH90", lat: 51.1, lon: 2.7 });
+  assert.equal(sar.naam, "SAR RN-01");
+  assert.equal(sar.soort, "defensie");
+  assert.equal(sar.icoon, "nh90");
+  assert.equal(sar.reg, "RN-01");
+  assert.equal(classify({ hex: "44f6a0", flight: "BAF702", t: "NH90", lat: 51.2, lon: 2.8 })?.naam, "SAR RN-01");
+  assert.equal(classify({ hex: "44f6a2", r: "RN-03", flight: "BAF701", t: "NH90", lat: 52.0, lon: 4.0 }), null);
   const c = classify({ hex: "480a01", r: "D-890", t: "H47", dbFlags: 1, lat: 51.5, lon: 4.9 });
   assert.equal(c.soort, "defensie");
   assert.equal(c.icoon, "chinook");

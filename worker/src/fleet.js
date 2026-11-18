@@ -42,6 +42,17 @@ export function classify(ac, learnedHeli = new Map(), learnedLucht = new Map()) 
   const kw = kustwacht(ac);
   if (kw) return { ...base, reg: kw.reg || base.reg, key: hex, naam: kw.naam, soort: kw.soort, icoon: kw.icoon, basis: null, herkenning: "registratie" };
 
+  // Belgian search-and-rescue NH90 RN-01 (ICAO 44F6A0).
+  // BAF701 is used by other Belgian NH90s as well, so never classify by callsign alone.
+  // This explicit SAR exception may be shown outside the NL defence-only box.
+  if (hex === "44f6a0" || base.reg === "RN-01") {
+    return {
+      ...base, key: "sar-rn01", reg: "RN-01", naam: "SAR RN-01",
+      soort: "defensie", icoon: "nh90", type: base.type || "NH90", basis: null,
+      herkenning: hex === "44f6a0" ? "toestel" : "registratie",
+    };
+  }
+
   if (typeof ac.lat === "number" && typeof ac.lon === "number" && !inNL(ac.lat, ac.lon)) return null;
   const l = luchtSoort(ac, learnedLucht);
   if (l) return { ...base, key: hex, naam: l.naam, soort: l.soort, icoon: l.icoon, basis: null, herkenning: null };
