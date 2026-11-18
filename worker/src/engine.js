@@ -1,5 +1,6 @@
 // Ingest: fetch ADS-B, keep state per aircraft, detect takeoff/landing and grote inzet, send pushes.
 import { classify, isAirborne, altitude, distanceKm, findClusters, wantsTakeoff, withinRadius, plekVan, bovenPlaats, isHeli, safeJSON, SOORT_LABEL } from "./fleet.js";
+import { fetchAAlertsAircraft } from "./aalerts-fallback.js";
 import { sendPush, isDeadToken, apnsConfigured } from "./apple.js";
 
 /**
@@ -18,6 +19,7 @@ export function landingSpot(lat, lon) {
 const POINT = { lat: 52.2, lon: 5.4, nm: 160 };
 const now = () => Math.floor(Date.now() / 1000);
 let detourUntil = 0;
+let aAlertsUntil = 0; // Avoid hammering adsb.lol again after a 429; use A-Alerts while it recovers.
 
 /**
  * adsb.lol sometimes refuses Cloudflare's shared addresses (HTTP 429). Like A-Alerts, the request then goes via the
@@ -32,15 +34,36 @@ export async function fetchADSB(env) {
   const viaService = () => fetch(`${String(env.VERKEER_URL).replace(/\/+$/, "")}/adsb?lat=${POINT.lat}&lon=${POINT.lon}&nm=${POINT.nm}`, {
     headers: { authorization: `Bearer ${env.VERKEER_TOKEN}` }, signal: AbortSignal.timeout(12_000),
   });
-  let res = null;
-  if (!(service && Date.now() < detourUntil)) {
-    res = await direct().catch(() => null);
-    if (!res?.ok && service) detourUntil = Date.now() + 10 * 60_000;
+  let res = null, list = null, source = "adsb.lol";
+  // A-Alerts already handles the Koyeb route and has a short shared aircraft cache.
+  // Reuse its public flight feed while adsb.lol rejects this Worker's IP.
+  if (Date.now() < aAlertsUntil) {
+    try { list = await fetchAAlertsAircraft(env); source = "a-alerts"; }
+    catch (e) { console.warn("[adsb fallback]", e.message); }
   }
-  if (!res?.ok && service) res = await viaService().catch(() => null);
-  if (!res?.ok) throw new Error(`ADS-B HTTP ${res?.status ?? "geen antwoord"}`);
-  const body = await res.json();
-  const list = Array.isArray(body.ac) ? body.ac : [];
+  if (!list && Date.now() >= aAlertsUntil) {
+    if (!(service && Date.now() < detourUntil)) {
+      res = await direct().catch(() => null);
+      if (!res?.ok && service) detourUntil = Date.now() + 10 * 60_000;
+    }
+    if (!res?.ok && service) res = await viaService().catch(() => null);
+    if (res?.ok) {
+      const body = await res.json();
+      if (!Array.isArray(body.ac)) throw new Error("ADS-B invalid data");
+      list = body.ac;
+      source = "adsb.lol";
+    } else {
+      const status = res?.status ?? "geen antwoord";
+      try {
+        list = await fetchAAlertsAircraft(env);
+        source = "a-alerts";
+        aAlertsUntil = Date.now() + 10 * 60_000;
+      } catch (error) {
+        throw new Error(`ADS-B HTTP ${status}; ${error.message}`);
+      }
+    }
+  }
+  if (!list) throw new Error("No fresh ADS-B or A-Alerts aircraft data");
   // Followed worldwide (not only above the Netherlands): Max Verstappen's jet (MV3). Only for these aircraft a second
   // source, airplanes.live, is asked as well: its receivers differ, so at the edge of coverage (Ireland, Azores,
   // Newfoundland) the jet is seen a little longer. The freshest position wins. 112Heli itself keeps using only adsb.lol.
@@ -49,6 +72,7 @@ export async function fetchADSB(env) {
     const best = await freshestOf([`https://api.adsb.lol/v2/hex/${hex}`, `https://api.airplanes.live/v2/hex/${hex}`]);
     if (best) list.push(best);
   }
+  list._source = source;
   return list;
 }
 

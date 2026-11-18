@@ -33,6 +33,14 @@ export function classify(ac, learnedHeli = new Map(), learnedLucht = new Map()) 
   if (!hex || hex.startsWith("~")) return null; // "~" = TIS-B track without a real airframe address
   const base = { hex, reg: ac.r ? String(ac.r).trim().toUpperCase() : null, callsign: String(ac.flight || "").trim().toUpperCase() || null, type: ac.t || null };
 
+  // A-Alerts has already classified these live records; preserve its matching
+  // rather than guessing again from partially redacted ADS-B operator data.
+  if (ac._aalerts && SOORTEN.includes(ac._aalerts.soort)) {
+    const a = ac._aalerts;
+    return { ...base, key: a.key, naam: a.naam, soort: a.soort, icoon: a.icoon,
+      basis: a.basis, herkenning: "a-alerts" };
+  }
+
   const special = BIJZONDER[hex] || BIJZONDER[BIJZONDER_REG[base.reg] || ""];
   if (special) return { ...base, type: base.type || special.type, key: hex, naam: special.naam, soort: "bijzonder", icoon: special.icoon, basis: null, herkenning: "registratie" };
 
