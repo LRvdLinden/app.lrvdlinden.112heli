@@ -32,6 +32,31 @@ jobs:
       - run: npm ci
       - run: npm test
 
+      - name: Diagnoseer publieke live API (zonder secrets)
+        # No API credentials are printed; just the publicly exposed status and counts.
+        run: |
+          node --input-type=module <<'JS'
+          const api = "https://112heli-api.112heli.workers.dev";
+          for (const path of ["/health", "/v1/live"]) {
+            try {
+              const r = await fetch(api + path, { signal: AbortSignal.timeout(15000), headers: { accept: "application/json" } });
+              const body = await r.json();
+              if (path === "/health") {
+                console.log("HEALTH", JSON.stringify({ status: r.status, ok: body.ok, lastIngest: body.lastIngest,
+                  lastResult: body.lastResult, verkeer: body.verkeer }));
+              } else {
+                const items = body.aircraft || [];
+                console.log("LIVE", JSON.stringify({ status: r.status, updated: body.updated,
+                  total: items.length, airborne: items.filter(a => a.airborne).length,
+                  fresh: items.filter(a => a.seen && Date.now() / 1000 - a.seen <= 120).length,
+                  byType: Object.fromEntries(["trauma","politie","kustwacht","defensie","kmar","regering","bijzonder"]
+                    .map(k => [k, items.filter(a => a.soort === k && a.airborne).length])) }));
+              }
+            } catch (e) { console.error(path, e.message); }
+          }
+          JS
+
+
       - name: Cloudflare-secrets aanwezig?
         id: cf
         run: |
