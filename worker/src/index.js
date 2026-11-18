@@ -157,7 +157,13 @@ async function route(request, env) {
 
   if (p === "/" || p === "/health") {
     const last = await env.DB.prepare("SELECT value, at FROM kv WHERE key = 'last_ingest'").first();
-    return json({ ok: true, app: "112Heli", lastIngest: last?.at ?? null, lastResult: last?.value ?? null, apns: apnsConfigured(env), mapkit: mapkitConfigured(env), verkeer: Boolean(env.VERKEER_URL && env.VERKEER_TOKEN) });
+    let result = null;
+    try { result = JSON.parse(last?.value || "null"); } catch {}
+    const feedOk = Boolean(last?.at && now() - last.at < 300 && result && !result.error);
+    return json({ ok: feedOk, apiOk: true, feedOk, source: result?.source || null,
+      app: "112Heli", lastIngest: last?.at ?? null, lastResult: last?.value ?? null,
+      apns: apnsConfigured(env), mapkit: mapkitConfigured(env),
+      verkeer: Boolean(env.VERKEER_URL && env.VERKEER_TOKEN) });
   }
   if (p === "/v1/live" && m === "GET") return json(await live(env), 200, 5);
   if (p === "/v1/mapkit-token" && m === "GET") {
@@ -368,7 +374,8 @@ async function runIngest(env) {
   for (let i = 0; i < polls; i++) {
     const started = Date.now();
     try {
-      results.push(await ingest(env, await fetchADSB(env)));
+      const records = await fetchADSB(env);
+      results.push({ ...await ingest(env, records), source: records._source || "adsb.lol" });
     } catch (e) {
       console.error("[ingest]", e.message);
       results.push({ error: e.message });
