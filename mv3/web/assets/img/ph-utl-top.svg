@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200" role="img" aria-label="Dassault Falcon 8X PH-UTL van bovenaf">
+  <title>Falcon 8X PH-UTL</title>
+  <!-- Nose points up (heading 0°); rotate the element by the track to use it on a map. -->
+  <g stroke="#0b0b0d" stroke-width="2" stroke-linejoin="round" stroke-linecap="round">
+    <!-- wings, swept, with winglets -->
+    <path fill="#1d1f24" d="M95 78 L18 116 L14 124 L20 126 L95 104 Z"/>
+    <path fill="#1d1f24" d="M105 78 L182 116 L186 124 L180 126 L105 104 Z"/>
+    <path fill="#ff6a13" d="M18 116 L12 112 L10 118 L14 124 Z"/>
+    <path fill="#ff6a13" d="M182 116 L188 112 L190 118 L186 124 Z"/>
+    <!-- horizontal tail -->
+    <path fill="#1d1f24" d="M96 160 L66 178 L66 184 L96 176 Z"/>
+    <path fill="#1d1f24" d="M104 160 L134 178 L134 184 L104 176 Z"/>
+    <!-- side engines on the rear fuselage -->
+    <rect x="76" y="132" width="13" height="30" rx="6" fill="#26282e"/>
+    <rect x="111" y="132" width="13" height="30" rx="6" fill="#26282e"/>
+    <!-- fuselage -->
+    <path fill="#1d1f24" d="M100 8 C108 8 112 22 112 40 L112 150 C112 168 107 186 100 194 C93 186 88 168 88 150 L88 40 C88 22 92 8 100 8 Z"/>
+    <!-- centre engine on top with its S-duct intake -->
+    <rect x="93" y="140" width="14" height="38" rx="7" fill="#26282e"/>
+  </g>
+  <!-- orange intake rings -->
+  <ellipse cx="82.5" cy="133" rx="5.5" ry="2.4" fill="#ff6a13"/>
+  <ellipse cx="117.5" cy="133" rx="5.5" ry="2.4" fill="#ff6a13"/>
+  <ellipse cx="100" cy="141" rx="5.5" ry="2.4" fill="#ff6a13"/>
+  <!-- livery: orange sweep along the fuselage -->
+  <path fill="#ff6a13" d="M100 30 L110 46 L110 92 L104 70 L100 60 L96 70 L90 92 L90 46 Z" opacity=".95"/>
+  <!-- cockpit windows -->
+  <path fill="#9fb3c8" d="M94 22 C96 17 104 17 106 22 L105 26 L95 26 Z"/>
+  <!-- registration -->
+  <text x="100" y="122" text-anchor="middle" font-family="Inter, Helvetica, Arial, sans-serif" font-size="9" font-weight="700" fill="#ffffff" transform="rotate(-90 100 118)">PH-UTL</text>
+</svg>
