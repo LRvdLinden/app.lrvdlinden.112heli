@@ -501,3 +501,26 @@ test("health reports a failed feed rather than declaring the helicopters working
   assert.equal(body.ok, false);
   assert.equal(body.feedOk, false);
 });
+
+test("A-Alerts down and adsb.lol 401: airplanes.live, then adsb.fi", async () => {
+  const original = globalThis.fetch;
+  let liveUp = true;
+  globalThis.fetch = async (url) => {
+    const path = String(url);
+    if (path.includes("a-alerts.nl") || path.includes("workers.dev")) return new Response("", { status: 503 });
+    if (path.includes("api.adsb.lol/")) return new Response("", { status: 401 });
+    if (path.includes("api.airplanes.live/v2/point/")) return liveUp ? Response.json({ ac: [{ hex: "4857b3", flight: "LIFELN3", lat: 50.9, lon: 5.7, seen_pos: 1 }] }) : new Response("", { status: 429 });
+    if (path.includes("opendata.adsb.fi/api/v2/lat/")) return Response.json({ aircraft: [{ hex: "4857b3", flight: "LIFELN3", lat: 50.9, lon: 5.7, seen_pos: 2 }] });
+    if (path.includes("/hex/")) return Response.json({ ac: [] });
+    throw new Error("Unexpected URL: " + path);
+  };
+  try {
+    const a = await fetchADSB({});
+    assert.equal(a._source, "airplanes.live");
+    assert.equal(classify(a[0]).naam, "Lifeliner 3");
+    liveUp = false;
+    const b = await fetchADSB({});
+    assert.equal(b._source, "adsb.fi");
+    assert.equal(classify(b[0]).naam, "Lifeliner 3");
+  } finally { globalThis.fetch = original; }
+});

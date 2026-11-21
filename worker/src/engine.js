@@ -45,16 +45,27 @@ export async function fetchADSB(env) {
       if (!res?.ok && service) detourUntil = Date.now() + 10 * 60_000;
     }
     if (!res?.ok && service) res = await viaService().catch(() => null);
-    if (!res?.ok) throw new Error(`${aalertsError}; ADS-B HTTP ${res?.status ?? "geen antwoord"}`);
-    const body = await res.json();
-    if (!Array.isArray(body.ac)) throw new Error("ADS-B invalid data");
-    list = body.ac;
-    source = "adsb.lol";
+    const errors = [aalertsError, `adsb.lol HTTP ${res?.status ?? "geen antwoord"}`];
+    if (res?.ok) {
+      const body = await res.json().catch(() => null);
+      if (Array.isArray(body?.ac)) { list = body.ac; source = "adsb.lol"; }
+      else errors.push("adsb.lol ongeldige data");
+    }
+    // adsb.lol now asks for a key (HTTP 401) and has a daily limit: then the free, keyless networks.
+    for (const [name, url] of OPEN_PUNT) {
+      if (list) break;
+      const r = await fetch(url, { headers: { accept: "application/json", "user-agent": "112Heli/1.0 (+https://lrvdlinden.app)" }, signal: AbortSignal.timeout(8_000) }).catch(() => null);
+      const body = r?.ok ? await r.json().catch(() => null) : null;
+      const ac = body?.ac ?? body?.aircraft;
+      if (Array.isArray(ac)) { list = ac; source = name; }
+      else errors.push(`${name} HTTP ${r?.status ?? "geen antwoord"}`);
+    }
+    if (!list) throw new Error(errors.filter(Boolean).join("; "));
   }
-  // Not in A-Alerts (it follows Dutch aircraft only): the Belgian SAR NH90 RN-01, asked by airframe at adsb.lol.
+  // Not in A-Alerts (it follows Dutch aircraft only): the Belgian SAR NH90 RN-01, asked by airframe.
   if (source === "a-alerts") {
     for (const hex of BUITENLAND) {
-      const best = await freshestOf([`https://api.adsb.lol/v2/hex/${hex}`]);
+      const best = await freshestOf(hexUrls(hex));
       if (best) list.push(best);
     }
   }
@@ -63,7 +74,7 @@ export async function fetchADSB(env) {
   // Newfoundland) the jet is seen a little longer. The freshest position wins.
   for (const hex of WERELDWIJD) {
     if (list.some((a) => String(a.hex).toLowerCase() === hex)) continue;
-    const best = await freshestOf([`https://api.adsb.lol/v2/hex/${hex}`, `https://api.airplanes.live/v2/hex/${hex}`]);
+    const best = await freshestOf(hexUrls(hex));
     if (best) list.push(best);
   }
   list._source = source;
@@ -82,10 +93,18 @@ export async function freshestOf(urls) {
     }).catch(() => null);
     if (!r?.ok) continue;
     const b = await r.json().catch(() => null);
-    for (const a of b?.ac || []) if (a.lat != null && (!best || ageOf(a) < ageOf(best))) best = a;
+    for (const a of b?.ac || b?.aircraft || []) if (a.lat != null && (!best || ageOf(a) < ageOf(best))) best = a;
   }
   return best;
 }
+
+/** Keyless open networks, same circle (both allow at most 250 NM). */
+const OPEN_PUNT = [
+  ["airplanes.live", `https://api.airplanes.live/v2/point/${POINT.lat}/${POINT.lon}/${POINT.nm}`],
+  ["adsb.fi", `https://opendata.adsb.fi/api/v2/lat/${POINT.lat}/lon/${POINT.lon}/dist/${POINT.nm}`],
+];
+/** One airframe at every network; the freshest position wins. */
+const hexUrls = (hex) => [`https://api.adsb.lol/v2/hex/${hex}`, `https://api.airplanes.live/v2/hex/${hex}`, `https://opendata.adsb.fi/api/v2/hex/${hex}`];
 
 /** Foreign aircraft 112Heli shows that A-Alerts does not have (by airframe): Belgian SAR NH90 RN-01. */
 export const BUITENLAND = ["44f6a0"];
