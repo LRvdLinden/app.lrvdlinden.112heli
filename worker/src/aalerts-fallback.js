@@ -1,9 +1,10 @@
 // 112Heli's main aircraft source: the live, already processed A-Alerts aircraft feed (helicopters and defence/coastguard).
-// First api.a-alerts.nl (A-Alerts' own engine with its own adsb.lol key, independent of Cloudflare), then the A-Alerts
-// Worker. Both projects are maintained together. No token is exposed to clients or logs.
+// Only api.a-alerts.nl (A-Alerts' own server, independent of Cloudflare); the old A-Alerts Worker on workers.dev is no
+// longer asked. When api.a-alerts.nl does not answer, the caller looks the aircraft up itself (adsb.lol and the open
+// networks). Both projects are maintained together. No token is exposed to clients or logs.
 // A-Alerts keeps the original ADS-B last-seen timestamp, so stale positions are rejected here.
 const BIJZONDER_PATH = "/v1/lucht?bijzonder=1";
-const ROOTS = ["https://api.a-alerts.nl", "https://p2000-apeldoorn-api.lrvdlinden.workers.dev"];
+const ROOTS = ["https://api.a-alerts.nl"];
 const MAX_AGE_MS = 60_000;
 const ACCEPTED_SOORTEN = new Set(["trauma", "politie", "kustwacht", "defensie", "kmar", "regering", "bijzonder"]);
 
@@ -52,11 +53,11 @@ export async function fetchAAlertsAircraft(env, at = Date.now()) {
     return records;
   };
   // Per list: the first address that answers properly wins.
-  // "/v1/lucht?bijzonder=1": Max (PH-UTL, soort bijzonder) and PH-GOV (regering) all over the world. Only api.a-alerts.nl
-  // has it (Max must never be on the A-Alerts map), so it is not asked at the A-Alerts Worker.
+  // "/v1/lucht?bijzonder=1": Max (PH-UTL, soort bijzonder) and PH-GOV (regering) all over the world (Max is never on the
+  // A-Alerts map; that is why it needs the parameter). Also delivered when the A-Alerts helicopter source has a hiccup.
   const results = await Promise.all(["/v1/helikopters", "/v1/lucht", BIJZONDER_PATH].map(async (path) => {
     const errors = [];
-    for (const root of path === BIJZONDER_PATH && !env.AALERTS_HELI_URL ? roots.slice(0, 1) : roots) {
+    for (const root of roots) {
       try { return { ok: true, path, root, records: await one(root, path) }; }
       catch (error) { errors.push(String(error.message || error)); }
     }

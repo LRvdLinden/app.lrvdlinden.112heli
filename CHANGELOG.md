@@ -1,5 +1,8 @@
 # Changelog
 
+## Server (21-11-2026)
+- De server haalt alles van A-Alerts alleen nog bij **api.a-alerts.nl**: helikopters, defensie en kustwacht, Max en PH-GOV wereldwijd (`/v1/lucht?bijzonder=1`) en de KNMI-waarschuwingen voor de weerbeperking. De oude A-Alerts-Worker op workers.dev wordt niet meer gevraagd; geeft api.a-alerts.nl niets, dan zoekt de server zelf (adsb.lol en de open netwerken).
+
 ## 1.0.0 (4)
 - Op de kaart weer de eigen tekeningen in zijaanzicht; het bovenaanzicht is weg.
 - Zulu AW139 opnieuw getekend: strak en zonder losse stukken, ook in het app-icoon, het Apple TV-icoon en het splashscreen.

@@ -468,28 +468,28 @@ test("A-Alerts (api.a-alerts.nl) is the main source: no adsb.lol circle request,
   } finally { globalThis.fetch = original; }
 });
 
-test("api.a-alerts.nl down: the A-Alerts Worker; both down or stale: adsb.lol", async () => {
+test("api.a-alerts.nl down or stale: adsb.lol itself, never the old A-Alerts Worker", async () => {
   const original = globalThis.fetch, feed = aaFeed(new Date().toISOString());
-  let workerUp = true;
+  let apiUp = true;
   const calls = [];
   globalThis.fetch = async (url) => {
     const path = String(url); calls.push(path);
-    if (path.startsWith("https://api.a-alerts.nl/")) return new Response("", { status: 503 });
-    if (path.includes("workers.dev/v1/helikopters")) return workerUp ? Response.json(feed.helikopters) : Response.json({ helikopters: [], fout: true, verouderd: true });
-    if (path.includes("workers.dev/v1/lucht")) return Response.json(feed.lucht);
+    if (path.includes("workers.dev")) throw new Error("workers.dev must not be asked: " + path);
+    if (path === "https://api.a-alerts.nl/v1/helikopters") return apiUp ? Response.json(feed.helikopters) : Response.json({ helikopters: [], fout: true, verouderd: true });
+    if (path.startsWith("https://api.a-alerts.nl/v1/lucht")) return Response.json(feed.lucht);
     if (path.includes("api.adsb.lol/v2/point/")) return Response.json({ ac: [{ hex: "484002", flight: "LIFELN2", lat: 52, lon: 5, seen_pos: 1 }] });
     if (path.includes("/v2/hex/")) return Response.json({ ac: [] });
     throw new Error("Unexpected URL: " + path);
   };
   try {
-    const viaWorker = await fetchADSB({});
-    assert.equal(viaWorker._source, "a-alerts");
-    assert.equal(viaWorker._root, "https://p2000-apeldoorn-api.lrvdlinden.workers.dev");
-    assert.equal(classify(viaWorker[0]).naam, "Lifeliner 1");
-    workerUp = false; calls.length = 0;
+    const viaApi = await fetchADSB({});
+    assert.equal(viaApi._source, "a-alerts");
+    assert.equal(viaApi._root, "https://api.a-alerts.nl");
+    apiUp = false; calls.length = 0;
     const viaAdsb = await fetchADSB({});
     assert.equal(viaAdsb._source, "adsb.lol");
     assert.ok(calls.some((x) => x.includes("api.adsb.lol/v2/point/")));
+    assert.ok(!calls.some((x) => x.includes("workers.dev")));
   } finally { globalThis.fetch = original; }
 });
 

@@ -21,7 +21,7 @@ const now = () => Math.floor(Date.now() / 1000);
 let detourUntil = 0;
 
 /**
- * Main source: A-Alerts (api.a-alerts.nl, then the A-Alerts Worker), so 112Heli shows exactly the helicopters and
+ * Main source: A-Alerts (api.a-alerts.nl only; never the old A-Alerts Worker), so 112Heli shows exactly the helicopters and
  * defence/coastguard aircraft that A-Alerts shows. When A-Alerts does not answer, adsb.lol directly; when that refuses
  * Cloudflare's shared addresses (HTTP 429), via the A-Alerts verkeer service (VERKEER_URL / VERKEER_TOKEN, own
  * address), and for 10 minutes straight there.

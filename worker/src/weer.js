@@ -21,7 +21,7 @@ export function weerBeperking(waarschuwingen, now = Date.now()) {
   return best;
 }
 
-const AALERTS_API = "https://p2000-apeldoorn-api.lrvdlinden.workers.dev";
+const AALERTS_API = "https://api.a-alerts.nl";
 
 /** Refreshes the weather limit at most every 10 minutes and keeps it in kv ("weer"). */
 export async function refreshWeer(env, now = Date.now()) {
