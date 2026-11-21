@@ -61,6 +61,8 @@ export function classify(ac, learnedHeli = new Map(), learnedLucht = new Map()) 
     };
   }
 
+  // The government aircraft is followed all over the world (like Max), so it is recognised outside the Netherlands too.
+  if (base.reg === "PH-GOV") return { ...base, key: hex, naam: "Regeringsvliegtuig PH-GOV", soort: "regering", icoon: "phgov", basis: null, herkenning: "registratie" };
   if (typeof ac.lat === "number" && typeof ac.lon === "number" && !inNL(ac.lat, ac.lon)) return null;
   const l = luchtSoort(ac, learnedLucht);
   if (l) return { ...base, key: hex, naam: l.naam, soort: l.soort, icoon: l.icoon, basis: null, herkenning: null };

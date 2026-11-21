@@ -77,6 +77,12 @@ export async function fetchADSB(env) {
     const best = await freshestOf(hexUrls(hex));
     if (best) list.push(best);
   }
+  // The government aircraft PH-GOV all over the world too, looked up by registration (A-Alerts only sees it near home).
+  for (const reg of WERELDWIJD_REG) {
+    if (list.some((a) => String(a.r || "").toUpperCase() === reg)) continue;
+    const best = await freshestOf(regUrls(reg));
+    if (best) list.push(best);
+  }
   list._source = source;
   return list;
 }
@@ -111,6 +117,9 @@ export const BUITENLAND = ["44f6a0"];
 
 /** Aircraft followed all over the world (hex), not just within the circle around the Netherlands. */
 export const WERELDWIJD = ["4867e6"];
+/** Aircraft followed all over the world by registration: the Dutch government aircraft. */
+export const WERELDWIJD_REG = ["PH-GOV"];
+const regUrls = (reg) => [`https://api.adsb.lol/v2/reg/${reg}`, `https://api.airplanes.live/v2/reg/${reg}`, `https://opendata.adsb.fi/api/v2/registration/${reg}`];
 
 /** Airframes recognised for sure before, so they are still known under another callsign (A-Alerts "learned"). */
 async function learned(env) {
