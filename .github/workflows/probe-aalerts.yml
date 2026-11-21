@@ -1,0 +1,24 @@
+name: Probe A-Alerts helikopters (alleen lezen)
+on:
+  push:
+    branches: [probe-aalerts]
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    steps:
+      - run: |
+          curl -s --max-time 25 https://api.a-alerts.nl/v1/helikopters -o h.json -w "status %{http_code} bytes %{size_download}\n"
+          curl -s --max-time 25 -D - https://api.a-alerts.nl/v1/helikopters -o /dev/null | grep -i -E "cache-control|access-control|ratelimit|content-type" || true
+          python3 - <<'P'
+          import json
+          d=json.load(open('h.json'))
+          print('keys', {k:(type(v).__name__, len(v) if isinstance(v,(list,dict,str)) else v) for k,v in d.items()})
+          for k in ('helikopters','lucht'):
+              L=d.get(k) or []
+              print(k, len(L))
+              for a in L[:2]: print(json.dumps(a, ensure_ascii=False)[:900])
+              print('velden', sorted({f for a in L for f in a}))
+          s=json.dumps(d).lower()
+          print('PH-UTL/4867e6 aanwezig:', '4867e6' in s or 'ph-utl' in s)
+          P
+          curl -s --max-time 25 https://api.a-alerts.nl/v1/docs -o docs.txt -w "docs %{http_code}\n"; head -c 2500 docs.txt; echo
