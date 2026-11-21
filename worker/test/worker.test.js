@@ -524,3 +524,23 @@ test("A-Alerts down and adsb.lol 401: airplanes.live, then adsb.fi", async () =>
     assert.equal(classify(b[0]).naam, "Lifeliner 3");
   } finally { globalThis.fetch = original; }
 });
+
+test("PH-GOV wordt wereldwijd gevolgd: opgezocht op registratie en buiten Nederland herkend", async () => {
+  const original = globalThis.fetch, calls = [];
+  globalThis.fetch = async (url) => {
+    const path = String(url); calls.push(path);
+    if (path === "https://api.a-alerts.nl/v1/helikopters") return Response.json({ helikopters: [] });
+    if (path === "https://api.a-alerts.nl/v1/lucht") return Response.json({ toestellen: [] });
+    if (path.includes("/reg/PH-GOV")) return Response.json({ ac: [{ hex: "484000", r: "PH-GOV", t: "B737", lat: 40.6, lon: -73.8, seen_pos: 4 }] });
+    if (path.includes("/hex/") || path.includes("/registration/")) return Response.json({ ac: [] });
+    throw new Error("Unexpected URL: " + path);
+  };
+  try {
+    const list = await fetchADSB({});
+    const gov = list.find((a) => a.r === "PH-GOV");
+    assert.ok(gov);
+    const c = classify(gov);
+    assert.equal(c.soort, "regering");
+    assert.equal(c.naam, "Regeringsvliegtuig PH-GOV");
+  } finally { globalThis.fetch = original; }
+});
