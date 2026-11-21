@@ -1,7 +1,8 @@
-// 112Heli fallback: reuse the live, already processed A-Alerts aircraft feed.
-// Both projects are maintained together. No Koyeb token is exposed to clients or logs.
+// 112Heli's main aircraft source: the live, already processed A-Alerts aircraft feed (helicopters and defence/coastguard).
+// First api.a-alerts.nl (A-Alerts' own engine with its own adsb.lol key, independent of Cloudflare), then the A-Alerts
+// Worker. Both projects are maintained together. No token is exposed to clients or logs.
 // A-Alerts keeps the original ADS-B last-seen timestamp, so stale positions are rejected here.
-const DEFAULT_API = "https://p2000-apeldoorn-api.lrvdlinden.workers.dev";
+const ROOTS = ["https://api.a-alerts.nl", "https://p2000-apeldoorn-api.lrvdlinden.workers.dev"];
 const MAX_AGE_MS = 60_000;
 const ACCEPTED_SOORTEN = new Set(["trauma", "politie", "kustwacht", "defensie", "kmar", "regering", "bijzonder"]);
 
@@ -36,26 +37,31 @@ export function fromAAlerts(item, at = Date.now()) {
 }
 
 export async function fetchAAlertsAircraft(env, at = Date.now()) {
-  const root = String(env.AALERTS_HELI_URL || DEFAULT_API).replace(/\/+$/, "");
-  const urls = ["/v1/helikopters", "/v1/lucht"];
-  const results = await Promise.all(urls.map(async path => {
-    try {
-      const res = await fetch(root + path, {
-        headers: { accept: "application/json", "user-agent": "112Heli/1.0 (+https://112heli.lrvdlinden.app)" },
-        signal: AbortSignal.timeout(10_000),
-      });
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      const body = await res.json();
-      if (body.fout) throw new Error("A-Alerts upstream unavailable");
-      const records = path === "/v1/lucht" ? body.toestellen : body.helikopters;
-      if (!Array.isArray(records)) throw new Error("Invalid A-Alerts aircraft response");
-      return { ok: true, records };
-    } catch (error) {
-      return { ok: false, error: String(error.message || error), records: [] };
+  const roots = (env.AALERTS_HELI_URL ? [env.AALERTS_HELI_URL] : ROOTS).map((r) => String(r).replace(/\/+$/, ""));
+  const one = async (root, path) => {
+    const res = await fetch(root + path, {
+      headers: { accept: "application/json", "user-agent": "112Heli/1.0 (+https://112heli.lrvdlinden.app)" },
+      signal: AbortSignal.timeout(10_000),
+    });
+    if (!res.ok) throw new Error(`${root}${path} HTTP ${res.status}`);
+    const body = await res.json();
+    if (body.fout || body.verouderd) throw new Error(`${root}${path} upstream unavailable`);
+    const records = path === "/v1/lucht" ? body.toestellen : body.helikopters;
+    if (!Array.isArray(records)) throw new Error(`${root}${path} invalid response`);
+    return records;
+  };
+  // Per list: the first address that answers properly wins.
+  const results = await Promise.all(["/v1/helikopters", "/v1/lucht"].map(async (path) => {
+    const errors = [];
+    for (const root of roots) {
+      try { return { ok: true, path, root, records: await one(root, path) }; }
+      catch (error) { errors.push(String(error.message || error)); }
     }
+    return { ok: false, path, error: errors.join("; "), records: [] };
   }));
-  if (!results.some(x => x.ok)) {
-    throw new Error("A-Alerts fallback unavailable: " + results.map(x => x.error).join("; "));
+  // The helicopters are the core: without them this source counts as failed (the caller then asks adsb.lol).
+  if (!results[0].ok) {
+    throw new Error("A-Alerts unavailable: " + results.map(x => x.error).filter(Boolean).join("; "));
   }
   const byHex = new Map();
   for (const source of results) {
@@ -65,5 +71,8 @@ export async function fetchAAlertsAircraft(env, at = Date.now()) {
     }
   }
   // A feed can legitimately have zero aircraft in the air.
-  return [...byHex.values()];
+  const list = [...byHex.values()];
+  list._root = results[0].root;
+  list._luchtOk = results[1].ok;
+  return list;
 }

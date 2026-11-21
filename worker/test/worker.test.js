@@ -439,37 +439,56 @@ test("A-Alerts fallback retains real ADS-B fix age and aircraft classification",
   assert.equal(fromAAlerts({ ...input, lat: null }, at), null);
 });
 
-test("429 switches to the live A-Alerts feed without disclosing a Koyeb token", async () => {
-  const original = globalThis.fetch;
-  const seen = new Date().toISOString();
-  const calls = [];
-  globalThis.fetch = async url => {
+const aaFeed = (seen) => ({
+  helikopters: { helikopters: [{ id: "lifeliner1", hex: "484001", soort: "trauma", naam: "Lifeliner 1", callsign: "LIFELN1",
+    lat: 52.1, lon: 5.2, hoogte_ft: 1000, snelheid_kt: 110, op_grond: false, gezien: seen }] },
+  lucht: { toestellen: [{ id: "lucht-c005e9", hex: "c005e9", soort: "kustwacht", icoon: "kustwacht_dash8",
+    naam: "Kustwacht PH-CGE", registratie: "PH-CGE", lat: 53.1, lon: 4.9, hoogte_ft: 2000, snelheid_kt: 180,
+    op_grond: false, gezien: seen }] },
+});
+
+test("A-Alerts (api.a-alerts.nl) is the main source: no adsb.lol circle request, RN-01 and Max by airframe", async () => {
+  const original = globalThis.fetch, calls = [], feed = aaFeed(new Date().toISOString());
+  globalThis.fetch = async (url) => {
     const path = String(url); calls.push(path);
-    if (path.includes("api.adsb.lol/v2/point/")) return new Response("", { status: 429 });
-    if (path.endsWith("/v1/helikopters")) return Response.json({ helikopters: [{ id: "lifeliner1", hex: "484001",
-      soort: "trauma", naam: "Lifeliner 1", callsign: "LIFELN1", lat: 52.1, lon: 5.2,
-      hoogte_ft: 1000, snelheid_kt: 110, op_grond: false, gezien: seen }] });
-    if (path.endsWith("/v1/lucht")) return Response.json({ toestellen: [{ id: "lucht-c005e9", hex: "c005e9",
-      soort: "kustwacht", icoon: "kustwacht_dash8", naam: "Kustwacht PH-CGE",
-      registratie: "PH-CGE", lat: 53.1, lon: 4.9, hoogte_ft: 2000, snelheid_kt: 180,
-      op_grond: false, gezien: seen }] });
+    if (path === "https://api.a-alerts.nl/v1/helikopters") return Response.json(feed.helikopters);
+    if (path === "https://api.a-alerts.nl/v1/lucht") return Response.json(feed.lucht);
+    if (path.includes("/v2/hex/44f6a0")) return Response.json({ ac: [{ hex: "44f6a0", r: "RN-01", lat: 51.3, lon: 3.2, seen_pos: 3 }] });
     if (path.includes("/v2/hex/")) return Response.json({ ac: [] });
     throw new Error("Unexpected URL: " + path);
   };
   try {
     const records = await fetchADSB({});
     assert.equal(records._source, "a-alerts");
-    assert.equal(records.length, 2);
-    assert.equal(classify(records[0]).naam, "Lifeliner 1");
-    assert.equal(classify(records[1]).soort, "kustwacht");
-    assert.ok(calls.some(x => x.includes("/v1/helikopters")));
-    assert.ok(calls.some(x => x.includes("/v1/lucht")));
-    assert.ok(calls.filter(x => x.includes("/v2/point/")).length === 1);
-    // Subsequent polls use A-Alerts directly, not repeated blocked ADS-B requests.
-    calls.length = 0;
-    const second = await fetchADSB({});
-    assert.equal(second._source, "a-alerts");
-    assert.ok(!calls.some(x => x.includes("/v2/point/")));
+    assert.deepEqual(records.map((r) => classify(r)?.naam), ["Lifeliner 1", "Kustwacht PH-CGE", "SAR RN-01"]);
+    assert.ok(!calls.some((x) => x.includes("/v2/point/")));
+    assert.ok(!calls.some((x) => x.includes("workers.dev")));
+    assert.ok(calls.some((x) => x.includes("/v2/hex/4867e6")));
+  } finally { globalThis.fetch = original; }
+});
+
+test("api.a-alerts.nl down: the A-Alerts Worker; both down or stale: adsb.lol", async () => {
+  const original = globalThis.fetch, feed = aaFeed(new Date().toISOString());
+  let workerUp = true;
+  const calls = [];
+  globalThis.fetch = async (url) => {
+    const path = String(url); calls.push(path);
+    if (path.startsWith("https://api.a-alerts.nl/")) return new Response("", { status: 503 });
+    if (path.includes("workers.dev/v1/helikopters")) return workerUp ? Response.json(feed.helikopters) : Response.json({ helikopters: [], fout: true, verouderd: true });
+    if (path.includes("workers.dev/v1/lucht")) return Response.json(feed.lucht);
+    if (path.includes("api.adsb.lol/v2/point/")) return Response.json({ ac: [{ hex: "484002", flight: "LIFELN2", lat: 52, lon: 5, seen_pos: 1 }] });
+    if (path.includes("/v2/hex/")) return Response.json({ ac: [] });
+    throw new Error("Unexpected URL: " + path);
+  };
+  try {
+    const viaWorker = await fetchADSB({});
+    assert.equal(viaWorker._source, "a-alerts");
+    assert.equal(viaWorker._root, "https://p2000-apeldoorn-api.lrvdlinden.workers.dev");
+    assert.equal(classify(viaWorker[0]).naam, "Lifeliner 1");
+    workerUp = false; calls.length = 0;
+    const viaAdsb = await fetchADSB({});
+    assert.equal(viaAdsb._source, "adsb.lol");
+    assert.ok(calls.some((x) => x.includes("api.adsb.lol/v2/point/")));
   } finally { globalThis.fetch = original; }
 });
 

@@ -19,11 +19,12 @@ export function landingSpot(lat, lon) {
 const POINT = { lat: 52.2, lon: 5.4, nm: 160 };
 const now = () => Math.floor(Date.now() / 1000);
 let detourUntil = 0;
-let aAlertsUntil = 0; // Avoid hammering adsb.lol again after a 429; use A-Alerts while it recovers.
 
 /**
- * adsb.lol sometimes refuses Cloudflare's shared addresses (HTTP 429). Like A-Alerts, the request then goes via the
- * A-Alerts verkeer service (VERKEER_URL / VERKEER_TOKEN, own address), and for 10 minutes straight there.
+ * Main source: A-Alerts (api.a-alerts.nl, then the A-Alerts Worker), so 112Heli shows exactly the helicopters and
+ * defence/coastguard aircraft that A-Alerts shows. When A-Alerts does not answer, adsb.lol directly; when that refuses
+ * Cloudflare's shared addresses (HTTP 429), via the A-Alerts verkeer service (VERKEER_URL / VERKEER_TOKEN, own
+ * address), and for 10 minutes straight there.
  */
 export async function fetchADSB(env) {
   const direct = () => fetch(env.ADSB_URL || `https://api.adsb.lol/v2/point/${POINT.lat}/${POINT.lon}/${POINT.nm}`, {
@@ -34,39 +35,32 @@ export async function fetchADSB(env) {
   const viaService = () => fetch(`${String(env.VERKEER_URL).replace(/\/+$/, "")}/adsb?lat=${POINT.lat}&lon=${POINT.lon}&nm=${POINT.nm}`, {
     headers: { authorization: `Bearer ${env.VERKEER_TOKEN}` }, signal: AbortSignal.timeout(12_000),
   });
-  let res = null, list = null, source = "adsb.lol";
-  // A-Alerts already handles the Koyeb route and has a short shared aircraft cache.
-  // Reuse its public flight feed while adsb.lol rejects this Worker's IP.
-  if (Date.now() < aAlertsUntil) {
-    try { list = await fetchAAlertsAircraft(env); source = "a-alerts"; }
-    catch (e) { console.warn("[adsb fallback]", e.message); }
-  }
-  if (!list && Date.now() >= aAlertsUntil) {
+  let list = null, source = "a-alerts", aalertsError = null;
+  try { list = await fetchAAlertsAircraft(env); }
+  catch (e) { aalertsError = e.message; console.warn("[a-alerts]", e.message); }
+  if (!list) {
+    let res = null;
     if (!(service && Date.now() < detourUntil)) {
       res = await direct().catch(() => null);
       if (!res?.ok && service) detourUntil = Date.now() + 10 * 60_000;
     }
     if (!res?.ok && service) res = await viaService().catch(() => null);
-    if (res?.ok) {
-      const body = await res.json();
-      if (!Array.isArray(body.ac)) throw new Error("ADS-B invalid data");
-      list = body.ac;
-      source = "adsb.lol";
-    } else {
-      const status = res?.status ?? "geen antwoord";
-      try {
-        list = await fetchAAlertsAircraft(env);
-        source = "a-alerts";
-        aAlertsUntil = Date.now() + 10 * 60_000;
-      } catch (error) {
-        throw new Error(`ADS-B HTTP ${status}; ${error.message}`);
-      }
+    if (!res?.ok) throw new Error(`${aalertsError}; ADS-B HTTP ${res?.status ?? "geen antwoord"}`);
+    const body = await res.json();
+    if (!Array.isArray(body.ac)) throw new Error("ADS-B invalid data");
+    list = body.ac;
+    source = "adsb.lol";
+  }
+  // Not in A-Alerts (it follows Dutch aircraft only): the Belgian SAR NH90 RN-01, asked by airframe at adsb.lol.
+  if (source === "a-alerts") {
+    for (const hex of BUITENLAND) {
+      const best = await freshestOf([`https://api.adsb.lol/v2/hex/${hex}`]);
+      if (best) list.push(best);
     }
   }
-  if (!list) throw new Error("No fresh ADS-B or A-Alerts aircraft data");
   // Followed worldwide (not only above the Netherlands): Max Verstappen's jet (MV3). Only for these aircraft a second
   // source, airplanes.live, is asked as well: its receivers differ, so at the edge of coverage (Ireland, Azores,
-  // Newfoundland) the jet is seen a little longer. The freshest position wins. 112Heli itself keeps using only adsb.lol.
+  // Newfoundland) the jet is seen a little longer. The freshest position wins.
   for (const hex of WERELDWIJD) {
     if (list.some((a) => String(a.hex).toLowerCase() === hex)) continue;
     const best = await freshestOf([`https://api.adsb.lol/v2/hex/${hex}`, `https://api.airplanes.live/v2/hex/${hex}`]);
@@ -92,6 +86,9 @@ export async function freshestOf(urls) {
   }
   return best;
 }
+
+/** Foreign aircraft 112Heli shows that A-Alerts does not have (by airframe): Belgian SAR NH90 RN-01. */
+export const BUITENLAND = ["44f6a0"];
 
 /** Aircraft followed all over the world (hex), not just within the circle around the Netherlands. */
 export const WERELDWIJD = ["4867e6"];
