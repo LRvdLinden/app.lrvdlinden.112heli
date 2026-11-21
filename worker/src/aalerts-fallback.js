@@ -2,6 +2,7 @@
 // First api.a-alerts.nl (A-Alerts' own engine with its own adsb.lol key, independent of Cloudflare), then the A-Alerts
 // Worker. Both projects are maintained together. No token is exposed to clients or logs.
 // A-Alerts keeps the original ADS-B last-seen timestamp, so stale positions are rejected here.
+const BIJZONDER_PATH = "/v1/lucht?bijzonder=1";
 const ROOTS = ["https://api.a-alerts.nl", "https://p2000-apeldoorn-api.lrvdlinden.workers.dev"];
 const MAX_AGE_MS = 60_000;
 const ACCEPTED_SOORTEN = new Set(["trauma", "politie", "kustwacht", "defensie", "kmar", "regering", "bijzonder"]);
@@ -46,14 +47,16 @@ export async function fetchAAlertsAircraft(env, at = Date.now()) {
     if (!res.ok) throw new Error(`${root}${path} HTTP ${res.status}`);
     const body = await res.json();
     if (body.fout || body.verouderd) throw new Error(`${root}${path} upstream unavailable`);
-    const records = path === "/v1/lucht" ? body.toestellen : body.helikopters;
+    const records = path.startsWith("/v1/lucht") ? body.toestellen : body.helikopters;
     if (!Array.isArray(records)) throw new Error(`${root}${path} invalid response`);
     return records;
   };
   // Per list: the first address that answers properly wins.
-  const results = await Promise.all(["/v1/helikopters", "/v1/lucht"].map(async (path) => {
+  // "/v1/lucht?bijzonder=1": Max (PH-UTL, soort bijzonder) and PH-GOV (regering) all over the world. Only api.a-alerts.nl
+  // has it (Max must never be on the A-Alerts map), so it is not asked at the A-Alerts Worker.
+  const results = await Promise.all(["/v1/helikopters", "/v1/lucht", BIJZONDER_PATH].map(async (path) => {
     const errors = [];
-    for (const root of roots) {
+    for (const root of path === BIJZONDER_PATH && !env.AALERTS_HELI_URL ? roots.slice(0, 1) : roots) {
       try { return { ok: true, path, root, records: await one(root, path) }; }
       catch (error) { errors.push(String(error.message || error)); }
     }

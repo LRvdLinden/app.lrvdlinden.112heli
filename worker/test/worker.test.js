@@ -453,6 +453,7 @@ test("A-Alerts (api.a-alerts.nl) is the main source: no adsb.lol circle request,
     const path = String(url); calls.push(path);
     if (path === "https://api.a-alerts.nl/v1/helikopters") return Response.json(feed.helikopters);
     if (path === "https://api.a-alerts.nl/v1/lucht") return Response.json(feed.lucht);
+    if (path === "https://api.a-alerts.nl/v1/lucht?bijzonder=1") return Response.json({ toestellen: [] });
     if (path.includes("/v2/hex/44f6a0")) return Response.json({ ac: [{ hex: "44f6a0", r: "RN-01", lat: 51.3, lon: 3.2, seen_pos: 3 }] });
     if (path.includes("/v2/hex/")) return Response.json({ ac: [] });
     throw new Error("Unexpected URL: " + path);
@@ -530,7 +531,7 @@ test("PH-GOV wordt wereldwijd gevolgd: opgezocht op registratie en buiten Nederl
   globalThis.fetch = async (url) => {
     const path = String(url); calls.push(path);
     if (path === "https://api.a-alerts.nl/v1/helikopters") return Response.json({ helikopters: [] });
-    if (path === "https://api.a-alerts.nl/v1/lucht") return Response.json({ toestellen: [] });
+    if (path.startsWith("https://api.a-alerts.nl/v1/lucht")) return Response.json({ toestellen: [] });
     if (path.includes("/reg/PH-GOV")) return Response.json({ ac: [{ hex: "484000", r: "PH-GOV", t: "B737", lat: 40.6, lon: -73.8, seen_pos: 4 }] });
     if (path.includes("/hex/") || path.includes("/registration/")) return Response.json({ ac: [] });
     throw new Error("Unexpected URL: " + path);
@@ -542,5 +543,28 @@ test("PH-GOV wordt wereldwijd gevolgd: opgezocht op registratie en buiten Nederl
     const c = classify(gov);
     assert.equal(c.soort, "regering");
     assert.equal(c.naam, "Regeringsvliegtuig PH-GOV");
+  } finally { globalThis.fetch = original; }
+});
+
+test("Max en PH-GOV komen uit /v1/lucht?bijzonder=1 van A-Alerts; dan geen losse opzoekingen", async () => {
+  const original = globalThis.fetch, calls = [], seen = new Date().toISOString();
+  globalThis.fetch = async (url) => {
+    const path = String(url); calls.push(path);
+    if (path === "https://api.a-alerts.nl/v1/helikopters") return Response.json({ helikopters: [] });
+    if (path === "https://api.a-alerts.nl/v1/lucht") return Response.json({ toestellen: [] });
+    if (path === "https://api.a-alerts.nl/v1/lucht?bijzonder=1") return Response.json({ toestellen: [
+      { id: "lucht-4867e6", hex: "4867e6", soort: "bijzonder", icoon: "verstappen", naam: "Max Verstappen", registratie: "PH-UTL",
+        lat: 36.08, lon: -115.15, hoogte_ft: 0, snelheid_kt: 0, op_grond: true, gezien: seen },
+      { id: "lucht-484000", hex: "484000", soort: "regering", icoon: "phgov", naam: "Regeringsvliegtuig PH-GOV", registratie: "PH-GOV",
+        lat: 40.6, lon: -73.8, hoogte_ft: 35000, snelheid_kt: 450, op_grond: false, gezien: seen }] });
+    if (path.includes("/hex/44f6a0")) return Response.json({ ac: [] });
+    throw new Error("Unexpected URL: " + path);
+  };
+  try {
+    const list = await fetchADSB({});
+    const names = list.map((a) => classify(a)).filter(Boolean).map((c) => `${c.soort}:${c.icoon}`);
+    assert.deepEqual(names.sort(), ["bijzonder:verstappen", "regering:phgov"]);
+    assert.ok(!calls.some((x) => x.includes("/hex/4867e6") || x.includes("/reg/PH-GOV")));
+    assert.ok(!calls.some((x) => x.includes("workers.dev/v1/lucht?bijzonder")));
   } finally { globalThis.fetch = original; }
 });
